@@ -38,6 +38,7 @@ bool loginAuth (string username, string password)
   // Using preset value to mock functionality
   if (username == "khilfi" && password == "1234")
   {
+    cout << "Invalid username or password" << endl;
     return true;
   }
   return false;
@@ -50,22 +51,37 @@ int main ()
   
   while (1)
   {
-    cout << "Please enter your username and password to login." << endl;
+    // cout << "Please enter your username and password to login." << endl;
 
-    string usernameIn, passwordIn;
+    // string usernameIn, passwordIn;
 
+    // cout << "Username: ";
+    // cin >> usernameIn;
+    // cout << "Password: ";
+    // cin >> passwordIn;
+
+    // if (!loginAuth(usernameIn, passwordIn))
+    // {
+    //   continue;
+    // }
+
+    // cout << "Welcome " << usernameIn << "!";
+
+    string usernameIn, passwordIn, repeatPasswordIn;
+
+    cout << "Register" << endl;
     cout << "Username: ";
-    cin >> usernameIn;
+    getline(cin, usernameIn);
+    
     cout << "Password: ";
-    cin >> passwordIn;
+    getline(cin, passwordIn);
 
-    if (!loginAuth(usernameIn, passwordIn))
-    {
-      cout << "Invalid username or password" << endl;
-      continue;
-    }
+    cout << "Repeat password: ";
+    getline(cin, repeatPasswordIn);
 
-    cout << "Welcome " << usernameIn << "!";
+    if (registerAccount(usernameIn, passwordIn, repeatPasswordIn))
+      break;
+    
     return 0;
   }
 }
