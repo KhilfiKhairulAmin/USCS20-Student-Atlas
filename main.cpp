@@ -6,9 +6,18 @@ using namespace std;
 bool registerAccount (string username, string password, string repeatPassword)
 {
   // Username validation
-  if (username.size() == 0 || username.find_first_of(' ') == username.size())
+  int usernameSize = username.size();
+  if (usernameSize == 0 || username.find_first_of(' ') < usernameSize)
   {
     cout << "Username cannot be empty & cannot contain blanks (' ').";
+    return false;
+  }
+
+  int firstChar = username.at(0);
+  cout << firstChar;
+  if (firstChar >= 48 && firstChar <= 57)
+  {
+    cout << "Username cannot begin with a number.";
     return false;
   }
 
@@ -27,7 +36,7 @@ bool registerAccount (string username, string password, string repeatPassword)
 
   cout << "Account created successfully!" << endl;
   cout << "Username: " << username << endl;
-  cout << "Password: " << '*' * password.size() << endl;
+  cout << "Password: " << "********" << endl;
 
   return true;
 }
@@ -81,7 +90,6 @@ int main ()
 
     if (registerAccount(usernameIn, passwordIn, repeatPasswordIn))
       break;
-    
-    return 0;
   }
+  return 0;
 }
