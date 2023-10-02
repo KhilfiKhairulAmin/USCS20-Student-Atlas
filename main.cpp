@@ -13,9 +13,8 @@ bool registerAccount (string username, string password, string repeatPassword)
     return false;
   }
 
-  int firstChar = username.at(0);
-  cout << firstChar;
-  if (firstChar >= 48 && firstChar <= 57)
+  char firstChar = username.at(0);
+  if (firstChar >= '0' && firstChar <= '9')
   {
     cout << "Username cannot begin with a number.";
     return false;
