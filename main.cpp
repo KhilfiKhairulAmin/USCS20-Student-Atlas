@@ -42,7 +42,7 @@ bool registerAccount (string username, string password, string repeatPassword)
 }
 
 // Basic authorization prototype
-bool loginAuth (string username, string password)
+bool loginAccount (string username, string password)
 {
   // Using preset value to mock functionality
   if (username == "khilfi" && password == "1234")
@@ -69,7 +69,7 @@ int main ()
     // cout << "Password: ";
     // cin >> passwordIn;
 
-    // if (!loginAuth(usernameIn, passwordIn))
+    // if (!loginAccount(usernameIn, passwordIn))
     // {
     //   continue;
     // }
