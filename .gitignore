@@ -1,2 +1,8 @@
+# For windows
 *.exe
+
+# For Linux (and Mac)
+*.out
+
+# Auto-generated folder for VSCode env
 .vscode
