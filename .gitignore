@@ -1,2 +1,5 @@
 *.exe
 .vscode
+chatGptGeneratedSolution.cpp
+student_data.txt
+.gitignore
