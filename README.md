@@ -1,5 +1,3 @@
-## Student Record Management System
-
 ### About
 
 ### Our Group
