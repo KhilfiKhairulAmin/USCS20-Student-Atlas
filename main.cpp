@@ -4,10 +4,22 @@
 using namespace std;
 
 /** TODO: CRUD operations for database (txt file)
- *  ✅ Account data
- *  ✅ Student data
+ *  ✅ Account data type
+ *  ✅ Student data type
  *  ✅ Load accounts data (READ)
  *  ✅ Store accounts data (CREATE)
+ *  ⏳ Load students data (READ)
+ *  ⏳ Store students data (CREATE)
+ *  ⏳ Delete accounts data (DELETE) *CASCADE to STUDENT as well
+ *  ⏳ Update accounts data (UPDATE)
+ *  ⏳ Update students data (UPDATE)
+*/
+
+/** TODO: Data validation
+ *  ⏳ Limited character input
+ *  ⏳ Realistic number range
+ *  ⏳ Unique identifiers/keys
+ *  ⏳ Character literals formatted correctly based on context of data
 */
 
 /**
