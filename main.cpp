@@ -18,7 +18,7 @@ struct Account
     string username;
     string password;
     string authority;
-    string refStudentId;
+    string refStudentId = "";
 };
 
 /**
@@ -35,14 +35,21 @@ struct Student
 };
 
 vector<Account> loadAccounts();
+void saveAccounts(vector<Account> accounts);
 
 
-int main ()
+int main()
 {
     cout << "Project Time";
     vector<Account> accounts = loadAccounts();
 
-    cout << accounts.at(0).username << accounts.at(0).authority;
+    Account newAcc; newAcc.username = "nazrin"; newAcc.password = "naz123rin"; newAcc.authority = "STUDENT"; newAcc.refStudentId = "3";
+    accounts.push_back(newAcc);
+
+    for (int i = 0; i < accounts.size(); i++)
+        cout << accounts.at(i).username << " " << accounts.at(i).authority << endl;
+
+    saveAccounts(accounts);
 
     return 0;
 }
@@ -51,36 +58,36 @@ int main ()
  * Parse a string of account data into an account object.
  * @param rawAccountData Unparsed account string
 */
-Account accountParser (string rawAccountData)
+Account stringToAccount(string rawAccountData)
 {
     int startI = 0, endI;
     string parsed;
     Account account;
-
     endI = rawAccountData.find_first_of(',', startI);
     parsed = rawAccountData.substr(startI, endI);
     account.username = parsed;
     startI = endI + 1;
 
     endI = rawAccountData.find_first_of(',', startI);
-    parsed = rawAccountData.substr(startI, endI);
+    parsed = rawAccountData.substr(startI, endI - startI);
     account.password = parsed;
     startI = endI + 1;
 
-    endI = rawAccountData.find_first_of(',');
-    parsed = rawAccountData.substr(startI, endI);
+    endI = rawAccountData.find_first_of(',', startI);
+    // Same value as npos indicates the search failed to find the last comma ','
+    if (endI == rawAccountData.npos)
+        endI = rawAccountData.length();
+
+    parsed = rawAccountData.substr(startI, endI - startI);
     account.authority = parsed;
 
     if (account.authority == "STUDENT")
     {
-        startI = endI + 1;
-        endI = rawAccountData.find_first_of(',');
-        parsed = rawAccountData.substr(startI, endI);
+        parsed = rawAccountData.substr(++endI);
         account.refStudentId = parsed;
     }
 
     return account;
-
 }
 
 /**
@@ -95,10 +102,33 @@ vector<Account> loadAccounts()
 
     while (getline(readAccountsData, curLine))
     {
-        cout << curLine << endl;
-        accounts.push_back(accountParser(curLine));
+        accounts.push_back(stringToAccount(curLine));
     }
     
     readAccountsData.close();
     return accounts;
+}
+
+/**
+ * Parse an account into an account string
+*/
+string accountToString(Account account)
+{
+    return account.username + ',' + account.password + ',' + account.authority + ',' + account.refStudentId + '\n';
+}
+
+/**
+ * Save all accounts into database.
+*/
+void saveAccounts(vector<Account> accounts)
+{
+    string save = "";
+    for (int i = 0; i < accounts.size(); i++)
+    {
+        save += accountToString(accounts.at(i));
+    }
+
+    ofstream writeAccounts("accounts.txt");
+    writeAccounts << save;
+    writeAccounts.close();
 }
