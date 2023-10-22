@@ -3,11 +3,11 @@
 #include <fstream>
 using namespace std;
 
-/** TODO
- * 1. CRUD operations for database (txt file)
- *      - Account data
- *      - Student data
- * 2. Parser for txt file
+/** TODO: CRUD operations for database (txt file)
+ *  ✅ Account data
+ *  ✅ Student data
+ *  ✅ Load accounts data (READ)
+ *  ⏳ Store accounts data (CREATE)
 */
 
 /**
