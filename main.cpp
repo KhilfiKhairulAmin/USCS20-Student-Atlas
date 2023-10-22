@@ -7,7 +7,7 @@ using namespace std;
  *  ✅ Account data
  *  ✅ Student data
  *  ✅ Load accounts data (READ)
- *  ⏳ Store accounts data (CREATE)
+ *  ✅ Store accounts data (CREATE)
 */
 
 /**
@@ -28,9 +28,9 @@ struct Student
 {
     string studentId;
     string icNumber;
-    int age;
+    unsigned short int age;
     string programme;
-    int numOfSubjects;
+    unsigned short int numOfSubjects;
     float cgpa;
 };
 
@@ -63,24 +63,28 @@ Account stringToAccount(string rawAccountData)
     int startI = 0, endI;
     string parsed;
     Account account;
+
+    // Parse account username
     endI = rawAccountData.find_first_of(',', startI);
     parsed = rawAccountData.substr(startI, endI);
     account.username = parsed;
     startI = endI + 1;
 
+    // Parse account password
     endI = rawAccountData.find_first_of(',', startI);
     parsed = rawAccountData.substr(startI, endI - startI);
     account.password = parsed;
     startI = endI + 1;
 
+    // Parse account authority
     endI = rawAccountData.find_first_of(',', startI);
-    // Same value as npos indicates the search failed to find the last comma ','
-    if (endI == rawAccountData.npos)
+    if (endI == rawAccountData.npos) // The value npos indicates the previous search for comma failed
         endI = rawAccountData.length();
 
     parsed = rawAccountData.substr(startI, endI - startI);
     account.authority = parsed;
 
+    // Parse account student ID reference (only for STUDENT!)
     if (account.authority == "STUDENT")
     {
         parsed = rawAccountData.substr(++endI);
