@@ -1,4 +1,3 @@
-username,password,authority
 khilfi,khilfi123,ADMIN
 husna,123husna,TEACHER
 amzar,am123zar,STUDENT,1
