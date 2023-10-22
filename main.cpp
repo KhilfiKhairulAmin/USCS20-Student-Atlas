@@ -13,11 +13,13 @@ using namespace std;
 struct Account;
 struct Student;
 
+vector<Account> loadAccounts();
+
 
 int main ()
 {
     cout << "Project Time";
-
+    loadAccounts();
     return 0;
 }
 
@@ -43,3 +45,16 @@ struct Student
     int numOfSubjects;
     float cgpa;
 };
+
+vector<Account> loadAccounts()
+{
+    ifstream readAccountsData("accounts.txt");
+    string curLine;
+
+    while (getline(readAccountsData, curLine))
+    {
+        cout << curLine << endl;
+    }
+    
+    readAccountsData.close();
+}
