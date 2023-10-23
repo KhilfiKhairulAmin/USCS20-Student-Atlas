@@ -63,7 +63,7 @@ int main()
     vector<Student> students = loadStudents();
 
     Student stud;
-    stud.studentId = "2"; stud.firstName = "Fusuna"; stud.lastName = "Ahumadu Fuadu"; stud.age = 18; stud.icNumber = "051101020000"; stud.programme = "Japan"; stud.numOfSubjects = 10; stud.cgpa = 4.0;
+    stud.studentId = "2"; stud.firstName = "Fusuna"; stud.lastName = "Ahumadu Fuadu"; stud.age = 18; stud.icNumber = "051101020000"; stud.programme = "Japan"; stud.numOfSubjects = 10; stud.cgpa = 3.0;
     students.push_back(stud);
 
     saveStudents(students);
@@ -171,14 +171,19 @@ float stringToPositiveFloat(string s)
 {
     float result = 0.0;
     int lenDigitBeforeDecPoint = s.find_first_of('.');
-    string beforeDec = s.substr(0, lenDigitBeforeDecPoint), afterDec = s.substr(lenDigitBeforeDecPoint + 1);
+    string beforeDec, afterDec;
+
+    // Early return numerical string contains no decimal point, it represents integer!
+    if (lenDigitBeforeDecPoint == s.npos)
+        return stringToUint(s);
+    else
+    {
+        beforeDec = s.substr(0, lenDigitBeforeDecPoint);
+        afterDec = s.substr(lenDigitBeforeDecPoint + 1);
+    }
 
     // Handles digit before decimal point
-    for (int i = 0; i < beforeDec.size(); i++)
-    {
-        float digit = beforeDec[i] - '0';
-        result += digit * pow(10, beforeDec.size() - 1 - i);
-    }
+    result += stringToUint(beforeDec);
 
     // Handles digit after decimal point
     for (int i = 0; i < afterDec.size(); i++)
