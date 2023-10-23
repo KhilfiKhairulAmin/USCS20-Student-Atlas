@@ -47,7 +47,9 @@ struct Student
 };
 
 vector<Account> loadAccounts();
-void saveAccounts(vector<Account> accounts);
+void saveAccounts(vector<Account>);
+vector<Student> loadStudents();
+void saveStudents(vector<Student>);
 
 
 int main()
@@ -67,40 +69,32 @@ int main()
 }
 
 /**
- * Parse a string of account data into an account object.
- * @param rawAccountData Unparsed account string
+ * Parse data stored in string delimited by ',' (comma) into a collection of the data
+ * @param unparsedData Unparsed string of data, delimited by ',' (comma)
+ * @return A collection of the parsed data
 */
-Account stringToAccount(string rawAccountData)
+vector<string> parseData(string unparsedData)
 {
-    int startI = 0, endI;
+    vector<string> data;
     string parsed;
-    Account account;
-
-    // Parse account username
-    endI = rawAccountData.find_first_of(',', startI);
-    parsed = rawAccountData.substr(startI, endI);
-    account.username = parsed;
-    startI = endI + 1;
-
-    // Parse account password
-    endI = rawAccountData.find_first_of(',', startI);
-    parsed = rawAccountData.substr(startI, endI - startI);
-    account.password = parsed;
-    startI = endI + 1;
-
-    // Parse account role
-    endI = rawAccountData.find_first_of(',', startI);
-    parsed = rawAccountData.substr(startI, endI - startI);
-    account.role = parsed;
-
-    // Parse account student ID reference (only for STUDENT!)
-    if (account.role == "STUDENT")
+    int startI = 0, endI;
+    
+    // Find index of comma (the delimiter)
+    endI = unparsedData.find_first_of(',', startI);
+    // When endI == npos is true, it means the comma character can't be found anymore
+    while (endI != unparsedData.npos)
     {
-        parsed = rawAccountData.substr(++endI);
-        account.refStudentId = parsed;
+        parsed = unparsedData.substr(startI, endI - startI); // Take the substring of the data
+        data.push_back(parsed); // Store it
+        startI = endI + 1;
+        endI = unparsedData.find_first_of(',', startI);
     }
 
-    return account;
+    // Parse the endmost data in the string
+    parsed = unparsedData.substr(startI);
+    data.push_back(parsed);
+
+    return data;
 }
 
 /**
@@ -115,10 +109,17 @@ vector<Account> loadAccounts()
 
     while (getline(readAccountsData, curLine))
     {
-        accounts.push_back(stringToAccount(curLine));
+        vector<string> parsed = parseData(curLine);
+        Account account;
+        account.username = parsed.at(0);
+        account.password = parsed.at(1);
+        account.role = parsed.at(2);
+        if (account.role == "STUDENT")
+            account.refStudentId = parsed.at(3);
     }
     
     readAccountsData.close();
+    
     return accounts;
 }
 
@@ -144,4 +145,21 @@ void saveAccounts(vector<Account> accounts)
     ofstream writeAccounts("accounts.txt");
     writeAccounts << save;
     writeAccounts.close();
+}
+
+Student stringToStudent(string rawStudentData)
+{
+
+}
+
+vector<Student> loadStudents()
+{
+    ifstream readAccountsData("students.txt");
+    string curLine;
+    vector<Student> students;
+
+    while (getline(readAccountsData, curLine))
+    {
+        students.push_back(stringToStudent(curLine));
+    }
 }
