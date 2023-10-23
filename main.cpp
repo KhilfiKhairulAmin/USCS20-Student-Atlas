@@ -190,6 +190,20 @@ float stringToPositiveFloat(string s)
     return result;
 }
 
+string numToString(int n)
+{
+    stringstream out;
+    out << n;
+    return out.str();
+}
+
+string numToString(float n)
+{
+    stringstream out;
+    out << n;
+    return out.str();
+}
+
 /**
  * Loads all student data
 */
@@ -224,14 +238,9 @@ vector<Student> loadStudents()
 */
 string studentToString(Student student)
 {
-    stringstream age, numSubjects, cgpa;
-    age << student.age;
-    numSubjects << student.numOfSubjects;
-    cgpa << student.cgpa;
-
-    return student.studentId + ',' + student.firstName + ',' + student.lastName + ',' + age.str()
-           + ',' + student.icNumber + ',' + student.programme + ',' + numSubjects.str() + ','
-           + cgpa.str() + '\n';
+    return student.studentId + ',' + student.firstName + ',' + student.lastName + ',' + numToString(student.age)
+           + ',' + student.icNumber + ',' + student.programme + ',' + numToString(student.numOfSubjects) + ','
+           + numToString(student.cgpa) + '\n';
 }
 
 /**
