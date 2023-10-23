@@ -1,5 +1,0 @@
-khilfi,khilfi123,ADMIN,
-husna,123husna,TEACHER,
-amzar,am123zar,STUDENT,1
-Ammar,Am123mar,STUDENT,2
-nazrin,naz123rin,STUDENT,3
