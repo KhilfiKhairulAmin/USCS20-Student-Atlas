@@ -29,8 +29,8 @@ struct Account
 {
     string username;
     string password;
-    string authority;
-    string refStudentId = "";
+    string role;
+    string refStudentId;
 };
 
 /**
@@ -55,11 +55,11 @@ int main()
     cout << "Project Time";
     vector<Account> accounts = loadAccounts();
 
-    Account newAcc; newAcc.username = "nazrin"; newAcc.password = "naz123rin"; newAcc.authority = "STUDENT"; newAcc.refStudentId = "3";
+    Account newAcc; newAcc.username = "nazrin"; newAcc.password = "naz123rin"; newAcc.role = "STUDENT"; newAcc.refStudentId = "3";
     accounts.push_back(newAcc);
 
     for (int i = 0; i < accounts.size(); i++)
-        cout << accounts.at(i).username << " " << accounts.at(i).authority << endl;
+        cout << accounts.at(i).username << " " << accounts.at(i).role << endl;
 
     saveAccounts(accounts);
 
@@ -88,16 +88,13 @@ Account stringToAccount(string rawAccountData)
     account.password = parsed;
     startI = endI + 1;
 
-    // Parse account authority
+    // Parse account role
     endI = rawAccountData.find_first_of(',', startI);
-    if (endI == rawAccountData.npos) // The value npos indicates the previous search for comma failed
-        endI = rawAccountData.length();
-
     parsed = rawAccountData.substr(startI, endI - startI);
-    account.authority = parsed;
+    account.role = parsed;
 
     // Parse account student ID reference (only for STUDENT!)
-    if (account.authority == "STUDENT")
+    if (account.role == "STUDENT")
     {
         parsed = rawAccountData.substr(++endI);
         account.refStudentId = parsed;
@@ -130,7 +127,7 @@ vector<Account> loadAccounts()
 */
 string accountToString(Account account)
 {
-    return account.username + ',' + account.password + ',' + account.authority + ',' + account.refStudentId + '\n';
+    return account.username + ',' + account.password + ',' + account.role + ',' + account.refStudentId + '\n';
 }
 
 /**
