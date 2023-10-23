@@ -2,6 +2,7 @@
 #include <vector> // For flexible array datatype
 #include <fstream> // For file operations
 #include <cmath> // For complicated mathematical operations
+#include <sstream> // For handling numerical to string conversion
 using namespace std;
 
 /** TODO: CRUD operations for database (txt file)
@@ -9,8 +10,8 @@ using namespace std;
  *  ✅ Student data type
  *  ✅ Load accounts data (READ)
  *  ✅ Store accounts data (CREATE)
- *  ⏳ Load students data (READ)
- *  ⏳ Store students data (CREATE)
+ *  ✅ Load students data (READ)
+ *  ✅ Store students data (CREATE)
  *  ⏳ Delete accounts data (DELETE) *CASCADE to STUDENT as well
  *  ⏳ Update accounts data (UPDATE)
  *  ⏳ Update students data (UPDATE)
@@ -61,8 +62,12 @@ int main()
 
     vector<Student> students = loadStudents();
 
-    cout << students.at(0).firstName << " " << students.at(0).cgpa;
+    Student stud;
+    stud.studentId = "2"; stud.firstName = "Fusuna"; stud.lastName = "Ahumadu Fuadu"; stud.age = 18; stud.icNumber = "051101020000"; stud.programme = "Japan"; stud.numOfSubjects = 10; stud.cgpa = 4.0;
+    students.push_back(stud);
 
+    saveStudents(students);
+    
     return 0;
 }
 
@@ -212,4 +217,35 @@ vector<Student> loadStudents()
     readStudentsData.close();
 
     return students;
+}
+
+/**
+ * Convert student to string representation
+*/
+string studentToString(Student student)
+{
+    stringstream age, numSubjects, cgpa;
+    age << student.age;
+    numSubjects << student.numOfSubjects;
+    cgpa << student.cgpa;
+
+    return student.studentId + ',' + student.firstName + ',' + student.lastName + ',' + age.str()
+           + ',' + student.icNumber + ',' + student.programme + ',' + numSubjects.str() + ','
+           + cgpa.str() + '\n';
+}
+
+/**
+ * Save all students in this session
+*/
+void saveStudents(vector<Student> students)
+{
+    string save = "";
+    for (int i = 0; i < students.size(); i++)
+    {
+        save += studentToString(students.at(i));
+    }
+
+    ofstream writeStudents("students.txt");
+    writeStudents << save;
+    writeStudents.close();
 }
