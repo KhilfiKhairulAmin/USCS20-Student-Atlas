@@ -1,6 +1,7 @@
-#include <iostream>
-#include <vector>
-#include <fstream>
+#include <iostream> // For user input and output
+#include <vector> // For flexible array datatype
+#include <fstream> // For file operations
+#include <cmath> // For complicated mathematical operations
 using namespace std;
 
 /** TODO: CRUD operations for database (txt file)
@@ -39,8 +40,10 @@ struct Account
 struct Student
 {
     string studentId;
-    string icNumber;
+    string firstName;
+    string lastName;
     unsigned short int age;
+    string icNumber;
     string programme;
     unsigned short int numOfSubjects;
     float cgpa;
@@ -55,15 +58,6 @@ void saveStudents(vector<Student>);
 int main()
 {
     cout << "Project Time";
-    vector<Account> accounts = loadAccounts();
-
-    Account newAcc; newAcc.username = "nazrin"; newAcc.password = "naz123rin"; newAcc.role = "STUDENT"; newAcc.refStudentId = "3";
-    accounts.push_back(newAcc);
-
-    for (int i = 0; i < accounts.size(); i++)
-        cout << accounts.at(i).username << " " << accounts.at(i).role << endl;
-
-    saveAccounts(accounts);
 
     return 0;
 }
@@ -147,19 +141,72 @@ void saveAccounts(vector<Account> accounts)
     writeAccounts.close();
 }
 
-Student stringToStudent(string rawStudentData)
+/**
+ * Convert whole number string to positive integer
+*/
+int stringToUint(string s)
 {
-
+    int result;
+    for(int i = 0; i < s.size(); i++)
+    {
+        int digit = s[i] - '0';
+        result += digit * pow(10, s.size() - 1 - i);
+    }
+    cout << result;
+    return result;
 }
 
+/**
+ * Convert numeric string to positive float
+*/
+float stringToPositiveFloat(string s)
+{
+    float result = 0.0;
+    int lenDigitBeforeDecPoint = s.find_first_of('.');
+    string beforeDec = s.substr(0, lenDigitBeforeDecPoint), afterDec = s.substr(lenDigitBeforeDecPoint + 1);
+
+    // Handles digit before decimal point
+    for (int i = 0; i < beforeDec.size(); i++)
+    {
+        float digit = beforeDec[i] - '0';
+        result += digit * pow(10, beforeDec.size() - 1 - i);
+    }
+
+    // Handles digit after decimal point
+    for (int i = 0; i < afterDec.size(); i++)
+    {
+        float digit = afterDec[i] - '0';
+        result += digit / pow(10, i + 1);
+    }
+
+    return result;
+}
+
+/**
+ * Loads all student data
+*/
 vector<Student> loadStudents()
 {
-    ifstream readAccountsData("students.txt");
+    ifstream readStudentsData("students.txt");
     string curLine;
     vector<Student> students;
 
-    while (getline(readAccountsData, curLine))
+    while (getline(readStudentsData, curLine))
     {
-        students.push_back(stringToStudent(curLine));
+        vector<string> parsed = parseData(curLine);
+        Student student;
+        student.studentId = parsed.at(0);
+        student.firstName = parsed.at(1);
+        student.lastName = parsed.at(2);
+        student.age = stringToUint(parsed.at(3));
+        student.icNumber = parsed.at(4);
+        student.programme = parsed.at(5);
+        student.numOfSubjects = stringToUint(parsed.at(6));
+        student.cgpa = stringToPositiveFloat(parsed.at(7));
+        students.push_back(student);
     }
+
+    readStudentsData.close();
+
+    return students;
 }
