@@ -59,6 +59,10 @@ int main()
 {
     cout << "Project Time";
 
+    vector<Student> students = loadStudents();
+
+    cout << students.at(0).firstName << " " << students.at(0).cgpa;
+
     return 0;
 }
 
@@ -152,7 +156,6 @@ int stringToUint(string s)
         int digit = s[i] - '0';
         result += digit * pow(10, s.size() - 1 - i);
     }
-    cout << result;
     return result;
 }
 
