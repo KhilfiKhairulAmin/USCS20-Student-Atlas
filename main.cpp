@@ -69,19 +69,21 @@ vector<Student> StudentData;
 
 void loadAccounts();
 void saveAccounts();
-bool createAccount();
+int createAccount(string, string, string);
+void printAccounts();
 void loadStudents();
 void saveStudents();
-bool createStudent();
+int createStudent();
+void printStudents();
 
 
 int main()
 {
-    loadStudents();
-
-
-
-    saveStudents();
+    loadAccounts();
+    printAccounts();
+    createAccount("infietech", "infie123", "infie123");
+    printAccounts();
+    saveAccounts();
     
     return 0;
 }
@@ -90,9 +92,10 @@ int main()
 // UTILITY FUNCTION PROTOTYPES
 
 vector<string> parseData(string);
-string accountToString(Account account);
-string studentToString(Student student);
+string accountToString(Account);
+string studentToString(Student);
 int stringToUint(string);
+float stringToPositiveFloat(string);
 string numToString(int);
 string numToString(float);
 
@@ -142,7 +145,7 @@ void saveAccounts()
     writeAccounts.close();
 }
 
-bool createAccount(string username, string password, string repeatPassword, string role = "STUDENT")
+int createAccount(string username, string password, string repeatPassword)
 {
     // TODO Data validation createAccount
 
@@ -152,12 +155,20 @@ bool createAccount(string username, string password, string repeatPassword, stri
         accountId,
         username,
         password,
-        role
+        "STUDENT"
     };
 
     AccountData.push_back(newAccount);
 
-    return true;
+    return accountId;
+}
+
+void printAccounts()
+{
+    for (int i = 0; i < AccountData.size(); i++)
+    {
+        cout << AccountData.at(i).accountId << " " << AccountData.at(i).username << endl;
+    }
 }
 
 /**
@@ -205,7 +216,7 @@ void saveStudents()
     writeStudents.close();
 }
 
-bool createStudent(string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
+int createStudent(string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
 {
     // TODO Data validation createStudent
 
@@ -224,7 +235,7 @@ bool createStudent(string firstName, string lastName, int age, string icNumber, 
 
     StudentData.push_back(newStudent);
 
-    return true;
+    return studentId;
 }
 
 
