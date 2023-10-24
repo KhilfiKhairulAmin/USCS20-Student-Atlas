@@ -9,9 +9,11 @@ using namespace std;
  *  ✅ Account data type
  *  ✅ Student data type
  *  ✅ Load accounts data (READ)
- *  ✅ Store accounts data (CREATE)
+ *  ✅ Store accounts data
  *  ✅ Load students data (READ)
- *  ✅ Store students data (CREATE)
+ *  ✅ Store students data
+ *  ⏳ Insert new account data (CREATE)
+ *  ⏳ Insert new student data (CREATE)
  *  ⏳ Delete accounts data (DELETE) *CASCADE to STUDENT as well
  *  ⏳ Update accounts data (UPDATE)
  *  ⏳ Update students data (UPDATE)
@@ -54,25 +56,34 @@ struct Student
 };
 
 
+// GLOBAL VARIABLES
+
+/** Global variable that holds accounts data */
+vector<Account> AccountData;
+/** Global variable that holds students data */
+vector<Student> StudentData;
+
+
 // PROGRAM FUNCTION PROTOTYPES
 
-vector<Account> loadAccounts();
-void saveAccounts(vector<Account>);
-vector<Student> loadStudents();
-void saveStudents(vector<Student>);
+void loadAccounts();
+void saveAccounts();
+void createAccount();
+void loadStudents();
+void saveStudents();
 
 
 int main()
 {
     cout << "Project Time";
 
-    vector<Student> students = loadStudents();
+    loadStudents();
 
     Student stud;
     stud.studentId = "2"; stud.firstName = "Fusuna"; stud.lastName = "Ahumadu Fuadu"; stud.age = 18; stud.icNumber = "051101020000"; stud.programme = "Japan"; stud.numOfSubjects = 10; stud.cgpa = 3.0;
-    students.push_back(stud);
+    StudentData.push_back(stud);
 
-    saveStudents(students);
+    saveStudents();
     
     return 0;
 }
@@ -94,11 +105,10 @@ string numToString(float);
  * Retrieve all accounts from database.
  * @return All accounts
 */
-vector<Account> loadAccounts()
+void loadAccounts()
 {
     ifstream readAccountsData("accounts.txt");
     string curLine;
-    vector<Account> accounts;
 
     while (getline(readAccountsData, curLine))
     {
@@ -109,22 +119,23 @@ vector<Account> loadAccounts()
         account.role = parsed.at(2);
         if (account.role == "STUDENT")
             account.refStudentId = parsed.at(3);
+        AccountData.push_back(account);
     }
     
     readAccountsData.close();
-    
-    return accounts;
+
+    return;
 }
 
 /**
  * Save all accounts into database.
 */
-void saveAccounts(vector<Account> accounts)
+void saveAccounts()
 {
     string save = "";
-    for (int i = 0; i < accounts.size(); i++)
+    for (int i = 0; i < AccountData.size(); i++)
     {
-        save += accountToString(accounts.at(i));
+        save += accountToString(AccountData.at(i));
     }
 
     ofstream writeAccounts("accounts.txt");
@@ -132,10 +143,24 @@ void saveAccounts(vector<Account> accounts)
     writeAccounts.close();
 }
 
+bool createAccount(string username, string password, string repeatPassword, string role = "STUDENT")
+{
+    // TODO Data validation createAccount
+
+    Account newAccount;
+    newAccount.username = username;
+    newAccount.password = password;
+    newAccount.role = role;
+
+    AccountData.push_back(newAccount);
+
+    return true;
+}
+
 /**
  * Loads all student data
 */
-vector<Student> loadStudents()
+void loadStudents()
 {
     ifstream readStudentsData("students.txt");
     string curLine;
@@ -153,23 +178,23 @@ vector<Student> loadStudents()
         student.programme = parsed.at(5);
         student.numOfSubjects = stringToUint(parsed.at(6));
         student.cgpa = stringToPositiveFloat(parsed.at(7));
-        students.push_back(student);
+        StudentData.push_back(student);
     }
 
     readStudentsData.close();
 
-    return students;
+    return;
 }
 
 /**
  * Save all students in this session
 */
-void saveStudents(vector<Student> students)
+void saveStudents()
 {
     string save = "";
-    for (int i = 0; i < students.size(); i++)
+    for (int i = 0; i < StudentData.size(); i++)
     {
-        save += studentToString(students.at(i));
+        save += studentToString(StudentData.at(i));
     }
 
     ofstream writeStudents("students.txt");
