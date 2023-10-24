@@ -24,6 +24,9 @@ using namespace std;
  *  ⏳ Character literals formatted correctly based on context of data
 */
 
+
+// DATA STRUCTURE DEFINITION
+
 /**
  * Account datatype
 */
@@ -37,7 +40,7 @@ struct Account
 
 /**
  * Student datatype
-*/
+ */
 struct Student
 {
     string studentId;
@@ -49,6 +52,9 @@ struct Student
     unsigned short int numOfSubjects;
     float cgpa;
 };
+
+
+// PROGRAM FUNCTION PROTOTYPES
 
 vector<Account> loadAccounts();
 void saveAccounts(vector<Account>);
@@ -70,6 +76,109 @@ int main()
     
     return 0;
 }
+
+
+// UTILITY FUNCTION PROTOTYPES
+
+vector<string> parseData(string);
+string accountToString(Account account);
+string studentToString(Student student);
+int stringToUint(string);
+string numToString(int);
+string numToString(float);
+
+
+// PROGRAM FUNCTIONS IMPLEMENTATION
+
+/**
+ * Retrieve all accounts from database.
+ * @return All accounts
+*/
+vector<Account> loadAccounts()
+{
+    ifstream readAccountsData("accounts.txt");
+    string curLine;
+    vector<Account> accounts;
+
+    while (getline(readAccountsData, curLine))
+    {
+        vector<string> parsed = parseData(curLine);
+        Account account;
+        account.username = parsed.at(0);
+        account.password = parsed.at(1);
+        account.role = parsed.at(2);
+        if (account.role == "STUDENT")
+            account.refStudentId = parsed.at(3);
+    }
+    
+    readAccountsData.close();
+    
+    return accounts;
+}
+
+/**
+ * Save all accounts into database.
+*/
+void saveAccounts(vector<Account> accounts)
+{
+    string save = "";
+    for (int i = 0; i < accounts.size(); i++)
+    {
+        save += accountToString(accounts.at(i));
+    }
+
+    ofstream writeAccounts("accounts.txt");
+    writeAccounts << save;
+    writeAccounts.close();
+}
+
+/**
+ * Loads all student data
+*/
+vector<Student> loadStudents()
+{
+    ifstream readStudentsData("students.txt");
+    string curLine;
+    vector<Student> students;
+
+    while (getline(readStudentsData, curLine))
+    {
+        vector<string> parsed = parseData(curLine);
+        Student student;
+        student.studentId = parsed.at(0);
+        student.firstName = parsed.at(1);
+        student.lastName = parsed.at(2);
+        student.age = stringToUint(parsed.at(3));
+        student.icNumber = parsed.at(4);
+        student.programme = parsed.at(5);
+        student.numOfSubjects = stringToUint(parsed.at(6));
+        student.cgpa = stringToPositiveFloat(parsed.at(7));
+        students.push_back(student);
+    }
+
+    readStudentsData.close();
+
+    return students;
+}
+
+/**
+ * Save all students in this session
+*/
+void saveStudents(vector<Student> students)
+{
+    string save = "";
+    for (int i = 0; i < students.size(); i++)
+    {
+        save += studentToString(students.at(i));
+    }
+
+    ofstream writeStudents("students.txt");
+    writeStudents << save;
+    writeStudents.close();
+}
+
+
+// ALL UTILITY FUNCTIONS
 
 /**
  * Parse data stored in string delimited by ',' (comma) into a collection of the data
@@ -101,32 +210,6 @@ vector<string> parseData(string unparsedData)
 }
 
 /**
- * Retrieve all accounts from database.
- * @return All accounts
-*/
-vector<Account> loadAccounts()
-{
-    ifstream readAccountsData("accounts.txt");
-    string curLine;
-    vector<Account> accounts;
-
-    while (getline(readAccountsData, curLine))
-    {
-        vector<string> parsed = parseData(curLine);
-        Account account;
-        account.username = parsed.at(0);
-        account.password = parsed.at(1);
-        account.role = parsed.at(2);
-        if (account.role == "STUDENT")
-            account.refStudentId = parsed.at(3);
-    }
-    
-    readAccountsData.close();
-    
-    return accounts;
-}
-
-/**
  * Parse an account into an account string
 */
 string accountToString(Account account)
@@ -135,19 +218,13 @@ string accountToString(Account account)
 }
 
 /**
- * Save all accounts into database.
+ * Convert student to string representation
 */
-void saveAccounts(vector<Account> accounts)
+string studentToString(Student student)
 {
-    string save = "";
-    for (int i = 0; i < accounts.size(); i++)
-    {
-        save += accountToString(accounts.at(i));
-    }
-
-    ofstream writeAccounts("accounts.txt");
-    writeAccounts << save;
-    writeAccounts.close();
+    return student.studentId + ',' + student.firstName + ',' + student.lastName + ',' + numToString(student.age)
+           + ',' + student.icNumber + ',' + student.programme + ',' + numToString(student.numOfSubjects) + ','
+           + numToString(student.cgpa) + '\n';
 }
 
 /**
@@ -207,59 +284,4 @@ string numToString(float n)
     stringstream out;
     out << n;
     return out.str();
-}
-
-/**
- * Loads all student data
-*/
-vector<Student> loadStudents()
-{
-    ifstream readStudentsData("students.txt");
-    string curLine;
-    vector<Student> students;
-
-    while (getline(readStudentsData, curLine))
-    {
-        vector<string> parsed = parseData(curLine);
-        Student student;
-        student.studentId = parsed.at(0);
-        student.firstName = parsed.at(1);
-        student.lastName = parsed.at(2);
-        student.age = stringToUint(parsed.at(3));
-        student.icNumber = parsed.at(4);
-        student.programme = parsed.at(5);
-        student.numOfSubjects = stringToUint(parsed.at(6));
-        student.cgpa = stringToPositiveFloat(parsed.at(7));
-        students.push_back(student);
-    }
-
-    readStudentsData.close();
-
-    return students;
-}
-
-/**
- * Convert student to string representation
-*/
-string studentToString(Student student)
-{
-    return student.studentId + ',' + student.firstName + ',' + student.lastName + ',' + numToString(student.age)
-           + ',' + student.icNumber + ',' + student.programme + ',' + numToString(student.numOfSubjects) + ','
-           + numToString(student.cgpa) + '\n';
-}
-
-/**
- * Save all students in this session
-*/
-void saveStudents(vector<Student> students)
-{
-    string save = "";
-    for (int i = 0; i < students.size(); i++)
-    {
-        save += studentToString(students.at(i));
-    }
-
-    ofstream writeStudents("students.txt");
-    writeStudents << save;
-    writeStudents.close();
 }
