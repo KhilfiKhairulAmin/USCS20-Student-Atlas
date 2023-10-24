@@ -34,6 +34,7 @@ using namespace std;
 */
 struct Account
 {
+    int accountId;
     string username;
     string password;
     string role;
@@ -45,7 +46,7 @@ struct Account
  */
 struct Student
 {
-    string studentId;
+    int studentId;
     string firstName;
     string lastName;
     unsigned short int age;
@@ -68,20 +69,17 @@ vector<Student> StudentData;
 
 void loadAccounts();
 void saveAccounts();
-void createAccount();
+bool createAccount();
 void loadStudents();
 void saveStudents();
+bool createStudent();
 
 
 int main()
 {
-    cout << "Project Time";
-
     loadStudents();
 
-    Student stud;
-    stud.studentId = "2"; stud.firstName = "Fusuna"; stud.lastName = "Ahumadu Fuadu"; stud.age = 18; stud.icNumber = "051101020000"; stud.programme = "Japan"; stud.numOfSubjects = 10; stud.cgpa = 3.0;
-    StudentData.push_back(stud);
+
 
     saveStudents();
     
@@ -114,11 +112,12 @@ void loadAccounts()
     {
         vector<string> parsed = parseData(curLine);
         Account account;
-        account.username = parsed.at(0);
-        account.password = parsed.at(1);
-        account.role = parsed.at(2);
+        account.accountId = stringToUint(parsed.at(0));
+        account.username = parsed.at(1);
+        account.password = parsed.at(2);
+        account.role = parsed.at(3);
         if (account.role == "STUDENT")
-            account.refStudentId = parsed.at(3);
+            account.refStudentId = parsed.at(4);
         AccountData.push_back(account);
     }
     
@@ -147,10 +146,14 @@ bool createAccount(string username, string password, string repeatPassword, stri
 {
     // TODO Data validation createAccount
 
-    Account newAccount;
-    newAccount.username = username;
-    newAccount.password = password;
-    newAccount.role = role;
+    int accountId = AccountData.size();
+
+    Account newAccount = {
+        accountId,
+        username,
+        password,
+        role
+    };
 
     AccountData.push_back(newAccount);
 
@@ -170,7 +173,7 @@ void loadStudents()
     {
         vector<string> parsed = parseData(curLine);
         Student student;
-        student.studentId = parsed.at(0);
+        student.studentId = stringToUint(parsed.at(0));
         student.firstName = parsed.at(1);
         student.lastName = parsed.at(2);
         student.age = stringToUint(parsed.at(3));
@@ -200,6 +203,28 @@ void saveStudents()
     ofstream writeStudents("students.txt");
     writeStudents << save;
     writeStudents.close();
+}
+
+bool createStudent(string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
+{
+    // TODO Data validation createStudent
+
+    int studentId = StudentData.size();
+
+    Student newStudent = {
+        studentId,
+        firstName,
+        lastName,
+        age,
+        icNumber,
+        programme,
+        numOfSubjects,
+        cgpa
+    };
+
+    StudentData.push_back(newStudent);
+
+    return true;
 }
 
 
@@ -239,7 +264,7 @@ vector<string> parseData(string unparsedData)
 */
 string accountToString(Account account)
 {
-    return account.username + ',' + account.password + ',' + account.role + ',' + account.refStudentId + '\n';
+    return numToString(account.accountId) + ',' + account.username + ',' + account.password + ',' + account.role + ',' + account.refStudentId + '\n';
 }
 
 /**
@@ -247,7 +272,7 @@ string accountToString(Account account)
 */
 string studentToString(Student student)
 {
-    return student.studentId + ',' + student.firstName + ',' + student.lastName + ',' + numToString(student.age)
+    return numToString(student.studentId) + ',' + student.firstName + ',' + student.lastName + ',' + numToString(student.age)
            + ',' + student.icNumber + ',' + student.programme + ',' + numToString(student.numOfSubjects) + ','
            + numToString(student.cgpa) + '\n';
 }
