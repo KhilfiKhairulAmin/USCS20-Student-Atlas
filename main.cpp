@@ -102,6 +102,8 @@ int stringToUint(string);
 float stringToPositiveFloat(string);
 string numToString(int);
 string numToString(float);
+int searchIndexAccount(int);
+int searchIndexStudent(int);
 
 
 // PROGRAM FUNCTIONS IMPLEMENTATION
@@ -199,27 +201,21 @@ bool updateAccount(int accountId, string username, string oldPassword, string ne
 
 bool deleteAccount(int accountId)
 {
-    string accRole = AccountData[accountId].role;
-    if (accRole == "ADMIN")
+    int accountIndex = searchIndexAccount(accountId);
+    Account account = AccountData[accountIndex];
+
+    if (account.role == "ADMIN")
     {
         ErrMsg = "Admin account can't be deleted through this program";
         return false;
     }
-    else if (accRole == "STUDENT")
+    else if (account.role == "STUDENT")
     {
-        int studentId = AccountData[accountId].refStudentId;
-        Student backupStudent = StudentData[studentId];
-
-        StudentData.erase(StudentData.begin() + studentId);
+        int studentIndex = searchIndexStudent(account.refStudentId);
+        StudentData.erase(StudentData.begin() + studentIndex);
     }
     
-    AccountData.erase(AccountData.begin() + accountId);
-
-    if (AccountData[accountId].accountId == accountId)
-    {
-        ErrMsg = "Account deletion failed";
-        return false;
-    }
+    AccountData.erase(AccountData.begin() + accountIndex);
 
     return true;
 }
@@ -314,9 +310,33 @@ bool updateStudent(int studentId, string firstName, string lastName, int age, st
         cgpa
     };
 
-    StudentData[studentId] = updateStudent;
+    StudentData[searchIndexStudent(studentId)] = updateStudent;
 
     return true;
+}
+
+int searchIndexAccount(int accountId)
+{
+    for (int i = 0; i < AccountData.size(); i++)
+    {
+        if (AccountData[i].accountId == accountId)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int searchIndexStudent(int studentId)
+{
+    for (int i = 0; i < StudentData.size(); i++)
+    {
+        if (StudentData[i].studentId == studentId)
+        {
+            return i;
+        }
+    }
+    return -1;
 }
 
 
