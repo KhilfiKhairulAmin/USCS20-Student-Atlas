@@ -15,8 +15,8 @@ using namespace std;
  *  ✅ Insert new account data (CREATE)
  *  ✅ Insert new student data (CREATE)
  *  ⏳ Delete accounts data (DELETE) *CASCADE to STUDENT as well
- *  ⏳ Update accounts data (UPDATE)
- *  ⏳ Update students data (UPDATE)
+ *  ✅ Update accounts data (UPDATE)
+ *  ✅ Update students data (UPDATE)
 */
 
 /** TODO: Data validation
@@ -38,7 +38,7 @@ struct Account
     string username;
     string password;
     string role;
-    string refStudentId;
+    int refStudentId;
 };
 
 /**
@@ -74,6 +74,7 @@ void saveAccounts();
 int createAccount(string, string, string);
 bool updateAccount(int, string, string, string);
 void printAccounts();
+bool deleteAccount(int);
 void loadStudents();
 void saveStudents();
 int createStudent(int, string, string, int, string, string, int, float);
@@ -123,7 +124,7 @@ void loadAccounts()
         account.password = parsed[2];
         account.role = parsed[3];
         if (account.role == "STUDENT")
-            account.refStudentId = parsed[4];
+            account.refStudentId = stringToUint(parsed[4]);
         AccountData.push_back(account);
     }
     
@@ -192,6 +193,33 @@ bool updateAccount(int accountId, string username, string oldPassword, string ne
         AccountData[accountId].refStudentId
     };
     AccountData[accountId] = updateAccount;
+
+    return true;
+}
+
+bool deleteAccount(int accountId)
+{
+    string accRole = AccountData[accountId].role;
+    if (accRole == "ADMIN")
+    {
+        ErrMsg = "Admin account can't be deleted through this program";
+        return false;
+    }
+    else if (accRole == "STUDENT")
+    {
+        int studentId = AccountData[accountId].refStudentId;
+        Student backupStudent = StudentData[studentId];
+
+        StudentData.erase(StudentData.begin() + studentId);
+    }
+    
+    AccountData.erase(AccountData.begin() + accountId);
+
+    if (AccountData[accountId].accountId == accountId)
+    {
+        ErrMsg = "Account deletion failed";
+        return false;
+    }
 
     return true;
 }
@@ -328,7 +356,7 @@ vector<string> parseData(string unparsedData)
 */
 string accountToString(Account account)
 {
-    return numToString(account.accountId) + ',' + account.username + ',' + account.password + ',' + account.role + ',' + account.refStudentId + '\n';
+    return numToString(account.accountId) + ',' + account.username + ',' + account.password + ',' + account.role + ',' + numToString(account.refStudentId) + '\n';
 }
 
 /**
