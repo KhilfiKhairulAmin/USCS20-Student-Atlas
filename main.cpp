@@ -63,6 +63,8 @@ struct Student
 vector<Account> AccountData;
 /** Global variable that holds students data */
 vector<Student> StudentData;
+/** Global variable that holds error message (only displayed when error occurs) */
+string ErrMsg;
 
 
 // PROGRAM FUNCTION PROTOTYPES
@@ -70,6 +72,7 @@ vector<Student> StudentData;
 void loadAccounts();
 void saveAccounts();
 int createAccount(string, string, string);
+bool updateAccount(int, string, string, string);
 void printAccounts();
 void loadStudents();
 void saveStudents();
@@ -81,7 +84,7 @@ int main()
 {
     loadAccounts();
     printAccounts();
-    createAccount("infietech", "infie123", "infie123");
+    updateAccount(1, "husnafarzana", "infie123", "infie123");
     printAccounts();
     saveAccounts();
     
@@ -115,12 +118,12 @@ void loadAccounts()
     {
         vector<string> parsed = parseData(curLine);
         Account account;
-        account.accountId = stringToUint(parsed.at(0));
-        account.username = parsed.at(1);
-        account.password = parsed.at(2);
-        account.role = parsed.at(3);
+        account.accountId = stringToUint(parsed[0]);
+        account.username = parsed[1];
+        account.password = parsed[2];
+        account.role = parsed[3];
         if (account.role == "STUDENT")
-            account.refStudentId = parsed.at(4);
+            account.refStudentId = parsed[4];
         AccountData.push_back(account);
     }
     
@@ -137,7 +140,7 @@ void saveAccounts()
     string save = "";
     for (int i = 0; i < AccountData.size(); i++)
     {
-        save += accountToString(AccountData.at(i));
+        save += accountToString(AccountData[i]);
     }
 
     ofstream writeAccounts("accounts.txt");
@@ -167,8 +170,30 @@ void printAccounts()
 {
     for (int i = 0; i < AccountData.size(); i++)
     {
-        cout << AccountData.at(i).accountId << " " << AccountData.at(i).username << endl;
+        cout << accountToString(AccountData[i]);
     }
+}
+
+bool updateAccount(int accountId, string username, string oldPassword, string newPassword)
+{
+    // TODO Username validation
+
+    if (oldPassword != AccountData[accountId].password)
+    {
+        ErrMsg = "Old password is not correct";
+        return false;
+    }
+
+    Account updateAccount = {
+        accountId,
+        username,
+        oldPassword,
+        AccountData[accountId].role,
+        AccountData[accountId].refStudentId
+    };
+    AccountData[accountId] = updateAccount;
+
+    return true;
 }
 
 /**
@@ -184,14 +209,14 @@ void loadStudents()
     {
         vector<string> parsed = parseData(curLine);
         Student student;
-        student.studentId = stringToUint(parsed.at(0));
-        student.firstName = parsed.at(1);
-        student.lastName = parsed.at(2);
-        student.age = stringToUint(parsed.at(3));
-        student.icNumber = parsed.at(4);
-        student.programme = parsed.at(5);
-        student.numOfSubjects = stringToUint(parsed.at(6));
-        student.cgpa = stringToPositiveFloat(parsed.at(7));
+        student.studentId = stringToUint(parsed[0]);
+        student.firstName = parsed[1];
+        student.lastName = parsed[2];
+        student.age = stringToUint(parsed[3]);
+        student.icNumber = parsed[4];
+        student.programme = parsed[5];
+        student.numOfSubjects = stringToUint(parsed[6]);
+        student.cgpa = stringToPositiveFloat(parsed[7]);
         StudentData.push_back(student);
     }
 
@@ -208,7 +233,7 @@ void saveStudents()
     string save = "";
     for (int i = 0; i < StudentData.size(); i++)
     {
-        save += studentToString(StudentData.at(i));
+        save += studentToString(StudentData[i]);
     }
 
     ofstream writeStudents("students.txt");
@@ -234,12 +259,20 @@ int createStudent(int accountId, string firstName, string lastName, int age, str
     };
 
     // Link account with student data
-    AccountData.at(accountId).refStudentId = studentId;
+    AccountData[accountId].refStudentId = studentId;
 
     StudentData.push_back(newStudent);
 
     return studentId;
 }
+
+void printStudent()
+{
+    for (int i = 0; i < StudentData.size(); i++)
+        cout << studentToString(StudentData[i]);
+}
+
+
 
 
 // ALL UTILITY FUNCTIONS
