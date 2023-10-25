@@ -83,11 +83,11 @@ void printStudents();
 
 int main()
 {
-    loadAccounts();
+    loadAccounts(); loadStudents();
     printAccounts();
-    updateAccount(1, "husnafarzana", "infie123", "infie123");
+    deleteAccount(0);
     printAccounts();
-    saveAccounts();
+    saveAccounts(); saveStudents();
     
     return 0;
 }
@@ -212,6 +212,7 @@ bool deleteAccount(int accountId)
     else if (account.role == "STUDENT")
     {
         int studentIndex = searchIndexStudent(account.refStudentId);
+        cout << studentIndex;
         StudentData.erase(StudentData.begin() + studentIndex);
     }
     
