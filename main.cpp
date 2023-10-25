@@ -12,8 +12,8 @@ using namespace std;
  *  ✅ Store accounts data
  *  ✅ Load students data (READ)
  *  ✅ Store students data
- *  ⏳ Insert new account data (CREATE)
- *  ⏳ Insert new student data (CREATE)
+ *  ✅ Insert new account data (CREATE)
+ *  ✅ Insert new student data (CREATE)
  *  ⏳ Delete accounts data (DELETE) *CASCADE to STUDENT as well
  *  ⏳ Update accounts data (UPDATE)
  *  ⏳ Update students data (UPDATE)
@@ -73,7 +73,7 @@ int createAccount(string, string, string);
 void printAccounts();
 void loadStudents();
 void saveStudents();
-int createStudent();
+int createStudent(int, string, string, int, string, string, int, float);
 void printStudents();
 
 
@@ -216,7 +216,7 @@ void saveStudents()
     writeStudents.close();
 }
 
-int createStudent(string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
+int createStudent(int accountId, string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
 {
     // TODO Data validation createStudent
 
@@ -232,6 +232,9 @@ int createStudent(string firstName, string lastName, int age, string icNumber, s
         numOfSubjects,
         cgpa
     };
+
+    // Link account with student data
+    AccountData.at(accountId).refStudentId = studentId;
 
     StudentData.push_back(newStudent);
 
