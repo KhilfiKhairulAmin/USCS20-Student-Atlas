@@ -272,7 +272,24 @@ void printStudent()
         cout << studentToString(StudentData[i]);
 }
 
+bool updateStudent(int studentId, string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
+{
+    // TODO Validation to all parameter
+    Student updateStudent = {
+        studentId,
+        firstName,
+        lastName,
+        age,
+        icNumber,
+        programme,
+        numOfSubjects,
+        cgpa
+    };
 
+    StudentData[studentId] = updateStudent;
+
+    return true;
+}
 
 
 // ALL UTILITY FUNCTIONS
