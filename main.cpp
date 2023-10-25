@@ -14,7 +14,7 @@ using namespace std;
  *  ✅ Store students data
  *  ✅ Insert new account data (CREATE)
  *  ✅ Insert new student data (CREATE)
- *  ⏳ Delete accounts data (DELETE) *CASCADE to STUDENT as well
+ *  ✅ Delete accounts data (DELETE) *CASCADE to STUDENT as well
  *  ✅ Update accounts data (UPDATE)
  *  ✅ Update students data (UPDATE)
 */
