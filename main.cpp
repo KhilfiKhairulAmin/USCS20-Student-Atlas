@@ -78,7 +78,7 @@ int main()
 {
     loadAccounts(); loadStudents();
     printAccounts();
-    deleteAccount(0);
+    deleteAccount(1);
     printAccounts();
     saveAccounts(); saveStudents();
     
@@ -270,8 +270,6 @@ void saveStudents()
 
 int createStudent(int accountId, string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
 {
-    // Data validation will be done in register function
-
     int studentId = StudentData.size();
 
     Student newStudent = {
@@ -301,7 +299,6 @@ void printStudent()
 
 bool updateStudent(int studentId, string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
 {
-    // TODO Validation to all parameter
     Student updateStudent = {
         studentId,
         firstName,
