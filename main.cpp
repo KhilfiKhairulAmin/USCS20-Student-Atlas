@@ -146,7 +146,7 @@ void saveAccounts()
 
 int createAccount(string username, string password, string repeatPassword)
 {
-    // TODO Data validation will be implemented in registerAccount
+    // Data validation will be implemented in registerAccount
 
     int accountId = AccountData.size();
 
@@ -192,11 +192,20 @@ bool updateAccount(int accountId, string username, string oldPassword, string ne
     return true;
 }
 
+/**
+ * Delete an account, and the student related to the account.
+ * @param accountId Account ID
+*/
 bool deleteAccount(int accountId)
 {
-    // TODO Validation accountId exists
     int accountIndex = searchIndexAccount(accountId);
     Account account = AccountData[accountIndex];
+
+    if (accountIndex == -1)
+    {
+        ErrMsg = "Account with accountId " + numToString(accountId) + " does not found";
+        return false;
+    }
 
     if (account.role == "ADMIN")
     {
