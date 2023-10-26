@@ -19,13 +19,6 @@ using namespace std;
  *  ✅ Update students data (UPDATE)
 */
 
-/** TODO: Data validation
- *  ⏳ Limited character input
- *  ⏳ Realistic number range
- *  ⏳ Unique identifiers/keys
- *  ⏳ Character literals formatted correctly based on context of data
-*/
-
 
 // DATA STRUCTURE DEFINITION
 
@@ -153,7 +146,7 @@ void saveAccounts()
 
 int createAccount(string username, string password, string repeatPassword)
 {
-    // TODO Data validation createAccount
+    // TODO Data validation will be implemented in registerAccount
 
     int accountId = AccountData.size();
 
@@ -201,6 +194,7 @@ bool updateAccount(int accountId, string username, string oldPassword, string ne
 
 bool deleteAccount(int accountId)
 {
+    // TODO Validation accountId exists
     int accountIndex = searchIndexAccount(accountId);
     Account account = AccountData[accountIndex];
 
@@ -212,7 +206,6 @@ bool deleteAccount(int accountId)
     else if (account.role == "STUDENT")
     {
         int studentIndex = searchIndexStudent(account.refStudentId);
-        cout << studentIndex;
         StudentData.erase(StudentData.begin() + studentIndex);
     }
     
@@ -268,7 +261,7 @@ void saveStudents()
 
 int createStudent(int accountId, string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
 {
-    // TODO Data validation createStudent
+    // Data validation will be done in register function
 
     int studentId = StudentData.size();
 
