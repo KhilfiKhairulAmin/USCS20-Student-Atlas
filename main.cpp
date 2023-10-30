@@ -147,9 +147,7 @@ int createAccount(string username, string password, string repeatPassword)
 void printAccounts()
 {
     for (int i = 0; i < AccountData.size(); i++)
-    {
         cout << accountToString(AccountData[i]);
-    }
 }
 
 bool updateAccount(int accountId, string username, string oldPassword, string newPassword)
@@ -271,7 +269,7 @@ int createStudent(int accountId, string firstName, string lastName, int age, str
     return studentId;
 }
 
-void printStudent()
+void printStudents()
 {
     for (int i = 0; i < StudentData.size(); i++)
         cout << studentToString(StudentData[i]);
