@@ -5,26 +5,10 @@
 #include <sstream> // For handling numerical to string conversion
 using namespace std;
 
-/** TODO: CRUD operations for database (txt file)
- *  ✅ Account data type
- *  ✅ Student data type
- *  ✅ Load accounts data (READ)
- *  ✅ Store accounts data
- *  ✅ Load students data (READ)
- *  ✅ Store students data
- *  ✅ Insert new account data (CREATE)
- *  ✅ Insert new student data (CREATE)
- *  ✅ Delete accounts data (DELETE) *CASCADE to STUDENT as well
- *  ✅ Update accounts data (UPDATE)
- *  ✅ Update students data (UPDATE)
-*/
-
 
 // DATA STRUCTURE DEFINITION
 
-/**
- * Account datatype
-*/
+// Account datatype
 struct Account
 {
     int accountId;
@@ -34,9 +18,7 @@ struct Account
     int refStudentId;
 };
 
-/**
- * Student datatype
- */
+// Student datatype
 struct Student
 {
     int studentId;
@@ -50,13 +32,13 @@ struct Student
 };
 
 
-// GLOBAL VARIABLES
+// GLOBAL VARIABLES DECLARATION
 
-/** Global variable that holds accounts data */
+// Global variable that holds all account data
 vector<Account> AccountData;
-/** Global variable that holds students data */
+// Global variable that holds all student data
 vector<Student> StudentData;
-/** Global variable that holds error message (only displayed when error occurs) */
+// Global variable that stores error message
 string ErrMsg;
 
 
@@ -93,13 +75,13 @@ string accountToString(Account);
 string studentToString(Student);
 int stringToUint(string);
 float stringToPositiveFloat(string);
-string numToString(int);
-string numToString(float);
+template <class T>
+string numToString(T);
 int searchIndexAccount(int);
 int searchIndexStudent(int);
 
 
-// PROGRAM FUNCTIONS IMPLEMENTATION
+// PROGRAM FUNCTIONS DEFINITION
 
 /**
  * Retrieve all accounts from database.
@@ -172,8 +154,6 @@ void printAccounts()
 
 bool updateAccount(int accountId, string username, string oldPassword, string newPassword)
 {
-    // TODO Username validation
-
     if (oldPassword != AccountData[accountId].password)
     {
         ErrMsg = "Old password is not correct";
@@ -434,14 +414,8 @@ float stringToPositiveFloat(string s)
     return result;
 }
 
-string numToString(int n)
-{
-    stringstream out;
-    out << n;
-    return out.str();
-}
-
-string numToString(float n)
+template <class T>
+string numToString(T n)
 {
     stringstream out;
     out << n;
