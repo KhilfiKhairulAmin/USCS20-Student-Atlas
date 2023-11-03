@@ -1,5 +1,4 @@
 #include <iostream> // For user input and output
-#include <vector> // For flexible array datatype
 #include <fstream> // For file operations
 #include <cmath> // For complicated mathematical operations
 #include <sstream> // For handling numerical to string conversion
@@ -34,10 +33,11 @@ struct Student
 
 // GLOBAL VARIABLES DECLARATION
 
+const int MAX_SIZE = 1024;
 // Global variable that holds all account data
-vector<Account> AccountData;
+Account AccountData[MAX_SIZE];
 // Global variable that holds all student data
-vector<Student> StudentData;
+Student StudentData[MAX_SIZE];
 // Global variable that stores error message
 string ErrMsg;
 
