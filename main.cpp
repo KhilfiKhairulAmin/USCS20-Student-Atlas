@@ -33,12 +33,16 @@ struct Student
 
 // GLOBAL VARIABLES DECLARATION
 
-const int MAX_SIZE = 1024;
+// Constant to control the maximum number of Student, and Account data the program can store
+const int MAX_SIZE = 500;
+
 // Global variable that holds all account data
 Account AccountData[MAX_SIZE];
+
 // Global variable that holds all student data
 Student StudentData[MAX_SIZE];
-// Global variable that stores error message
+
+// Global variable that stores the latest error message
 string ErrMsg;
 
 
@@ -96,12 +100,7 @@ void loadAccounts()
     {
         vector<string> parsed = parseData(curLine);
         Account account;
-        account.accountId = stringToUint(parsed[0]);
-        account.username = parsed[1];
-        account.password = parsed[2];
-        account.role = parsed[3];
-        if (account.role == "STUDENT")
-            account.refStudentId = stringToUint(parsed[4]);
+
         AccountData.push_back(account);
     }
     
@@ -222,7 +221,6 @@ void loadStudents()
         student.programme = parsed[5];
         student.numOfSubjects = stringToUint(parsed[6]);
         student.cgpa = stringToPositiveFloat(parsed[7]);
-        StudentData.push_back(student);
     }
 
     readStudentsData.close();
@@ -325,28 +323,68 @@ int searchIndexStudent(int studentId)
  * @param unparsedData Unparsed string of data, delimited by ',' (comma)
  * @return A collection of the parsed data
 */
-vector<string> parseData(string unparsedData)
+Account parseAccount(string rawString)
 {
-    vector<string> data;
-    string parsed;
+    string data[5], parsed;
+
     int startI = 0, endI;
-    
-    // Find index of comma (the delimiter)
-    endI = unparsedData.find_first_of(',', startI);
+    endI = rawString.find_first_of(',', startI);
+
     // When endI == npos is true, it means the comma character can't be found anymore
-    while (endI != unparsedData.npos)
+    while (endI != rawString.npos)
     {
-        parsed = unparsedData.substr(startI, endI - startI); // Take the substring of the data
-        data.push_back(parsed); // Store it
+        parsed = rawString.substr(startI, endI - startI); // Take the substring of the data
+        data->append(parsed); // Store it
         startI = endI + 1;
-        endI = unparsedData.find_first_of(',', startI);
+        endI = rawString.find_first_of(',', startI);
     }
 
     // Parse the endmost data in the string
-    parsed = unparsedData.substr(startI);
-    data.push_back(parsed);
+    parsed = rawString.substr(startI);
+    data->append(parsed);
 
-    return data;
+    Account account;
+    account.accountId = stringToUint(data[0]);
+    account.username = data[1];
+    account.password = data[2];
+    account.role = data[3];
+    if (account.role == "STUDENT")
+        account.refStudentId = stringToUint(data[4]);
+
+    return account;
+}
+
+Student parseStudent(string rawString)
+{
+    string data[7], parsed;
+
+    int startI = 0, endI;
+    endI = rawString.find_first_of(',', startI);
+
+    // When endI == npos is true, it means the comma character can't be found anymore
+    while (endI != rawString.npos)
+    {
+        parsed = rawString.substr(startI, endI - startI); // Take the substring of the data
+        data->append(parsed); // Store it
+        startI = endI + 1;
+        endI = rawString.find_first_of(',', startI);
+    }
+
+    // Parse the endmost data in the string
+    parsed = rawString.substr(startI);
+    data->append(parsed);
+
+    Student student;
+    student.studentId = stringToUint(data[0]);
+    student.firstName = data[1];
+    student.lastName = data[2];
+    student.age = stringToUint(data[3]);
+    student.icNumber = data[4];
+    student.programme = data[5];
+    student.numOfSubjects = stringToUint(data[6]);
+    student.cgpa = stringToPositiveFloat(data[7]);
+
+    return student;
 }
 
 /**
