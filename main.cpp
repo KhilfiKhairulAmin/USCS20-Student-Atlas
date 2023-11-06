@@ -74,7 +74,8 @@ int main()
 
 // UTILITY FUNCTION PROTOTYPES
 
-vector<string> parseData(string);
+Account parseAccount(string);
+Student parseStudent(string);
 string accountToString(Account);
 string studentToString(Student);
 int stringToUint(string);
