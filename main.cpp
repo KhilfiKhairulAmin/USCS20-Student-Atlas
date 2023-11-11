@@ -51,7 +51,7 @@ string ErrMsg = "";
 void loadAccounts();
 void saveAccounts();
 int createAccount(string, string, string);
-bool updateAccount(int, string, string);
+int updateAccount(int, string, string);
 void printAccounts();
 bool deleteAccountCascade(int);
 void loadStudents();
