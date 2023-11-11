@@ -51,9 +51,9 @@ string ErrMsg = "";
 void loadAccounts();
 void saveAccounts();
 int createAccount(string, string, string);
-bool updateAccount(int, string, string, string);
+bool updateAccount(int, string, string);
 void printAccounts();
-bool deleteAccount(int);
+bool deleteAccountCascade(int);
 void loadStudents();
 void saveStudents();
 int createStudent(int, string, string, int, string, string, int, float);
@@ -64,7 +64,7 @@ int main()
 {
     loadAccounts(); loadStudents();
     printAccounts();
-    deleteAccount(1);
+    deleteAccountCascade(1);
     printAccounts();
     saveAccounts(); saveStudents();
     
@@ -78,14 +78,14 @@ Account parseAccount(string);
 Student parseStudent(string);
 template<class T> int generateId(T [MAX_SIZE]);
 template<class T> int getEmptyPosition(T [MAX_SIZE]);
+template<class T> int findId(T [MAX_SIZE], int);
+template<class T> bool deleteAtIndex(T [MAX_SIZE], int);
 string accountToString(Account);
 string studentToString(Student);
 int stringToUint(string);
 float stringToPositiveFloat(string);
 template <class T>
 string numToString(T);
-int searchIndexAccount(int);
-int searchIndexStudent(int);
 
 
 // PROGRAM FUNCTIONS DEFINITION
@@ -178,53 +178,63 @@ void printAccounts()
         cout << accountToString(Accounts[i]);
 }
 
-bool updateAccount(int accountId, string username, string oldPassword, string newPassword)
+/**
+ * Update `Account` with `id` to the new data. Return `pos` if the account exists, else return `-1`.
+*/
+int updateAccount(int accountId, string username, string newPassword)
 {
-    if (oldPassword != Accounts[accountId].password)
+    // Find position of this `Account` in array
+    int pos = findId(Accounts, accountId);
+
+    // Account is not found
+    if (pos == -1)
     {
-        ErrMsg = "Old password is not correct";
-        return false;
+        ErrMsg = "Account with id of " + numToString(accountId) + " does not exist.";
+        return -1;
     }
 
-    Account updateAccount = {
-        accountId,
-        username,
-        oldPassword,
-        Accounts[accountId].role,
-        Accounts[accountId].refStudentId
-    };
-    Accounts[accountId] = updateAccount;
+    // Overwrite old username and password
+    Accounts[pos].username = username;
+    Accounts[pos].password = newPassword;
 
-    return true;
+    // Return position pf this account in the array
+    return pos;
 }
 
 /**
- * Delete an account, and the student related to the account.
- * @param accountId Account ID
+ * Delete an `Account` with `id` and the `Student` related to the account.
 */
-bool deleteAccount(int accountId)
+bool deleteAccountCascade(int accountId)
 {
-    int accountIndex = searchIndexAccount(accountId);
-    Account account = Accounts[accountIndex];
+    int accountIndex = findId(Accounts, accountId);
 
     if (accountIndex == -1)
     {
-        ErrMsg = "Account with accountId " + numToString(accountId) + " does not found";
+        ErrMsg = "Account with id of " + numToString(accountId) + " does not exist.";
         return false;
     }
 
+    Account account = Accounts[accountIndex];
+
     if (account.role == "ADMIN")
     {
-        ErrMsg = "Admin account can't be deleted through this program";
+        ErrMsg = "Admin account can't be deleted.";
         return false;
     }
-    else if (account.role == "STUDENT")
+    
+    int studentIndex = findId(Students, account.refStudentId);
+
+    if (studentIndex == -1)
     {
-        int studentIndex = searchIndexStudent(account.refStudentId);
-        Students.erase(Students.begin() + studentIndex);
+        ErrMsg = "Student with id of " + numToString(accountId) + " does not exist.";
+        return false;
     }
     
-    Accounts.erase(Accounts.begin() + accountIndex);
+    if (!deleteAtIndex(Accounts, accountIndex) || !deleteAtIndex(Students, studentIndex))
+    {
+        ErrMsg = "Something went wrong.";
+        return false;
+    }
 
     return true;
 }
@@ -319,31 +329,6 @@ bool updateStudent(int studentId, string firstName, string lastName, int age, st
 
     return true;
 }
-
-int searchIndexAccount(int accountId)
-{
-    for (int i = 0; i < Accounts.size(); i++)
-    {
-        if (Accounts[i].id == accountId)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-
-int searchIndexStudent(int studentId)
-{
-    for (int i = 0; i < Students.size(); i++)
-    {
-        if (Students[i].id == studentId)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-
 
 // ALL UTILITY FUNCTIONS
 
@@ -454,6 +439,23 @@ int len(T array[MAX_SIZE])
 }
 
 /**
+ * Find index of target id. Return `-1` if not found.
+*/
+template<class T>
+int findId(T array[MAX_SIZE], int targetId)
+{
+    // Search for index of target id
+    for (int i = 0; i < MAX_SIZE; i++)
+    {
+        if (array[i].id == -1)
+            break;
+        if (array[i].id == targetId)
+            return i;
+    }
+    return -1;
+}
+
+/**
  * Find an index in the array which is empty. Return `-1` if array is full.
 */
 template<class T>
@@ -463,6 +465,28 @@ int getEmptyPosition(T array[MAX_SIZE])
     if (length == MAX_SIZE)
         return -1;
     return length;
+}
+
+/**
+ * Delete an element in array and move other elements to fill the empty space. Return `false` if an error occurred, else `True`.
+*/
+template<class T>
+bool deleteAtIndex(T array[MAX_SIZE], int index)
+{
+    if (index >= MAX_SIZE)
+    {
+        ErrMsg = "Index at position " + numToString(index) + " is invalid.";
+        return false;
+    }
+    delete array[index];
+
+    for (int i = index; i < MAX_SIZE - 1; i++)
+    {
+        if (array[i].id == -1)
+            break;
+        array[i] = array[i+1];
+    }
+    return true;
 }
 
 /**
