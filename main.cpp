@@ -10,7 +10,7 @@ using namespace std;
 // Account datatype
 struct Account
 {
-    int accountId;
+    int id = -1;
     string username;
     string password;
     string role;
@@ -20,7 +20,7 @@ struct Account
 // Student datatype
 struct Student
 {
-    int studentId;
+    int id = -1;
     string firstName;
     string lastName;
     unsigned short int age;
@@ -33,17 +33,17 @@ struct Student
 
 // GLOBAL VARIABLES DECLARATION
 
-// Constant to control the maximum number of Student, and Account data the program can store
-const int MAX_SIZE = 500;
+// Constant to control the maximum number of data an array can hold
+const int MAX_SIZE = 200;
 
-// Global variable that holds all account data
-Account AccountData[MAX_SIZE];
+// Global array storing all `Account` data
+Account Accounts[MAX_SIZE] = {Account()};
 
-// Global variable that holds all student data
-Student StudentData[MAX_SIZE];
+// Global array storing all `Student` data
+Student Students[MAX_SIZE];
 
-// Global variable that stores the latest error message
-string ErrMsg;
+// Global variable storing the latest Error m6essage
+string ErrMsg = "";
 
 
 // PROGRAM FUNCTION PROTOTYPES
@@ -76,6 +76,8 @@ int main()
 
 Account parseAccount(string);
 Student parseStudent(string);
+template<class T> int generateId(T [MAX_SIZE]);
+template<class T> int getEmptyPosition(T [MAX_SIZE]);
 string accountToString(Account);
 string studentToString(Student);
 int stringToUint(string);
@@ -90,19 +92,20 @@ int searchIndexStudent(int);
 
 /**
  * Retrieve all accounts from database.
- * @return All accounts
 */
 void loadAccounts()
 {
+    // Open the file
     ifstream readAccountsData("accounts.txt");
-    string curLine;
+    string currentLine;
 
-    while (getline(readAccountsData, curLine))
+    int i = 0;
+    // Read the file line by line
+    while (getline(readAccountsData, currentLine))
     {
-        vector<string> parsed = parseData(curLine);
-        Account account;
-
-        AccountData.push_back(account);
+        Account account = parseAccount(currentLine);
+        // Assign each account into the global array
+        Accounts[i++] = account;
     }
     
     readAccountsData.close();
@@ -111,27 +114,37 @@ void loadAccounts()
 }
 
 /**
- * Save all accounts into database.
+ * Save all accounts into text file
 */
 void saveAccounts()
 {
     string save = "";
-    for (int i = 0; i < AccountData.size(); i++)
+    int i = 0;
+
+    // If i does not exceed max array size AND accountId is valid, continue loop
+    while (i < MAX_SIZE && Accounts[i].id != -1)
     {
-        save += accountToString(AccountData[i]);
+        // Convert to string form to be saved in .txt file
+        save += accountToString(Accounts[i++]);
     }
 
+    // Write string into text file
     ofstream writeAccounts("accounts.txt");
     writeAccounts << save;
     writeAccounts.close();
+
+    return;
 }
 
+/**
+ * Create a new `Account`
+*/
 int createAccount(string username, string password, string repeatPassword)
 {
-    // Data validation will be implemented in registerAccount
+    // Get new id
+    int accountId = generateId(Accounts);
 
-    int accountId = AccountData.size();
-
+    // Create new account
     Account newAccount = {
         accountId,
         username,
@@ -139,20 +152,35 @@ int createAccount(string username, string password, string repeatPassword)
         "STUDENT"
     };
 
-    AccountData.push_back(newAccount);
+    // Find the position of empty space in the array
+    int empty = getEmptyPosition(Accounts);
+
+    // Array is fully used
+    if (empty == -1)
+    {
+        ErrMsg = "Maximum size reached. Cannot add new Account.";
+        // Return invalid id to represent error occurred
+        return -1;
+    }
+
+    // Assign to empty location in `Accounts` array
+    Accounts[empty] = newAccount;
 
     return accountId;
 }
 
+/**
+ * Display all `Account` data
+*/
 void printAccounts()
 {
-    for (int i = 0; i < AccountData.size(); i++)
-        cout << accountToString(AccountData[i]);
+    for (int i = 0; i <; i++)
+        cout << accountToString(Accounts[i]);
 }
 
 bool updateAccount(int accountId, string username, string oldPassword, string newPassword)
 {
-    if (oldPassword != AccountData[accountId].password)
+    if (oldPassword != Accounts[accountId].password)
     {
         ErrMsg = "Old password is not correct";
         return false;
@@ -162,10 +190,10 @@ bool updateAccount(int accountId, string username, string oldPassword, string ne
         accountId,
         username,
         oldPassword,
-        AccountData[accountId].role,
-        AccountData[accountId].refStudentId
+        Accounts[accountId].role,
+        Accounts[accountId].refStudentId
     };
-    AccountData[accountId] = updateAccount;
+    Accounts[accountId] = updateAccount;
 
     return true;
 }
@@ -177,7 +205,7 @@ bool updateAccount(int accountId, string username, string oldPassword, string ne
 bool deleteAccount(int accountId)
 {
     int accountIndex = searchIndexAccount(accountId);
-    Account account = AccountData[accountIndex];
+    Account account = Accounts[accountIndex];
 
     if (accountIndex == -1)
     {
@@ -193,10 +221,10 @@ bool deleteAccount(int accountId)
     else if (account.role == "STUDENT")
     {
         int studentIndex = searchIndexStudent(account.refStudentId);
-        StudentData.erase(StudentData.begin() + studentIndex);
+        Students.erase(Students.begin() + studentIndex);
     }
     
-    AccountData.erase(AccountData.begin() + accountIndex);
+    Accounts.erase(Accounts.begin() + accountIndex);
 
     return true;
 }
@@ -214,7 +242,7 @@ void loadStudents()
     {
         vector<string> parsed = parseData(curLine);
         Student student;
-        student.studentId = stringToUint(parsed[0]);
+        student.id = stringToUint(parsed[0]);
         student.firstName = parsed[1];
         student.lastName = parsed[2];
         student.age = stringToUint(parsed[3]);
@@ -235,9 +263,9 @@ void loadStudents()
 void saveStudents()
 {
     string save = "";
-    for (int i = 0; i < StudentData.size(); i++)
+    for (int i = 0; i < Students.size(); i++)
     {
-        save += studentToString(StudentData[i]);
+        save += studentToString(Students[i]);
     }
 
     ofstream writeStudents("students.txt");
@@ -247,7 +275,7 @@ void saveStudents()
 
 int createStudent(int accountId, string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
 {
-    int studentId = StudentData.size();
+    int studentId = Students.size();
 
     Student newStudent = {
         studentId,
@@ -261,17 +289,17 @@ int createStudent(int accountId, string firstName, string lastName, int age, str
     };
 
     // Link account with student data
-    AccountData[accountId].refStudentId = studentId;
+    Accounts[accountId].refStudentId = studentId;
 
-    StudentData.push_back(newStudent);
+    Students.push_back(newStudent);
 
     return studentId;
 }
 
 void printStudents()
 {
-    for (int i = 0; i < StudentData.size(); i++)
-        cout << studentToString(StudentData[i]);
+    for (int i = 0; i < Students.size(); i++)
+        cout << studentToString(Students[i]);
 }
 
 bool updateStudent(int studentId, string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
@@ -287,16 +315,16 @@ bool updateStudent(int studentId, string firstName, string lastName, int age, st
         cgpa
     };
 
-    StudentData[searchIndexStudent(studentId)] = updateStudent;
+    Students[searchIndexStudent(studentId)] = updateStudent;
 
     return true;
 }
 
 int searchIndexAccount(int accountId)
 {
-    for (int i = 0; i < AccountData.size(); i++)
+    for (int i = 0; i < Accounts.size(); i++)
     {
-        if (AccountData[i].accountId == accountId)
+        if (Accounts[i].id == accountId)
         {
             return i;
         }
@@ -306,9 +334,9 @@ int searchIndexAccount(int accountId)
 
 int searchIndexStudent(int studentId)
 {
-    for (int i = 0; i < StudentData.size(); i++)
+    for (int i = 0; i < Students.size(); i++)
     {
-        if (StudentData[i].studentId == studentId)
+        if (Students[i].id == studentId)
         {
             return i;
         }
@@ -319,38 +347,39 @@ int searchIndexStudent(int studentId)
 
 // ALL UTILITY FUNCTIONS
 
-/**
- * Parse data stored in string delimited by ',' (comma) into a collection of the data
- * @param unparsedData Unparsed string of data, delimited by ',' (comma)
- * @return A collection of the parsed data
-*/
-Account parseAccount(string rawString)
+Account parseAccount(string unparsedText)
 {
-    string data[5], parsed;
+    string parsedString, parsedData[5];
 
-    int startI = 0, endI;
-    endI = rawString.find_first_of(',', startI);
+    // Index used to parse string from startIndex to endIndex
+    // Initial start is at index 0 and end is at the position of first delimiter (,)
+    int startIndex = 0, endIndex = unparsedText.find_first_of(',');
 
-    // When endI == npos is true, it means the comma character can't be found anymore
-    while (endI != rawString.npos)
+    do
     {
-        parsed = rawString.substr(startI, endI - startI); // Take the substring of the data
-        data->append(parsed); // Store it
-        startI = endI + 1;
-        endI = rawString.find_first_of(',', startI);
-    }
+        // Parse the data point
+        parsedString = unparsedText.substr(startIndex, endIndex - startIndex);
 
-    // Parse the endmost data in the string
-    parsed = rawString.substr(startI);
-    data->append(parsed);
+        // Add the data point in this array
+        parsedData->append(parsedString);
+
+        // Update the start and end index
+        startIndex = endIndex + 1;
+        endIndex = unparsedText.find_first_of(',', startIndex);
+    } // If endIndex == string.npos, then it means no more delimiter is found, thus ending the loop
+    while (endIndex != unparsedText.npos);
+    
+    // Get the final data point
+    parsedString = unparsedText.substr(startIndex);
+    parsedData->append(parsedString);
 
     Account account;
-    account.accountId = stringToUint(data[0]);
-    account.username = data[1];
-    account.password = data[2];
-    account.role = data[3];
+    account.id = stringToUint(parsedData[0]);
+    account.username = parsedData[1];
+    account.password = parsedData[2];
+    account.role = parsedData[3];
     if (account.role == "STUDENT")
-        account.refStudentId = stringToUint(data[4]);
+        account.refStudentId = stringToUint(parsedData[4]);
 
     return account;
 }
@@ -376,7 +405,7 @@ Student parseStudent(string rawString)
     data->append(parsed);
 
     Student student;
-    student.studentId = stringToUint(data[0]);
+    student.id = stringToUint(data[0]);
     student.firstName = data[1];
     student.lastName = data[2];
     student.age = stringToUint(data[3]);
@@ -389,11 +418,59 @@ Student parseStudent(string rawString)
 }
 
 /**
+ * Generate a unique ID for new `Account` and new `Student`
+*/
+template<class T> 
+int generateId(T array[MAX_SIZE])
+{
+    int maxId = array[0].id;
+    // Search for highest index in the array (i.e. id which value is -1)
+    for (int i = 0; i < MAX_SIZE; i++)
+    {
+        if (array[i].id == -1)
+            break;
+        else if (array[i].id > maxId)
+            maxId = array[id].id
+    }
+
+    // Return the next highest id
+    return ++maxId;
+}
+
+/**
+ * Get the number of elements in the array
+*/
+template<class T>
+int len(T array[MAX_SIZE])
+{
+    // Search for unused position in array (i.e. id which value is -1)
+    for (int i = 0; i < MAX_SIZE; i++)
+    {
+        if (array[i].id == -1)
+            return i + 1
+    }
+    // Array is fully used
+    return MAX_SIZE
+}
+
+/**
+ * Find an index in the array which is empty. Return `-1` if array is full.
+*/
+template<class T>
+int getEmptyPosition(T array[MAX_SIZE])
+{
+    int length = len(array);
+    if (length == MAX_SIZE)
+        return -1;
+    return length;
+}
+
+/**
  * Parse an account into an account string
 */
 string accountToString(Account account)
 {
-    return numToString(account.accountId) + ',' + account.username + ',' + account.password + ',' + account.role + ',' + numToString(account.refStudentId) + '\n';
+    return numToString(account.id) + ',' + account.username + ',' + account.password + ',' + account.role + ',' + numToString(account.refStudentId) + '\n';
 }
 
 /**
@@ -401,7 +478,7 @@ string accountToString(Account account)
 */
 string studentToString(Student student)
 {
-    return numToString(student.studentId) + ',' + student.firstName + ',' + student.lastName + ',' + numToString(student.age)
+    return numToString(student.id) + ',' + student.firstName + ',' + student.lastName + ',' + numToString(student.age)
            + ',' + student.icNumber + ',' + student.programme + ',' + numToString(student.numOfSubjects) + ','
            + numToString(student.cgpa) + '\n';
 }
