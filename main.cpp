@@ -266,9 +266,13 @@ void loadStudents()
 void saveStudents()
 {
     string save = "";
-    for (int i = 0; i < Students.size(); i++)
+
+    int i = 0;
+    // If i does not exceed max array size AND accountId is valid, continue loop
+    while (i < MAX_SIZE && Students[i].id != -1)
     {
-        save += studentToString(Students[i]);
+        // Convert to string form to be saved in .txt file
+        save += studentToString(Students[i++]);
     }
 
     ofstream writeStudents("students.txt");
