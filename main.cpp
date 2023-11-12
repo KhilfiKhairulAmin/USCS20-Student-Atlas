@@ -173,7 +173,7 @@ int createAccount(string username, string password, string repeatPassword)
 */
 void printAccounts()
 {
-    for (int i = 0; i <; i++)
+    for (int i = 0; i < len(Accounts); i++)
         cout << accountToString(Accounts[i]);
 }
 
@@ -323,7 +323,7 @@ int createStudent(
 
 void printStudents()
 {
-    for (int i = 0; i < Students.size(); i++)
+    for (int i = 0; i < len(Students); i++)
         cout << studentToString(Students[i]);
 }
 
