@@ -23,10 +23,10 @@ struct Student
     int id = -1;
     string firstName;
     string lastName;
-    unsigned short int age;
+    int age;
     string icNumber;
     string programme;
-    unsigned short int numOfSubjects;
+    int numOfSubjects;
     float cgpa;
 };
 
@@ -327,9 +327,22 @@ void printStudents()
         cout << studentToString(Students[i]);
 }
 
-bool updateStudent(int studentId, string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
+bool updateStudent(
+    int studentId, string firstName, string lastName,
+    int age, string icNumber, string programme,
+    int numOfSubjects, float cgpa
+)
 {
-    Student updateStudent = {
+    // Find position of this `Student` in array
+    int pos = findId(Students, studentId);
+
+    if (pos == -1)
+    {
+        ErrMsg = "Student with id of " + numToString(studentId) + " does not exist.";
+        return -1;
+    }
+
+    Students[pos] = {
         studentId,
         firstName,
         lastName,
@@ -339,8 +352,6 @@ bool updateStudent(int studentId, string firstName, string lastName, int age, st
         numOfSubjects,
         cgpa
     };
-
-    Students[searchIndexStudent(studentId)] = updateStudent;
 
     return true;
 }
