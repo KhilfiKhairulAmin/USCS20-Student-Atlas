@@ -244,13 +244,13 @@ bool deleteAccountCascade(int accountId)
 */
 void loadStudents()
 {
+    // Open student file
     ifstream readStudentsData("students.txt");
-    string curLine;
-    vector<Student> students;
+    string currentLine;
 
-    while (getline(readStudentsData, curLine))
+    while (getline(readStudentsData, currentLine))
     {
-        vector<string> parsed = parseData(curLine);
+        vector<string> parsed = parseData(currentLine);
         Student student;
         student.id = stringToUint(parsed[0]);
         student.firstName = parsed[1];
@@ -340,7 +340,8 @@ Account parseAccount(string unparsedText)
     // Initial start is at index 0 and end is at the position of first delimiter (,)
     int startIndex = 0, endIndex = unparsedText.find_first_of(',');
 
-    do
+    // If endIndex == string.npos, then it means no more delimiter is found, thus ending the loop
+    while (endIndex != unparsedText.npos);
     {
         // Parse the data point
         parsedString = unparsedText.substr(startIndex, endIndex - startIndex);
@@ -351,8 +352,8 @@ Account parseAccount(string unparsedText)
         // Update the start and end index
         startIndex = endIndex + 1;
         endIndex = unparsedText.find_first_of(',', startIndex);
-    } // If endIndex == string.npos, then it means no more delimiter is found, thus ending the loop
-    while (endIndex != unparsedText.npos);
+    }
+    
     
     // Get the final data point
     parsedString = unparsedText.substr(startIndex);
@@ -369,35 +370,41 @@ Account parseAccount(string unparsedText)
     return account;
 }
 
-Student parseStudent(string rawString)
+Student parseStudent(string unparsedText)
 {
-    string data[7], parsed;
+    string parsedString, parsedData[7];
 
-    int startI = 0, endI;
-    endI = rawString.find_first_of(',', startI);
+    // Index used to parse string from startIndex to endIndex
+    // Initial start is at index 0 and end is at the position of first delimiter (,)
+    int startIndex = 0, endIndex = unparsedText.find_first_of(',', 0);
 
-    // When endI == npos is true, it means the comma character can't be found anymore
-    while (endI != rawString.npos)
+    // If endIndex == string.npos, then it means no more delimiter is found, thus ending the loop
+    while (endIndex != unparsedText.npos)
     {
-        parsed = rawString.substr(startI, endI - startI); // Take the substring of the data
-        data->append(parsed); // Store it
-        startI = endI + 1;
-        endI = rawString.find_first_of(',', startI);
+        // Parse the data point
+        parsedString = unparsedText.substr(startIndex, endIndex - startIndex);
+
+        // Add the data point in this array
+        parsedData->append(parsedString);
+
+        // Update the start and end index
+        startIndex = endIndex + 1;
+        endIndex = unparsedText.find_first_of(',', startIndex);
     }
 
-    // Parse the endmost data in the string
-    parsed = rawString.substr(startI);
-    data->append(parsed);
+    // Get the final data point
+    parsedString = unparsedText.substr(startIndex);
+    parsedData->append(parsedString);
 
     Student student;
-    student.id = stringToUint(data[0]);
-    student.firstName = data[1];
-    student.lastName = data[2];
-    student.age = stringToUint(data[3]);
-    student.icNumber = data[4];
-    student.programme = data[5];
-    student.numOfSubjects = stringToUint(data[6]);
-    student.cgpa = stringToPositiveFloat(data[7]);
+    student.id = stringToUint(parsedData[0]);
+    student.firstName = parsedData[1];
+    student.lastName = parsedData[2];
+    student.age = stringToUint(parsedData[3]);
+    student.icNumber = parsedData[4];
+    student.programme = parsedData[5];
+    student.numOfSubjects = stringToUint(parsedData[6]);
+    student.cgpa = stringToPositiveFloat(parsedData[7]);
 
     return student;
 }
