@@ -57,6 +57,7 @@ bool deleteAccountCascade(int);
 void loadStudents();
 void saveStudents();
 int createStudent(int, string, string, int, string, string, int, float);
+int updateStudent(int, string, string, int, string, string, int, float);
 void printStudents();
 
 
@@ -185,9 +186,9 @@ int updateAccount(int accountId, string username, string newPassword)
     // Find position of this `Account` in array
     int pos = findId(Accounts, accountId);
 
-    // Account is not found
     if (pos == -1)
     {
+        // Account is not found
         ErrMsg = "Account with id of " + numToString(accountId) + " does not exist.";
         return -1;
     }
@@ -196,7 +197,7 @@ int updateAccount(int accountId, string username, string newPassword)
     Accounts[pos].username = username;
     Accounts[pos].password = newPassword;
 
-    // Return position pf this account in the array
+    // Return position of this account in the array
     return pos;
 }
 
@@ -327,7 +328,7 @@ void printStudents()
         cout << studentToString(Students[i]);
 }
 
-bool updateStudent(
+int updateStudent(
     int studentId, string firstName, string lastName,
     int age, string icNumber, string programme,
     int numOfSubjects, float cgpa
@@ -336,12 +337,15 @@ bool updateStudent(
     // Find position of this `Student` in array
     int pos = findId(Students, studentId);
 
+    
     if (pos == -1)
     {
+        // Student is not found
         ErrMsg = "Student with id of " + numToString(studentId) + " does not exist.";
         return -1;
     }
 
+    // Overwrite old student data
     Students[pos] = {
         studentId,
         firstName,
@@ -353,7 +357,8 @@ bool updateStudent(
         cgpa
     };
 
-    return true;
+    // Return position of this student in the array
+    return pos;
 }
 
 // ALL UTILITY FUNCTIONS
