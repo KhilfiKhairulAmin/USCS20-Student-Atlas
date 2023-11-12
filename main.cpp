@@ -10,7 +10,7 @@ using namespace std;
 // Account datatype
 struct Account
 {
-    int id = -1;
+    int id;
     string username;
     string password;
     string role;
@@ -31,7 +31,7 @@ struct Account
 // Student datatype
 struct Student
 {
-    int id = -1;
+    int id;
     string firstName;
     string lastName;
     int age;
@@ -39,6 +39,25 @@ struct Student
     string programme;
     int numOfSubjects;
     float cgpa;
+
+    Student(
+        int id_ = -1, string firstName_ = "", string lastName_ = "",
+        int age_ = -1, string icNumber_ = "", string programme_ = "",
+        int numOfSubjects_ = 0, float cgpa_ = -1)
+        : id(id_), firstName(firstName_), lastName(lastName_),
+        age(age_), icNumber(icNumber_), programme(programme_),
+        numOfSubjects(numOfSubjects_), cgpa(cgpa_)
+        {
+            id = id_;
+            firstName = firstName_;
+            lastName = lastName_;
+            age = age_;
+            icNumber = icNumber_;
+            programme = programme_;
+            numOfSubjects = numOfSubjects_;
+            cgpa = cgpa_;
+        }
+
 };
 
 
@@ -297,7 +316,7 @@ int createStudent(
     // Get new id
     int studentId = generateId(Students);
 
-    Student newStudent = {
+    Student newStudent(
         studentId,
         firstName,
         lastName,
@@ -306,7 +325,7 @@ int createStudent(
         programme,
         numOfSubjects,
         cgpa
-    };
+    );
 
     // Find the position of empty space in the array
     int empty = getEmptyPosition(Students);
@@ -466,7 +485,7 @@ int generateId(T array[MAX_SIZE])
         if (array[i].id == -1)
             break;
         else if (array[i].id > maxId)
-            maxId = array[id].id
+            maxId = array[i].id;
     }
 
     // Return the next highest id
@@ -483,10 +502,10 @@ int len(T array[MAX_SIZE])
     for (int i = 0; i < MAX_SIZE; i++)
     {
         if (array[i].id == -1)
-            return i + 1
+            return i + 1;
     }
     // Array is fully used
-    return MAX_SIZE
+    return MAX_SIZE;
 }
 
 /**
@@ -529,7 +548,7 @@ bool deleteAtIndex(T array[MAX_SIZE], int index)
         ErrMsg = "Index at position " + numToString(index) + " is invalid.";
         return false;
     }
-    delete array[index];
+    array[index] = T();
 
     for (int i = index; i < MAX_SIZE - 1; i++)
     {
