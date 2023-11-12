@@ -15,6 +15,17 @@ struct Account
     string password;
     string role;
     int refStudentId;
+
+    Account(int id_ = -1, string username_ = "", string password_ = "", string role_ = "STUDENT", int refStudentId_ = -1)
+    : id(id_), username(username_), password(password_), refStudentId(refStudentId_)
+    {
+        id = id_;
+        username = username_;
+        password = password_;
+        role = role_;
+        refStudentId = -1;
+    }
+
 };
 
 // Student datatype
@@ -61,14 +72,11 @@ int updateStudent(int, string, string, int, string, string, int, float);
 void printStudents();
 
 
+// THIS IS WHERE THE PROGRAM STARTS EXECUTING
 int main()
 {
-    loadAccounts(); loadStudents();
-    printAccounts();
-    deleteAccountCascade(1);
-    printAccounts();
-    saveAccounts(); saveStudents();
-    
+    loadAccounts();
+    createAccount("Khilfi", "Khilfi", "ADMIN");
     return 0;
 }
 
@@ -139,18 +147,13 @@ void saveAccounts()
 /**
  * Create a new `Account`
 */
-int createAccount(string username, string password, string repeatPassword)
+int createAccount(string username, string password, string role)
 {
     // Get new id
     int accountId = generateId(Accounts);
 
     // Create new account
-    Account newAccount = {
-        accountId,
-        username,
-        password,
-        "STUDENT"
-    };
+    Account newAccount(accountId, username, password, role);
 
     // Find the position of empty space in the array
     int empty = getEmptyPosition(Accounts);
@@ -541,7 +544,13 @@ bool deleteAtIndex(T array[MAX_SIZE], int index)
 */
 string accountToString(Account account)
 {
-    return numToString(account.id) + ',' + account.username + ',' + account.password + ',' + account.role + ',' + numToString(account.refStudentId) + '\n';
+    string ref = "";
+    if (account.refStudentId >= 0)
+    {   
+        ref = numToString(account.refStudentId);
+    }
+
+    return numToString(account.id) + ',' + account.username + ',' + account.password + ',' + account.role + ',' + ref + '\n';
 }
 
 /**
