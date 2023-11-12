@@ -280,9 +280,14 @@ void saveStudents()
     writeStudents.close();
 }
 
-int createStudent(int accountId, string firstName, string lastName, int age, string icNumber, string programme, int numOfSubjects, float cgpa)
+int createStudent(
+    int accountId, string firstName, string lastName,
+    int age, string icNumber, string programme,
+    int numOfSubjects, float cgpa
+)
 {
-    int studentId = Students.size();
+    // Get new id
+    int studentId = generateId(Students);
 
     Student newStudent = {
         studentId,
@@ -295,10 +300,23 @@ int createStudent(int accountId, string firstName, string lastName, int age, str
         cgpa
     };
 
-    // Link account with student data
-    Accounts[accountId].refStudentId = studentId;
+    // Find the position of empty space in the array
+    int empty = getEmptyPosition(Students);
 
-    Students.push_back(newStudent);
+    // Array is fully used
+    if (empty == -1)
+    {
+        ErrMsg = "Maximum size reached. Cannot add new Student.";
+        // Return invalid id to represent error occurred
+        return -1;
+    }
+
+    // Assign to empty location in `Accounts` array
+    Students[empty] = newStudent;
+
+    // Store reference in the specified `Account` with studentId
+    int accountIndex = findId(Accounts, accountId);
+    Accounts[accountIndex].refStudentId = studentId;
 
     return studentId;
 }
