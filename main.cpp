@@ -89,6 +89,7 @@ template<class T> int generateId(T [MAX_SIZE]);
 template<class T> int getEmptyPosition(T [MAX_SIZE]);
 template<class T> int findId(T [MAX_SIZE], int);
 template<class T> bool deleteAtIndex(T [MAX_SIZE], int);
+template<class T> int len(T [MAX_SIZE]);
 string accountToString(Account);
 string studentToString(Student);
 int stringToUint(string);
