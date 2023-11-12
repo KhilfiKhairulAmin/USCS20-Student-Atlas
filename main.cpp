@@ -103,9 +103,8 @@ void loadAccounts()
     // Read the file line by line
     while (getline(readAccountsData, currentLine))
     {
-        Account account = parseAccount(currentLine);
-        // Assign each account into the global array
-        Accounts[i++] = account;
+        // Assign each `Account` into the global array
+        Accounts[i++] = parseAccount(currentLine);
     }
     
     readAccountsData.close();
@@ -248,20 +247,14 @@ void loadStudents()
     ifstream readStudentsData("students.txt");
     string currentLine;
 
+    int i = 0;
     while (getline(readStudentsData, currentLine))
     {
-        vector<string> parsed = parseData(currentLine);
-        Student student;
-        student.id = stringToUint(parsed[0]);
-        student.firstName = parsed[1];
-        student.lastName = parsed[2];
-        student.age = stringToUint(parsed[3]);
-        student.icNumber = parsed[4];
-        student.programme = parsed[5];
-        student.numOfSubjects = stringToUint(parsed[6]);
-        student.cgpa = stringToPositiveFloat(parsed[7]);
+        // Assign each `Student` into the global array
+        Students[i++] = parseStudent(currentLine);
     }
 
+    // Close the file
     readStudentsData.close();
 
     return;
