@@ -262,7 +262,7 @@ void loadStudents()
 }
 
 /**
- * Save all students in this session
+ * Save all students into text file
 */
 void saveStudents()
 {
@@ -281,6 +281,9 @@ void saveStudents()
     writeStudents.close();
 }
 
+/**
+ * Create a new `Student`
+*/
 int createStudent(
     int accountId, string firstName, string lastName,
     int age, string icNumber, string programme,
@@ -322,12 +325,18 @@ int createStudent(
     return studentId;
 }
 
+/**
+ * Display all `Student` data
+*/
 void printStudents()
 {
     for (int i = 0; i < len(Students); i++)
         cout << studentToString(Students[i]);
 }
 
+/**
+ * Update `Student` with `id` to the new data. Return `pos` if the account exists, else return `-1`.
+*/
 int updateStudent(
     int studentId, string firstName, string lastName,
     int age, string icNumber, string programme,
