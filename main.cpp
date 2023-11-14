@@ -23,7 +23,7 @@ struct Account
         username = username_;
         password = password_;
         role = role_;
-        refStudentId = -1;
+        refStudentId = refStudentId_;
     }
 };
 
@@ -91,6 +91,9 @@ void save();
 int main()
 {
     load();
+    int accId = createAccount("husna", "husna123", "STUDENT");
+    int studId = createStudent(accId, "Husna", "Ahmad Fuad", 18, "051101000000", "JAPAN", 9, 4);
+    printAccounts();
     printStudents();
     save();
     return 0;
@@ -134,7 +137,8 @@ void load()
             accountId,
             username,
             password,
-            role
+            role,
+            refStudentId
         );
 
         // Read the next row
