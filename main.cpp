@@ -38,7 +38,7 @@ struct Student
     string icNumber;
     string programme;
     int numOfSubjects;
-    float cgpa;
+    double cgpa;
 
     Student(
         int id_ = -1, string firstName_ = "", string lastName_ = "",
@@ -94,9 +94,8 @@ void printStudents();
 // THIS IS WHERE THE PROGRAM STARTS EXECUTING
 int main()
 {
-    loadAccounts();
-    printAccounts();
-    saveAccounts();
+    loadStudents();
+    printStudents();
     return 0;
 }
 
@@ -112,7 +111,6 @@ template<class T> int getEmptyPosition(T [MAX_SIZE]);
 template<class T> int findId(T [MAX_SIZE], int);
 template<class T> bool deleteAtIndex(T [MAX_SIZE], int);
 template<class T> int len(T [MAX_SIZE]);
-string accountToString(Account);
 string studentToString(Student);
 int stringToUint(string);
 float stringToPositiveFloat(string);
@@ -139,7 +137,7 @@ void loadAccounts()
 
     int i = 0;
     // Read each data row by row
-    while (readAccountsData.good())
+    do
     {
         // Assign each data into an Account and store in the global array
         Accounts[i++] = Account(
@@ -151,7 +149,7 @@ void loadAccounts()
 
         // Read the next row
         readAccountsData >> id >> username >> password >> role >> refStudentId;
-    };
+    } while (readAccountsData.good());
     
     // Close the text file
     readAccountsData.close();
@@ -286,20 +284,42 @@ bool deleteAccountCascade(int accountId)
 }
 
 /**
- * Loads all student data
+ * Loads all `Student` data
 */
 void loadStudents()
 {
-    // Open student file
+    // Open student text file
     ifstream readStudentsData("students.txt");
-    string currentLine;
+
+    // Variables to store Student data
+    int id, age, numOfSubjects;
+    double cgpa;
+    string firstName, lastName, icNumber, programme;
+
+    // Read data on the first row
+    readStudentsData >> id >> firstName >> lastName >> age >> icNumber
+                     >> programme >> numOfSubjects >> cgpa;
 
     int i = 0;
-    while (getline(readStudentsData, currentLine))
+    // Read data row by row
+    do
     {
         // Assign each `Student` into the global array
-        Students[i++] = parseStudent(currentLine);
-    }
+        Students[i++] = Student(
+            id,
+            firstName,
+            lastName,
+            age,
+            icNumber,
+            programme,
+            numOfSubjects,
+            cgpa
+        );
+
+        // Read next row
+        readStudentsData >> id >> firstName >> lastName >> age >> icNumber
+                         >> programme >> numOfSubjects >> cgpa;
+    } while (readStudentsData.good());
 
     // Close the file
     readStudentsData.close();
@@ -376,8 +396,15 @@ int createStudent(
 */
 void printStudents()
 {
+    cout << "Id,First_Name,Last_Name,Age,IcNumber,Programme,NumOfSubj,Cgpa" << endl;
     for (int i = 0; i < len(Students); i++)
-        cout << studentToString(Students[i]);
+    {
+        Student s = Students[i];
+        cout << s.id << ',' << s.firstName << ',' << s.lastName << ',' << s.age << ','
+             << s.icNumber << ',' << s.programme << ',' << s.numOfSubjects << ',' << s.cgpa << endl;
+    }
+
+    return;
 }
 
 /**
