@@ -95,6 +95,8 @@ void printStudents();
 int main()
 {
     loadAccounts();
+    deleteAccountCascade(0);
+    cout << ErrMsg;
     printAccounts();
     saveAccounts();
     return 0;
@@ -220,6 +222,7 @@ void printAccounts()
 int updateAccount(int accountId, string username, string newPassword)
 {
     // Find position of this `Account` in array
+    // TODO Keep current data if `null` is entered.
     int pos = findId(Accounts, accountId);
 
     if (pos == -1)
@@ -258,19 +261,25 @@ bool deleteAccountCascade(int accountId)
         return false;
     }
     
-    int studentIndex = findId(Students, account.refStudentId);
+    // int studentIndex = findId(Students, account.refStudentId);
 
-    if (studentIndex == -1)
-    {
-        ErrMsg = "Student with id of " + numToString(accountId) + " does not exist.";
-        return false;
-    }
+    // if (account.role == "STUDENT")
+    // {
+    //     if (studentIndex == -1)
+    //     {
+    //         ErrMsg = "Student with id of " + numToString(account.refStudentId) + " does not exist.";
+    //         return false;
+    //     }
+    //     deleteAtIndex(Students, studentIndex);
+    // }
     
-    if (!deleteAtIndex(Accounts, accountIndex) || !deleteAtIndex(Students, studentIndex))
-    {
-        ErrMsg = "Something went wrong.";
-        return false;
-    }
+    // if (account.role == "ADMIN" && !deleteAtIndex(Accounts, accountIndex))
+    // {
+    //     ErrMsg = "Something went wrong.";
+    //     return false;
+    // }
+
+    deleteAtIndex(Accounts, 0);
 
     return true;
 }
@@ -565,7 +574,7 @@ int getEmptyPosition(T array[MAX_SIZE])
 template<class T>
 bool deleteAtIndex(T array[MAX_SIZE], int index)
 {
-    if (index >= MAX_SIZE)
+    if (index >= MAX_SIZE || index < 0)
     {
         ErrMsg = "Index at position " + numToString(index) + " is invalid.";
         return false;
