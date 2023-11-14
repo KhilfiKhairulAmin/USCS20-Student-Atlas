@@ -1,7 +1,6 @@
 #include <iostream> // For user input and output
 #include <fstream> // For file operations
 #include <cmath> // For complicated mathematical operations
-#include <sstream> // For handling numerical to string conversion
 using namespace std;
 
 
@@ -25,7 +24,6 @@ struct Account
         role = role_;
         refStudentId = -1;
     }
-
 };
 
 // Student datatype
@@ -57,7 +55,6 @@ struct Student
             numOfSubjects = numOfSubjects_;
             cgpa = cgpa_;
         }
-
 };
 
 
@@ -102,8 +99,6 @@ int main()
 
 // UTILITY FUNCTION PROTOTYPES (USED BY FUNCTIONS OTHER THAN main())
 
-Account parseAccount(string);
-Student parseStudent(string);
 string parseName(string);
 string unparseName(string);
 template<class T> int generateId(T [MAX_SIZE]);
@@ -111,11 +106,6 @@ template<class T> int getEmptyPosition(T [MAX_SIZE]);
 template<class T> int findId(T [MAX_SIZE], int);
 template<class T> bool deleteAtIndex(T [MAX_SIZE], int);
 template<class T> int len(T [MAX_SIZE]);
-string studentToString(Student);
-int stringToUint(string);
-float stringToPositiveFloat(string);
-template <class T>
-string numToString(T);
 
 
 // PROGRAM & UTILITY FUNCTIONS DEFINITION
@@ -227,7 +217,7 @@ int updateAccount(int accountId, string username, string newPassword)
     if (pos == -1)
     {
         // Account is not found
-        ErrMsg = "Account with id of " + numToString(accountId) + " does not exist.";
+        // ErrMsg = "Account with id of " + numToString(accountId) + " does not exist.";
         return -1;
     }
 
@@ -248,7 +238,7 @@ bool deleteAccountCascade(int accountId)
 
     if (accountIndex == -1)
     {
-        ErrMsg = "Account with id of " + numToString(accountId) + " does not exist.";
+        // ErrMsg = "Account with id of " + numToString(accountId) + " does not exist.";
         return false;
     }
 
@@ -307,8 +297,8 @@ void loadStudents()
         // Assign each `Student` into the global array
         Students[i++] = Student(
             id,
-            firstName,
-            lastName,
+            parseName(firstName),
+            parseName(lastName),
             age,
             icNumber,
             programme,
@@ -332,23 +322,23 @@ void loadStudents()
 */
 void saveStudents()
 {
-    string save = "";
+    ofstream writeStudents("students.txt");
 
-    int i = 0;
-    // If i does not exceed max array size AND accountId is valid, continue loop
-    while (i < MAX_SIZE && Students[i].id != -1)
+    for (int i = 0; i < len(Students); i++)
     {
-        // Convert to string form to be saved in .txt file
-        save += studentToString(Students[i++]);
+        Student s = Students[i];
+        writeStudents << s.id << ' ' << unparseName(s.firstName) << ' ' << unparseName(s.lastName) << ' '
+                      << s.age << ' ' << s.icNumber << ' ' << s.programme << ' '
+                      << s.numOfSubjects << ' ' << s.cgpa << endl;
     }
 
-    ofstream writeStudents("students.txt");
-    writeStudents << save;
     writeStudents.close();
+
+    return;
 }
 
 /**
- * Create a new `Student`
+ * Create a new `Student`. Return the `id` of student.
 */
 int createStudent(
     int accountId, string firstName, string lastName,
@@ -418,12 +408,11 @@ int updateStudent(
 {
     // Find position of this `Student` in array
     int pos = findId(Students, studentId);
-
     
     if (pos == -1)
     {
         // Student is not found
-        ErrMsg = "Student with id of " + numToString(studentId) + " does not exist.";
+        // ErrMsg = "Student with id of " + numToString(studentId) + " does not exist.";
         return -1;
     }
 
@@ -452,83 +441,6 @@ string parseName(string name)
 string unparseName(string name)
 {
     return name.replace(name.begin(), name.end(), ' ', '_');
-}
-
-Account parseAccount(string unparsedText)
-{
-    string parsedString, parsedData[5];
-
-    // Index used to parse string from startIndex to endIndex
-    // Initial start is at index 0 and end is at the position of first delimiter (,)
-    int startIndex = 0, endIndex = unparsedText.find_first_of(',');
-
-    int i = 0;
-    // If endIndex == string.npos, then it means no more delimiter is found, thus ending the loop
-    while (endIndex != unparsedText.npos);
-    {
-        // Parse the data point
-        parsedString = unparsedText.substr(startIndex, endIndex - startIndex);
-
-        // Add the data point in this array
-        parsedData[i++] = parsedString;
-
-        // Update the start and end index
-        startIndex = endIndex + 1;
-        endIndex = unparsedText.find_first_of(',', startIndex);
-    }
-    
-    // Get the final data point
-    parsedString = unparsedText.substr(startIndex);
-    parsedData[4] = parsedString;
-
-    Account account;
-    account.id = stringToUint(parsedData[0]);
-    account.username = parsedData[1];
-    account.password = parsedData[2];
-    account.role = parsedData[3];
-    if (account.role == "STUDENT")
-        account.refStudentId = stringToUint(parsedData[4]);
-
-    return account;
-}
-
-Student parseStudent(string unparsedText)
-{
-    string parsedString, parsedData[7];
-
-    // Index used to parse string from startIndex to endIndex
-    // Initial start is at index 0 and end is at the position of first delimiter (,)
-    int startIndex = 0, endIndex = unparsedText.find_first_of(',', 0);
-
-    // If endIndex == string.npos, then it means no more delimiter is found, thus ending the loop
-    while (endIndex != unparsedText.npos)
-    {
-        // Parse the data point
-        parsedString = unparsedText.substr(startIndex, endIndex - startIndex);
-
-        // Add the data point in this array
-        parsedData->append(parsedString);
-
-        // Update the start and end index
-        startIndex = endIndex + 1;
-        endIndex = unparsedText.find_first_of(',', startIndex);
-    }
-
-    // Get the final data point
-    parsedString = unparsedText.substr(startIndex);
-    parsedData->append(parsedString);
-
-    Student student;
-    student.id = stringToUint(parsedData[0]);
-    student.firstName = parsedData[1];
-    student.lastName = parsedData[2];
-    student.age = stringToUint(parsedData[3]);
-    student.icNumber = parsedData[4];
-    student.programme = parsedData[5];
-    student.numOfSubjects = stringToUint(parsedData[6]);
-    student.cgpa = stringToPositiveFloat(parsedData[7]);
-
-    return student;
 }
 
 /**
@@ -598,7 +510,7 @@ template<class T> bool deleteAtIndex(T array[MAX_SIZE], int index)
     // Invalid index
     if (index >= MAX_SIZE || index < 0)
     {
-        ErrMsg = "Index at position " + numToString(index) + " is invalid.";
+        // ErrMsg = "Index at position " + numToString(index) + " is invalid.";
         return false;
     }
 
@@ -611,67 +523,4 @@ template<class T> bool deleteAtIndex(T array[MAX_SIZE], int index)
         array[i] = array[i+1];
     }
     return true;
-}
-
-/**
- * Convert student to string representation
-*/
-string studentToString(Student student)
-{
-    return numToString(student.id) + ',' + student.firstName + ',' + student.lastName + ',' + numToString(student.age)
-           + ',' + student.icNumber + ',' + student.programme + ',' + numToString(student.numOfSubjects) + ','
-           + numToString(student.cgpa) + '\n';
-}
-
-/**
- * Convert whole number string to positive integer
-*/
-int stringToUint(string s)
-{
-    int result;
-    for(int i = 0; i < s.size(); i++)
-    {
-        int digit = s[i] - '0';
-        result += digit * pow(10, s.size() - 1 - i);
-    }
-    return result;
-}
-
-/**
- * Convert numeric string to positive float
-*/
-float stringToPositiveFloat(string s)
-{
-    float result = 0.0;
-    int lenDigitBeforeDecPoint = s.find_first_of('.');
-    string beforeDec, afterDec;
-
-    // Early return numerical string contains no decimal point, it represents integer!
-    if (lenDigitBeforeDecPoint == s.npos)
-        return stringToUint(s);
-    else
-    {
-        beforeDec = s.substr(0, lenDigitBeforeDecPoint);
-        afterDec = s.substr(lenDigitBeforeDecPoint + 1);
-    }
-
-    // Handles digit before decimal point
-    result += stringToUint(beforeDec);
-
-    // Handles digit after decimal point
-    for (int i = 0; i < afterDec.size(); i++)
-    {
-        float digit = afterDec[i] - '0';
-        result += digit / pow(10, i + 1);
-    }
-
-    return result;
-}
-
-template <class T>
-string numToString(T n)
-{
-    stringstream out;
-    out << n;
-    return out.str();
 }
