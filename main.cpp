@@ -180,9 +180,7 @@ void saveAccounts()
     return;
 }
 
-/**
- * Create a new `Account`
-*/
+// Create a new `Account`
 int createAccount(string username, string password, string role)
 {
     // Get new id
@@ -212,6 +210,7 @@ int createAccount(string username, string password, string role)
 void printAccounts()
 {
     cout << "Id,Username,Password,Role,RefStudentId" << endl;
+
     for (int i = 0; i < len(Accounts); i++)
     {
         Account a = Accounts[i];
@@ -509,30 +508,28 @@ Student parseStudent(string unparsedText)
 }
 
 /**
- * Generate a unique ID for new `Account` and new `Student`
+ * Generate a unique ID for new `Account` or new `Student`
 */
-template<class T> 
-int generateId(T array[MAX_SIZE])
+template<class T> int generateId(T array[MAX_SIZE])
 {
     int maxId = array[0].id;
-    // Search for highest index in the array (i.e. id which value is -1)
+    // Search for highest id in the array
     for (int i = 0; i < len(array); i++)
     {
         if (array[i].id > maxId)
             maxId = array[i].id;
     }
 
-    maxId++;
 
     // Return the next highest id
+    maxId++;
     return maxId;
 }
 
 /**
  * Get the number of elements in the array
 */
-template<class T>
-int len(T array[MAX_SIZE])
+template<class T> int len(T array[MAX_SIZE])
 {
     // Search for unused position in array (i.e. id which value is -1)
     for (int i = 0; i < MAX_SIZE; i++)
@@ -545,16 +542,13 @@ int len(T array[MAX_SIZE])
 }
 
 /**
- * Find index of target id. Return `-1` if not found.
+ * Find index of `targetId`. Return `-1` if not found.
 */
-template<class T>
-int findId(T array[MAX_SIZE], int targetId)
+template<class T> int findId(T array[MAX_SIZE], int targetId)
 {
     // Search for index of target id
-    for (int i = 0; i < MAX_SIZE; i++)
+    for (int i = 0; i < len(array); i++)
     {
-        if (array[i].id == -1)
-            break;
         if (array[i].id == targetId)
             return i;
     }
@@ -564,8 +558,7 @@ int findId(T array[MAX_SIZE], int targetId)
 /**
  * Find an index in the array which is empty. Return `-1` if array is full.
 */
-template<class T>
-int getEmptyPosition(T array[MAX_SIZE])
+template<class T> int getEmptyPosition(T array[MAX_SIZE])
 {
     int length = len(array);
     if (length == MAX_SIZE)
@@ -574,39 +567,26 @@ int getEmptyPosition(T array[MAX_SIZE])
 }
 
 /**
- * Delete an element in array and move other elements to fill the empty space. Return `false` if an error occurred, else `True`.
+ * Delete an element at specified `index` and move other elements forward to fill empty space. Return `false` if an error occurred, else `true`.
 */
-template<class T>
-bool deleteAtIndex(T array[MAX_SIZE], int index)
+template<class T> bool deleteAtIndex(T array[MAX_SIZE], int index)
 {
+    // Invalid index
     if (index >= MAX_SIZE || index < 0)
     {
         ErrMsg = "Index at position " + numToString(index) + " is invalid.";
         return false;
     }
+
+    // Reset element at `index`
     array[index] = T();
 
-    for (int i = index; i < MAX_SIZE - 1; i++)
+    // Move other elements forward to fill empty spaces
+    for (int i = index; i < len(array) - 1; i++)
     {
-        if (array[i].id == -1)
-            break;
         array[i] = array[i+1];
     }
     return true;
-}
-
-/**
- * Parse an account into an account string
-*/
-string accountToString(Account account)
-{
-    string ref = "";
-    if (account.refStudentId >= 0)
-    {   
-        ref = numToString(account.refStudentId);
-    }
-
-    return numToString(account.id) + ',' + account.username + ',' + account.password + ',' + account.role + ',' + ref + '\n';
 }
 
 /**
