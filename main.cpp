@@ -1,6 +1,7 @@
 #include <iostream> // For user input and output
 #include <fstream> // For file operations
 #include <cmath> // For complicated mathematical operations
+#include <algorithm> // for std::replace
 using namespace std;
 
 
@@ -75,24 +76,23 @@ string ErrMsg = "";
 
 // MAIN FUNCTION PROTOTYPES (USED BY main() FUNCTION)
 
-void loadAccounts();
-void saveAccounts();
+void load();
 int createAccount(string, string, string);
 int updateAccount(int, string, string);
 void printAccounts();
-bool deleteAccountCascade(int);
-void loadStudents();
-void saveStudents();
+bool deleteAccount(int);
 int createStudent(int, string, string, int, string, string, int, float);
 int updateStudent(int, string, string, int, string, string, int, float);
 void printStudents();
+void save();
 
 
 // THIS IS WHERE THE PROGRAM STARTS EXECUTING
 int main()
 {
-    loadStudents();
+    load();
     printStudents();
+    save();
     return 0;
 }
 
@@ -111,19 +111,19 @@ template<class T> int len(T [MAX_SIZE]);
 // PROGRAM & UTILITY FUNCTIONS DEFINITION
 
 /**
- * Retrieve all accounts from database.
+ * Retrieve all accounts and students data from text file into the global array
 */
-void loadAccounts()
+void load()
 {
     // Open the text file
     ifstream readAccountsData("accounts.txt");
 
     // Variables to store Account data
-    int id, refStudentId;
+    int accountId, refStudentId;
     string username, password, role;
 
     // Read the data on first line
-    readAccountsData >> id >> username >> password >> role >> refStudentId;
+    readAccountsData >> accountId >> username >> password >> role >> refStudentId;
 
     int i = 0;
     // Read each data row by row
@@ -131,36 +131,54 @@ void loadAccounts()
     {
         // Assign each data into an Account and store in the global array
         Accounts[i++] = Account(
-            id,
+            accountId,
             username,
             password,
             role
         );
 
         // Read the next row
-        readAccountsData >> id >> username >> password >> role >> refStudentId;
+        readAccountsData >> accountId >> username >> password >> role >> refStudentId;
     } while (readAccountsData.good());
     
     // Close the text file
     readAccountsData.close();
 
-    return;
-}
+    // Open student text file
+    ifstream readStudentsData("students.txt");
 
-/**
- * Save all accounts into text file
-*/
-void saveAccounts()
-{
-    ofstream writeAccounts("accounts.txt");
+    // Variables to store Student data
+    int studentId, age, numOfSubjects;
+    double cgpa;
+    string firstName, lastName, icNumber, programme;
 
-    for (int i = 0; i < len(Accounts); i++)
+    // Read data on the first row
+    readStudentsData >> studentId >> firstName >> lastName >> age >> icNumber
+                     >> programme >> numOfSubjects >> cgpa;
+
+    int j = 0;
+    // Read data row by row
+    do
     {
-        Account a = Accounts[i];
-        writeAccounts << a.id << ' ' << a.username << ' ' << a.password << ' ' << a.role << ' ' << a.refStudentId << endl;
-    }
+        // Assign each `Student` into the global array
+        Students[j++] = Student(
+            studentId,
+            parseName(firstName),
+            parseName(lastName),
+            age,
+            icNumber,
+            programme,
+            numOfSubjects,
+            cgpa
+        );
 
-    writeAccounts.close();
+        // Read next row
+        readStudentsData >> studentId >> firstName >> lastName >> age >> icNumber
+                         >> programme >> numOfSubjects >> cgpa;
+    } while (readStudentsData.good());
+
+    // Close the file
+    readStudentsData.close();
 
     return;
 }
@@ -232,7 +250,7 @@ int updateAccount(int accountId, string username, string newPassword)
 /**
  * Delete an `Account` with `id` and the `Student` related to the account.
 */
-bool deleteAccountCascade(int accountId)
+bool deleteAccount(int accountId)
 {
     int accountIndex = findId(Accounts, accountId);
 
@@ -271,70 +289,6 @@ bool deleteAccountCascade(int accountId)
     deleteAtIndex(Accounts, 0);
 
     return true;
-}
-
-/**
- * Loads all `Student` data
-*/
-void loadStudents()
-{
-    // Open student text file
-    ifstream readStudentsData("students.txt");
-
-    // Variables to store Student data
-    int id, age, numOfSubjects;
-    double cgpa;
-    string firstName, lastName, icNumber, programme;
-
-    // Read data on the first row
-    readStudentsData >> id >> firstName >> lastName >> age >> icNumber
-                     >> programme >> numOfSubjects >> cgpa;
-
-    int i = 0;
-    // Read data row by row
-    do
-    {
-        // Assign each `Student` into the global array
-        Students[i++] = Student(
-            id,
-            parseName(firstName),
-            parseName(lastName),
-            age,
-            icNumber,
-            programme,
-            numOfSubjects,
-            cgpa
-        );
-
-        // Read next row
-        readStudentsData >> id >> firstName >> lastName >> age >> icNumber
-                         >> programme >> numOfSubjects >> cgpa;
-    } while (readStudentsData.good());
-
-    // Close the file
-    readStudentsData.close();
-
-    return;
-}
-
-/**
- * Save all students into text file
-*/
-void saveStudents()
-{
-    ofstream writeStudents("students.txt");
-
-    for (int i = 0; i < len(Students); i++)
-    {
-        Student s = Students[i];
-        writeStudents << s.id << ' ' << unparseName(s.firstName) << ' ' << unparseName(s.lastName) << ' '
-                      << s.age << ' ' << s.icNumber << ' ' << s.programme << ' '
-                      << s.numOfSubjects << ' ' << s.cgpa << endl;
-    }
-
-    writeStudents.close();
-
-    return;
 }
 
 /**
@@ -432,15 +386,48 @@ int updateStudent(
     return pos;
 }
 
+/**
+ * Save all accounts and students into text file
+*/
+void save()
+{
+    ofstream writeAccounts("accounts.txt");
+
+    for (int i = 0; i < len(Accounts); i++)
+    {
+        Account a = Accounts[i];
+        writeAccounts << a.id << ' ' << a.username << ' ' << a.password << ' ' << a.role << ' ' << a.refStudentId << endl;
+    }
+
+    writeAccounts.close();
+
+    ofstream writeStudents("students.txt");
+
+    for (int i = 0; i < len(Students); i++)
+    {
+        Student s = Students[i];
+        writeStudents << s.id << ' ' << unparseName(s.firstName) << ' ' << unparseName(s.lastName) << ' '
+                      << s.age << ' ' << s.icNumber << ' ' << s.programme << ' '
+                      << s.numOfSubjects << ' ' << s.cgpa << endl;
+    }
+
+    writeStudents.close();
+
+    return;
+}
+
+
 // ALL UTILITY FUNCTIONS
 string parseName(string name)
 {
-    return name.replace(name.begin(), name.end(), '_', ' ');
+    replace(name.begin(), name.end(), '_', ' ');
+    return name;
 }
 
 string unparseName(string name)
 {
-    return name.replace(name.begin(), name.end(), ' ', '_');
+    replace(name.begin(), name.end(), ' ', '_');
+    return name;
 }
 
 /**
