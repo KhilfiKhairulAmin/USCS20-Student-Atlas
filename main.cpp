@@ -67,7 +67,7 @@ struct Student
 const int MAX_SIZE = 200;
 
 // Global array storing all `Account` data
-Account Accounts[MAX_SIZE] = {Account()};
+Account Accounts[MAX_SIZE];
 
 // Global array storing all `Student` data
 Student Students[MAX_SIZE];
@@ -95,8 +95,6 @@ void printStudents();
 int main()
 {
     loadAccounts();
-    deleteAccountCascade(0);
-    cout << ErrMsg;
     printAccounts();
     saveAccounts();
     return 0;
@@ -129,20 +127,21 @@ string numToString(T);
 */
 void loadAccounts()
 {
-    // Open the file
+    // Open the text file
     ifstream readAccountsData("accounts.txt");
-    string currentLine;
 
-    // Variables for storing account data
+    // Variables to store Account data
     int id, refStudentId;
     string username, password, role;
 
-    int i = 0;
-
+    // Read the first line
     readAccountsData >> id >> username >> password >> role >> refStudentId;
+
+    int i = 0;
+    // Read each data line by line
     while (readAccountsData.good())
     {
-        // Assign each `Account` into the global array
+        // Assign each data into a new Account in the global array
         Accounts[i++] = Account(
             id,
             username,
@@ -150,9 +149,11 @@ void loadAccounts()
             role
         );
 
+        // Read the next line
         readAccountsData >> id >> username >> password >> role >> refStudentId;
     };
     
+    // Close the text file
     readAccountsData.close();
 
     return;
