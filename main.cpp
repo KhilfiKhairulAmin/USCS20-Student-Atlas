@@ -76,7 +76,7 @@ Student Students[MAX_SIZE];
 string ErrMsg = "";
 
 
-// PROGRAM FUNCTION PROTOTYPES
+// MAIN FUNCTION PROTOTYPES (USED BY main() FUNCTION)
 
 void loadAccounts();
 void saveAccounts();
@@ -95,15 +95,18 @@ void printStudents();
 int main()
 {
     loadAccounts();
-    createAccount("Khilfi", "Khilfi", "ADMIN");
+    printAccounts();
+    saveAccounts();
     return 0;
 }
 
 
-// UTILITY FUNCTION PROTOTYPES
+// UTILITY FUNCTION PROTOTYPES (USED BY FUNCTIONS OTHER THAN main())
 
 Account parseAccount(string);
 Student parseStudent(string);
+string parseName(string);
+string unparseName(string);
 template<class T> int generateId(T [MAX_SIZE]);
 template<class T> int getEmptyPosition(T [MAX_SIZE]);
 template<class T> int findId(T [MAX_SIZE], int);
@@ -117,7 +120,7 @@ template <class T>
 string numToString(T);
 
 
-// PROGRAM FUNCTIONS DEFINITION
+// PROGRAM & UTILITY FUNCTIONS DEFINITION
 
 /**
  * Retrieve all accounts from database.
@@ -128,13 +131,25 @@ void loadAccounts()
     ifstream readAccountsData("accounts.txt");
     string currentLine;
 
+    // Variables for storing account data
+    int id, refStudentId;
+    string username, password, role;
+
     int i = 0;
-    // Read the file line by line
-    while (getline(readAccountsData, currentLine))
+
+    readAccountsData >> id >> username >> password >> role >> refStudentId;
+    while (readAccountsData.good())
     {
         // Assign each `Account` into the global array
-        Accounts[i++] = parseAccount(currentLine);
-    }
+        Accounts[i++] = Account(
+            id,
+            username,
+            password,
+            role
+        );
+
+        readAccountsData >> id >> username >> password >> role >> refStudentId;
+    };
     
     readAccountsData.close();
 
@@ -146,19 +161,17 @@ void loadAccounts()
 */
 void saveAccounts()
 {
-    string save = "";
-    int i = 0;
+    ofstream writeAccounts("accounts.txt");
+
+    Account account;
 
     // If i does not exceed max array size AND accountId is valid, continue loop
-    while (i < MAX_SIZE && Accounts[i].id != -1)
+    for (int i = 0; i < len(Accounts); i++)
     {
-        // Convert to string form to be saved in .txt file
-        save += accountToString(Accounts[i++]);
+        account = Accounts[i];
+        writeAccounts << account.id << ' ' << account.username << ' ' << account.password << ' ' << account.role << ' ' << account.refStudentId << endl;
     }
 
-    // Write string into text file
-    ofstream writeAccounts("accounts.txt");
-    writeAccounts << save;
     writeAccounts.close();
 
     return;
@@ -378,7 +391,7 @@ int updateStudent(
     }
 
     // Overwrite old student data
-    Students[pos] = {
+    Students[pos] = Student(
         studentId,
         firstName,
         lastName,
@@ -387,13 +400,22 @@ int updateStudent(
         programme,
         numOfSubjects,
         cgpa
-    };
+    );
 
     // Return position of this student in the array
     return pos;
 }
 
 // ALL UTILITY FUNCTIONS
+string parseName(string name)
+{
+    return name.replace(name.begin(), name.end(), '_', ' ');
+}
+
+string unparseName(string name)
+{
+    return name.replace(name.begin(), name.end(), ' ', '_');
+}
 
 Account parseAccount(string unparsedText)
 {
@@ -403,6 +425,7 @@ Account parseAccount(string unparsedText)
     // Initial start is at index 0 and end is at the position of first delimiter (,)
     int startIndex = 0, endIndex = unparsedText.find_first_of(',');
 
+    int i = 0;
     // If endIndex == string.npos, then it means no more delimiter is found, thus ending the loop
     while (endIndex != unparsedText.npos);
     {
@@ -410,17 +433,16 @@ Account parseAccount(string unparsedText)
         parsedString = unparsedText.substr(startIndex, endIndex - startIndex);
 
         // Add the data point in this array
-        parsedData->append(parsedString);
+        parsedData[i++] = parsedString;
 
         // Update the start and end index
         startIndex = endIndex + 1;
         endIndex = unparsedText.find_first_of(',', startIndex);
     }
     
-    
     // Get the final data point
     parsedString = unparsedText.substr(startIndex);
-    parsedData->append(parsedString);
+    parsedData[4] = parsedString;
 
     Account account;
     account.id = stringToUint(parsedData[0]);
@@ -480,16 +502,16 @@ int generateId(T array[MAX_SIZE])
 {
     int maxId = array[0].id;
     // Search for highest index in the array (i.e. id which value is -1)
-    for (int i = 0; i < MAX_SIZE; i++)
+    for (int i = 0; i < len(array); i++)
     {
-        if (array[i].id == -1)
-            break;
-        else if (array[i].id > maxId)
+        if (array[i].id > maxId)
             maxId = array[i].id;
     }
 
+    maxId++;
+
     // Return the next highest id
-    return ++maxId;
+    return maxId;
 }
 
 /**
@@ -502,7 +524,7 @@ int len(T array[MAX_SIZE])
     for (int i = 0; i < MAX_SIZE; i++)
     {
         if (array[i].id == -1)
-            return i + 1;
+            return i;
     }
     // Array is fully used
     return MAX_SIZE;
