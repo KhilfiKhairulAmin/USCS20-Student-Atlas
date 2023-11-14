@@ -134,14 +134,14 @@ void loadAccounts()
     int id, refStudentId;
     string username, password, role;
 
-    // Read the first line
+    // Read the data on first line
     readAccountsData >> id >> username >> password >> role >> refStudentId;
 
     int i = 0;
-    // Read each data line by line
+    // Read each data row by row
     while (readAccountsData.good())
     {
-        // Assign each data into a new Account in the global array
+        // Assign each data into an Account and store in the global array
         Accounts[i++] = Account(
             id,
             username,
@@ -149,7 +149,7 @@ void loadAccounts()
             role
         );
 
-        // Read the next line
+        // Read the next row
         readAccountsData >> id >> username >> password >> role >> refStudentId;
     };
     
@@ -166,13 +166,10 @@ void saveAccounts()
 {
     ofstream writeAccounts("accounts.txt");
 
-    Account account;
-
-    // If i does not exceed max array size AND accountId is valid, continue loop
     for (int i = 0; i < len(Accounts); i++)
     {
-        account = Accounts[i];
-        writeAccounts << account.id << ' ' << account.username << ' ' << account.password << ' ' << account.role << ' ' << account.refStudentId << endl;
+        Account a = Accounts[i];
+        writeAccounts << a.id << ' ' << a.username << ' ' << a.password << ' ' << a.role << ' ' << a.refStudentId << endl;
     }
 
     writeAccounts.close();
