@@ -208,13 +208,17 @@ int createAccount(string username, string password, string role)
     return accountId;
 }
 
-/**
- * Display all `Account` data
-*/
+// Display all `Account` data. Use for debugging purpose.
 void printAccounts()
 {
+    cout << "Id,Username,Password,Role,RefStudentId" << endl;
     for (int i = 0; i < len(Accounts); i++)
-        cout << accountToString(Accounts[i]);
+    {
+        Account a = Accounts[i];
+        cout << a.id << ',' << a.username << ',' << a.password << ',' << a.role << ',' << a.refStudentId << endl;
+    }
+
+    return;
 }
 
 /**
