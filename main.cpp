@@ -1,7 +1,7 @@
 #include <iostream> // For user input and output
 #include <fstream> // For file operations
 #include <cmath> // For complicated mathematical operations
-#include <algorithm> // for std::replace
+#include <algorithm> // for string processing
 using namespace std;
 
 
@@ -70,33 +70,64 @@ Account Accounts[MAX_SIZE];
 // Global array storing all `Student` data
 Student Students[MAX_SIZE];
 
-// Global variable storing the latest Error m6essage
+// Global variable storing the latest Error message
 string ErrMsg = "";
 
 
 // MAIN FUNCTION PROTOTYPES (USED BY main() FUNCTION)
 
 void load();
+void signUp();
+void login();
 int createAccount(string, string, string);
 int updateAccount(int, string, string);
 void printAccounts();
-bool deleteAccount(int);
 int createStudent(int, string, string, int, string, string, int, float);
 int updateStudent(int, string, string, int, string, string, int, float);
 void printStudents();
+bool deleteAccountAndStudent(int);
 void save();
 
 
 // THIS IS WHERE THE PROGRAM STARTS EXECUTING
 int main()
 {
-    load();
-    int accId = createAccount("husna", "husna123", "STUDENT");
-    int studId = createStudent(accId, "Husna", "Ahmad Fuad", 18, "051101000000", "JAPAN", 9, 4);
-    printAccounts();
-    printStudents();
-    save();
+    int choice;
+
+    cout << "___________________________________\n";
+    cout << "| WELCOME TO INTEC STUDENT RECORD |\n";
+    cout << "-----------------------------------\n";
+
+    cout << "\nDo you have an existing record?\n";
+    cout << "1. Yes\n";
+    cout << "2. No\n";
+    
+    do
+    {
+
+        cout << "Option: ";
+        cin >> choice;
+
+        if(choice > 2 || choice < 1)
+        {
+            cout << "\nPlease enter option correctly.\n";
+        }
+
+    }
+    while(choice > 2 || choice < 1);
+
+    switch(choice)
+    {
+        case 1:
+            login();
+            break;
+        case 2:
+            signUp();
+            break;
+    }
+
     return 0;
+
 }
 
 
@@ -112,6 +143,61 @@ template<class T> int len(T [MAX_SIZE]);
 
 
 // PROGRAM & UTILITY FUNCTIONS DEFINITION
+
+void signUp()
+{
+    string username, password, fullname, program;
+    int age, nosub, studentid, year, day, month;
+
+    cout << "________________________\n";
+    cout << "| STUDENT REGISTRATION |\n";
+    cout << "------------------------\n";
+
+    cout << "Full Name:";
+    getline(cin >> ws, fullname);
+    cout << "Age: ";
+    cin >> age;
+    cout << "Birthdate: \n";
+    cout << "Day(1-30): "; cin >> day; cout << "Month (1 - 12): "; cin >> month; cout << "Year (2xxx): "; cin >> year;
+
+    return;
+}
+
+void login()
+{
+    string user_test = "iyas";
+    string pass_test = "12345";
+
+    string username, password;
+
+    cout << "_______________\n";
+    cout << "|    LOG IN   |\n";
+    cout << "---------------\n";
+
+    do
+    {
+        cout << "Please enter username: ";
+        cin >> username;
+
+        cout << "\nPlease enter password: ";
+        cin >> password;
+
+        if(username == user_test && password == pass_test)
+        {
+            cout << "\nlogin successful!";
+            break;
+        }
+        else
+        {
+            cout << "\nLogin failed.\n";
+            cout << "Please enter username and password again.\n\n";
+
+        }
+    }
+    while(1);
+
+    return;
+}
 
 /**
  * Retrieve all accounts and students data from text file into the global array
@@ -254,7 +340,7 @@ int updateAccount(int accountId, string username, string newPassword)
 /**
  * Delete an `Account` with `id` and the `Student` related to the account.
 */
-bool deleteAccount(int accountId)
+bool deleteAccountAndStudent(int accountId)
 {
     int accountIndex = findId(Accounts, accountId);
 
