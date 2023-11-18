@@ -76,6 +76,8 @@ string ErrMsg = "";
 
 // MAIN FUNCTION PROTOTYPES (USED BY main() FUNCTION)
 
+void authInterface();
+void mainInterface();
 void load();
 void signUp();
 void login();
@@ -91,6 +93,26 @@ void save();
 
 // THIS IS WHERE THE PROGRAM STARTS EXECUTING
 int main()
+{
+    load();
+    authInterface();
+}
+
+
+// UTILITY FUNCTION PROTOTYPES (USED BY FUNCTIONS OTHER THAN main())
+
+string parseName(string);
+string unparseName(string);
+template<class T> int generateId(T [MAX_SIZE]);
+template<class T> int getEmptyPosition(T [MAX_SIZE]);
+template<class T> int findId(T [MAX_SIZE], int);
+template<class T> bool deleteAtIndex(T [MAX_SIZE], int);
+template<class T> int len(T [MAX_SIZE]);
+
+
+// PROGRAM & UTILITY FUNCTIONS DEFINITION
+
+void authInterface()
 {
     int choice;
 
@@ -126,41 +148,47 @@ int main()
             break;
     }
 
-    return 0;
-
+    return;
 }
-
-
-// UTILITY FUNCTION PROTOTYPES (USED BY FUNCTIONS OTHER THAN main())
-
-string parseName(string);
-string unparseName(string);
-template<class T> int generateId(T [MAX_SIZE]);
-template<class T> int getEmptyPosition(T [MAX_SIZE]);
-template<class T> int findId(T [MAX_SIZE], int);
-template<class T> bool deleteAtIndex(T [MAX_SIZE], int);
-template<class T> int len(T [MAX_SIZE]);
-
-
-// PROGRAM & UTILITY FUNCTIONS DEFINITION
 
 void signUp()
 {
-    string username, password, fullname, program;
+    string username, password, repeatPassword, fullname, program;
     int age, nosub, studentid, year, day, month;
 
     cout << "________________________\n";
     cout << "| STUDENT REGISTRATION |\n";
     cout << "------------------------\n";
 
-    cout << "Full Name:";
-    getline(cin >> ws, fullname);
-    cout << "Age: ";
-    cin >> age;
-    cout << "Birthdate: \n";
-    cout << "Day(1-30): "; cin >> day; cout << "Month (1 - 12): "; cin >> month; cout << "Year (2xxx): "; cin >> year;
+    cout << "Username: ";
+    cin >> username;
 
-    return;
+    cout << "Password: ";
+    cin >> password;
+
+    do
+    {
+        cout << "Repeat password: ";
+        cin >> repeatPassword;
+
+        if (password == repeatPassword)
+            break;
+
+        cout << "The repeated password is not correct. Please try again." << endl;
+    }
+    while (1);
+
+    int studentId = createAccount(username, password, "STUDENT");
+    save();
+
+    // cout << "Full Name:";
+    // getline(cin >> ws, fullname);
+    // cout << "Age: ";
+    // cin >> age;
+    // cout << "Birthdate: \n";
+    // cout << "Day(1-30): "; cin >> day; cout << "Month (1 - 12): "; cin >> month; cout << "Year (2xxx): "; cin >> year;
+
+    // return;
 }
 
 void login()
@@ -273,7 +301,7 @@ void load()
     return;
 }
 
-// Create a new `Account`
+// Create a new `Account`. Return `studentId`.
 int createAccount(string username, string password, string role)
 {
     // Get new id
@@ -295,7 +323,7 @@ int createAccount(string username, string password, string role)
 
     // Assign to empty location in `Accounts` array
     Accounts[empty] = newAccount;
-
+    
     return accountId;
 }
 
