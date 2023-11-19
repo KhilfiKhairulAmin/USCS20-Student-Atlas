@@ -95,7 +95,8 @@ void save();
 int main()
 {
     load();
-    authInterface();
+    updateAccount(1, "", "");
+    return 0;
 }
 
 
@@ -174,7 +175,7 @@ void signUp()
         if (password == repeatPassword)
             break;
 
-        cout << "The repeated password is not correct. Please try again." << endl;
+        cout << "The repeated password is not correct. Please re-enter." << endl;
     }
     while (1);
 
@@ -357,9 +358,13 @@ int updateAccount(int accountId, string username, string newPassword)
         return -1;
     }
 
-    // Overwrite old username and password
-    Accounts[pos].username = username;
-    Accounts[pos].password = newPassword;
+    // Overwrite with new data if provided, else keep the old data
+    if (username != "")
+        Accounts[pos].username = username;
+    if (newPassword != "")
+        Accounts[pos].password = newPassword;
+
+    save();
 
     // Return position of this account in the array
     return pos;
