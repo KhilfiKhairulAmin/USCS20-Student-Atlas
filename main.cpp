@@ -73,17 +73,15 @@ void signUp(),
      login();
 
 // Prototypes for data manipulation functions
-void loadStudents(),
-     saveStudents();
-int  createStudent(int, string, string, int, string, string, int, float),
-     updateStudent(int, string, string, int, string, string, int, float);
+void readStudents(),
+     writeStudents();
+int  addStudent(int, string, string, int, string, string, int, float),
+     editStudent(int, string, string, int, string, string, int, float);
 bool deleteStudent(int);
 
 // Prototypes for utility functions
-string parseName(string),
-       unparseName(string);
-int    findStudent(int),
-       lenStudents();
+int  findStudent(int),
+     lenStudents();
 
 
 /*++++++ SECTION 3A: FUNCTION DECLARATIONS ++++++*/
@@ -199,7 +197,11 @@ void signUp()
     }
     while (1);
 
-    saveStudents();
+    ofstream writeAccount("accounts.txt", ios::app);
+
+    writeAccount << username << " " << password << endl;
+
+    writeAccount.close();
 
     // cout << "Full Name:";
     // getline(cin >> ws, fullname);
@@ -216,44 +218,43 @@ void signUp()
 */
 void login()
 {
-    string user_test = "iyas";
-    string pass_test = "12345";
-
-    string username, password;
-
     cout << "_______________\n";
     cout << "|    LOG IN   |\n";
     cout << "---------------\n";
 
     do
     {
+        string usernameIn, passwordIn, username, password;
         cout << "Please enter username: ";
-        cin >> username;
+        cin >> usernameIn;
 
         cout << "\nPlease enter password: ";
-        cin >> password;
+        cin >> passwordIn;
 
-        if(username == user_test && password == pass_test)
-        {
-            cout << "\nlogin successful!";
-            break;
-        }
-        else
-        {
-            cout << "\nLogin failed.\n";
-            cout << "Please enter username and password again.\n\n";
+        ifstream readAccount("accounts.txt");
 
+        readAccount >> username >> password;
+        while (readAccount.good())
+        {
+            if(usernameIn == username && passwordIn == password)
+            {
+                readAccount.close();
+                cout << "\nLogin successful!";
+                return;
+            }
+            readAccount >> username >> password;
         }
+        readAccount.close();
+        cout << "\nLogin failed.\n";
+        cout << "Please enter username and password again.\n\n";
     }
-    while(1);
-
-    return;
+    while(true);
 }
 
 /**
  * Retrieve all student data from text file into the Students array
 */
-void loadStudents()
+void readStudents()
 {
     // Open student text file
     ifstream readStudentsData("students.txt");
@@ -266,6 +267,10 @@ void loadStudents()
     // Read data on the first row
     readStudentsData >> studentId >> firstName >> lastName >> age >> icNumber
                      >> programme >> numOfSubjects >> cgpa;
+
+    // Parse first and last name
+    replace(firstName.begin(), firstName.end(), '_', ' ');
+    replace(lastName.begin(), lastName.end(), '_', ' ');
 
     int j = 0;
     // Read data row by row
@@ -298,14 +303,20 @@ void loadStudents()
 /**
  * Save all student data into text file
 */
-void saveStudents()
+void writeStudents()
 {
     ofstream writeStudents("students.txt");
 
     for (int i = 0; i < lenStudents(); i++)
     {
         Student s = Students[i];
-        writeStudents << s.id << ' ' << unparseName(s.firstName) << ' ' << unparseName(s.lastName) << ' '
+
+        // Unparse first and last name to store inside text file
+        replace(s.firstName.begin(), s.firstName.end(), ' ', '_');
+        replace(s.lastName.begin(), s.lastName.end(), ' ', '_');
+
+        // Write to text file
+        writeStudents << s.id << ' ' << s.firstName << ' ' << s.lastName << ' '
                       << s.age << ' ' << s.icNumber << ' ' << s.programme << ' '
                       << s.numOfSubjects << ' ' << s.cgpa << endl;
     }
@@ -318,7 +329,7 @@ void saveStudents()
 /**
  * Create a new `Student`. Return the `id` of student.
 */
-int createStudent(
+int addStudent(
     int accountId, string firstName, string lastName,
     int age, string icNumber, string programme,
     int numOfSubjects, float cgpa
@@ -362,7 +373,7 @@ int createStudent(
     // Assign to empty location in `Accounts` array
     Students[empty] = newStudent;
 
-    saveStudents();
+    writeStudents();
 
     return studentId;
 }
@@ -370,7 +381,7 @@ int createStudent(
 /**
  * Update `Student` with `id` to the new data. Return `pos` if the account exists, else return `-1`.
 */
-int updateStudent(
+int editStudent(
     int studentId, string firstName = "", string lastName = "",
     int age = -1, string icNumber = "", string programme = "",
     int numOfSubjects = -1, float cgpa = -1
@@ -401,7 +412,7 @@ int updateStudent(
     if (cgpa != -1)
         Students[pos].cgpa = cgpa;
 
-    saveStudents();
+    writeStudents();
 
     // Return position of this student in the array
     return pos;
@@ -431,21 +442,9 @@ bool deleteStudent(int studentId)
         swap(Students[i], Students[i+1]);
     }
 
-    saveStudents();
+    writeStudents();
 
     return true;
-}
-
-string parseName(string name)
-{
-    replace(name.begin(), name.end(), '_', ' ');
-    return name;
-}
-
-string unparseName(string name)
-{
-    replace(name.begin(), name.end(), ' ', '_');
-    return name;
 }
 
 /**
