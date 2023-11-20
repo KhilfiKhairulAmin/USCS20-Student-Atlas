@@ -76,8 +76,8 @@ string ErrMsg = "";
 
 // MAIN FUNCTION PROTOTYPES (USED BY main() FUNCTION)
 
-void authInterface();
-void mainInterface();
+void authUI();
+void mainUI();
 void load();
 void signUp();
 void login();
@@ -113,7 +113,7 @@ template<class T> int len(T [MAX_SIZE]);
 
 // PROGRAM & UTILITY FUNCTIONS DEFINITION
 
-void authInterface()
+void authUI()
 {
     int choice;
 
@@ -151,6 +151,50 @@ void authInterface()
 
     return;
 }
+
+void mainUI(int x)
+{
+	int select;
+	if(x == 1)
+	{
+		cout<< "========================="
+			<< "\n Welcome to main menu "
+			<<"\n========================="
+			<<endl
+			<<"1.Browse"
+			<<"\n2.Edit"
+			<<"\n3.Delete"
+			<<"\n4.Exit";
+			do {
+			cout<<"\nPlease make your selection: ";
+			cin>>select;
+			} while (x > 4 || x < 1);
+			
+		switch(select)
+		{
+			case 1:
+				
+				break;
+			case 2:
+				
+				break;
+			case 3:
+				
+				break;
+			case 4:
+				break;
+			
+		}
+	}
+	else
+	{
+		
+	}
+	
+	return;
+	
+}
+
 
 void signUp()
 {
