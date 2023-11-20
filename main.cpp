@@ -26,16 +26,6 @@ Thanks ^_^
 #include <algorithm> // for string processing
 using namespace std;
 
-// Account datatype
-struct Account
-{
-    int id = -1;
-    string username;
-    string password;
-    string role;
-    int refStudentId;
-};
-
 // Student datatype
 struct Student
 {
@@ -52,21 +42,14 @@ struct Student
 // Maximum size of array
 const int MAX_SIZE = 200;
 
-// Store Accounts data
-Account Accounts[MAX_SIZE];
-
 // Store Students data
 Student Students[MAX_SIZE];
 
-// Store error message
-string ErrMsg = "";
-
-// Prototypes for main user interface
-void authUI();
-void mainUI(int);
-
 
 /*===================================================== SECTION 2: MAIN PROGRAM =====================================================*/
+
+void authUI();
+void mainUI(int);
 
 int main()
 {
@@ -83,32 +66,27 @@ int main()
 /*========================================= SECTION 3: PROTOTYPES AND FUNCTION DECLARATIONS =========================================*/
 
 
-/*+++++++ SECTION 3A: PROTOTYPES +++++++*/
+/*++++++++++++ SECTION 3A: PROTOTYPES ++++++++++++*/
 
-// Prototypes for signUp and login
+// Prototypes for signUp and login interface
 void signUp(),
      login();
 
 // Prototypes for data manipulation functions
-void load(),
-     save();
-int  createAccount(string, string, string),
-     updateAccount(int, string, string),
-     createStudent(int, string, string, int, string, string, int, float),
+void loadStudents(),
+     saveStudents();
+int  createStudent(int, string, string, int, string, string, int, float),
      updateStudent(int, string, string, int, string, string, int, float);
-bool deleteAccountAndStudent(int);
+bool deleteStudent(int);
 
 // Prototypes for utility functions
 string parseName(string),
        unparseName(string);
-template<class T> int generateId(T [MAX_SIZE]);
-template<class T> int getEmptyPosition(T [MAX_SIZE]);
-template<class T> int findId(T [MAX_SIZE], int);
-template<class T> bool deleteAtIndex(T [MAX_SIZE], int);
-template<class T> int len(T [MAX_SIZE]);
+int    findStudent(int),
+       lenStudents();
 
 
-/*+ SECTION 3A: FUNCTION DECLARATIONS +*/
+/*++++++ SECTION 3A: FUNCTION DECLARATIONS ++++++*/
 
 // Authorization user interface
 void authUI()
@@ -221,8 +199,7 @@ void signUp()
     }
     while (1);
 
-    int studentId = createAccount(username, password, "STUDENT");
-    save();
+    saveStudents();
 
     // cout << "Full Name:";
     // getline(cin >> ws, fullname);
@@ -274,41 +251,10 @@ void login()
 }
 
 /**
- * Retrieve all accounts and students data from text file into the global array
+ * Retrieve all student data from text file into the Students array
 */
-void load()
+void loadStudents()
 {
-    // Open the text file
-    ifstream readAccountsData("accounts.txt");
-
-    // Variables to store Account data
-    int accountId, refStudentId;
-    string username, password, role;
-
-    // Read the data on first line
-    readAccountsData >> accountId >> username >> password >> role >> refStudentId;
-
-    int i = 0;
-    // Read each data row by row
-    do
-    {
-        // Assign each data into an Account and store in the global array
-        Account account;
-        account.id = accountId;
-        account.username = username;
-        account.password = password;
-        account.role = role;
-        account.refStudentId = refStudentId;
-
-        Accounts[i++] = account;
-
-        // Read the next row
-        readAccountsData >> accountId >> username >> password >> role >> refStudentId;
-    } while (readAccountsData.good());
-    
-    // Close the text file
-    readAccountsData.close();
-
     // Open student text file
     ifstream readStudentsData("students.txt");
 
@@ -349,109 +295,24 @@ void load()
     return;
 }
 
-// Create a new `Account`. Return `studentId`.
-int createAccount(string username, string password, string role)
+/**
+ * Save all student data into text file
+*/
+void saveStudents()
 {
-    // Get new id
-    int accountId = generateId(Accounts);
+    ofstream writeStudents("students.txt");
 
-    // Create new account
-    Account newAccount;
-    newAccount.id = accountId;
-    newAccount.username = username;
-    newAccount.password = password;
-    newAccount.role = role;
-
-    // Find the position of empty space in the array
-    int empty = getEmptyPosition(Accounts);
-
-    // Array is fully used
-    if (empty == -1)
+    for (int i = 0; i < lenStudents(); i++)
     {
-        ErrMsg = "Maximum size reached. Cannot add new Account.";
-        // Return invalid id to represent error occurred
-        return -1;
+        Student s = Students[i];
+        writeStudents << s.id << ' ' << unparseName(s.firstName) << ' ' << unparseName(s.lastName) << ' '
+                      << s.age << ' ' << s.icNumber << ' ' << s.programme << ' '
+                      << s.numOfSubjects << ' ' << s.cgpa << endl;
     }
 
-    // Assign to empty location in `Accounts` array
-    Accounts[empty] = newAccount;
-    
-    return accountId;
-}
-
-// Display all `Account` data. Use for debugging purpose.
-void printAccounts()
-{
-    cout << "Id,Username,Password,Role,RefStudentId" << endl;
-
-    for (int i = 0; i < len(Accounts); i++)
-    {
-        Account a = Accounts[i];
-        cout << a.id << ',' << a.username << ',' << a.password << ',' << a.role << ',' << a.refStudentId << endl;
-    }
+    writeStudents.close();
 
     return;
-}
-
-/**
- * Update `Account` with `id` to the new data. Return `pos` if the account exists, else return `-1`.
-*/
-int updateAccount(int accountId, string username = "", string newPassword = "")
-{
-    // Find position of this `Account` in array
-    int pos = findId(Accounts, accountId);
-
-    // If Account is not found
-    if (pos == -1)
-    {
-        // ErrMsg = "Account with id of " + numToString(accountId) + " does not exist.";
-        return -1;
-    }
-
-    // Overwrite with new data if provided, else keep the old data
-    if (username != "")
-        Accounts[pos].username = username;
-    if (newPassword != "")
-        Accounts[pos].password = newPassword;
-
-    save();
-
-    // Return position of this account in the array
-    return pos;
-}
-
-/**
- * Delete an `Account` with `id` and the `Student` related to the account.
-*/
-bool deleteAccountAndStudent(int accountId)
-{
-    int accountIndex = findId(Accounts, accountId);
-
-    if (accountIndex == -1)
-    {
-        // ErrMsg = "Account with id of " + numToString(accountId) + " does not exist.";
-        return false;
-    }
-
-    Account account = Accounts[accountIndex];
-
-    if (account.role == "ADMIN")
-    {
-        ErrMsg = "Admin account can't be deleted.";
-        return false;
-    }
-
-    if (account.refStudentId != -1)
-    {
-        int studentIndex = findId(Students, account.refStudentId);
-        deleteAtIndex(Students, studentIndex);
-    }
-
-    deleteAtIndex(Accounts, accountIndex);
-
-    save();
-
-    return true;
 }
 
 /**
@@ -464,7 +325,17 @@ int createStudent(
 )
 {
     // Get new id
-    int studentId = generateId(Students);
+    int studentId = Students[0].id;
+
+    // Search for highest id in the array
+    for (int i = 0; i < lenStudents(); i++)
+    {
+        if (Students[i].id > studentId)
+            studentId = Students[i].id;
+    }
+
+    // Get the next id
+    studentId++;
 
     Student newStudent;
 
@@ -477,13 +348,13 @@ int createStudent(
     newStudent.numOfSubjects = numOfSubjects;
     newStudent.cgpa = cgpa;
 
-    // Find the position of empty space in the array
-    int empty = getEmptyPosition(Students);
+    // Get the position of empty index in the array
+    int empty = lenStudents();
 
     // Array is fully used
-    if (empty == -1)
+    if (empty == MAX_SIZE)
     {
-        ErrMsg = "Maximum size reached. Cannot add new Student.";
+        cout << "Maximum size reached. Cannot add new Student.";
         // Return invalid id to represent error occurred
         return -1;
     }
@@ -491,27 +362,9 @@ int createStudent(
     // Assign to empty location in `Accounts` array
     Students[empty] = newStudent;
 
-    // Store reference in the specified `Account` with studentId
-    int accountIndex = findId(Accounts, accountId);
-    Accounts[accountIndex].refStudentId = studentId;
+    saveStudents();
 
     return studentId;
-}
-
-/**
- * Display all `Student` data
-*/
-void printStudents()
-{
-    cout << "Id,First_Name,Last_Name,Age,IcNumber,Programme,NumOfSubj,Cgpa" << endl;
-    for (int i = 0; i < len(Students); i++)
-    {
-        Student s = Students[i];
-        cout << s.id << ',' << s.firstName << ',' << s.lastName << ',' << s.age << ','
-             << s.icNumber << ',' << s.programme << ',' << s.numOfSubjects << ',' << s.cgpa << endl;
-    }
-
-    return;
 }
 
 /**
@@ -524,11 +377,10 @@ int updateStudent(
 )
 {
     // Find position of this `Student` in array
-    int pos = findId(Students, studentId);
+    int pos = findStudent(studentId);
     
     if (pos == -1)
     {
-        // Student is not found
         // ErrMsg = "Student with id of " + numToString(studentId) + " does not exist.";
         return -1;
     }
@@ -549,44 +401,41 @@ int updateStudent(
     if (cgpa != -1)
         Students[pos].cgpa = cgpa;
 
-    save();
+    saveStudents();
 
     // Return position of this student in the array
     return pos;
 }
 
 /**
- * Save all accounts and students into text file
+ * Delete a Student with `studentId`
 */
-void save()
+bool deleteStudent(int studentId)
 {
-    ofstream writeAccounts("accounts.txt");
+    int studentIndex = findStudent(studentId);
 
-    for (int i = 0; i < len(Accounts); i++)
+    if (studentIndex == -1)
     {
-        Account a = Accounts[i];
-        writeAccounts << a.id << ' ' << a.username << ' ' << a.password << ' ' << a.role << ' ' << a.refStudentId << endl;
+        return false;
     }
 
-    writeAccounts.close();
+    int initLen = lenStudents();
+    Student reset;
 
-    ofstream writeStudents("students.txt");
+    // Reset the data at index
+    Students[studentIndex] = reset;
 
-    for (int i = 0; i < len(Students); i++)
+    // Move other elements forward to fill empty spaces
+    for (int i = studentIndex; i < initLen - 1; i++)
     {
-        Student s = Students[i];
-        writeStudents << s.id << ' ' << unparseName(s.firstName) << ' ' << unparseName(s.lastName) << ' '
-                      << s.age << ' ' << s.icNumber << ' ' << s.programme << ' '
-                      << s.numOfSubjects << ' ' << s.cgpa << endl;
+        swap(Students[i], Students[i+1]);
     }
 
-    writeStudents.close();
+    saveStudents();
 
-    return;
+    return true;
 }
 
-
-// ALL UTILITY FUNCTIONS
 string parseName(string name)
 {
     replace(name.begin(), name.end(), '_', ' ');
@@ -600,33 +449,14 @@ string unparseName(string name)
 }
 
 /**
- * Generate a unique ID for new `Account` or new `Student`
+ * Get the number of elements in the Students array
 */
-template<class T> int generateId(T array[MAX_SIZE])
-{
-    int maxId = array[0].id;
-    // Search for highest id in the array
-    for (int i = 0; i < len(array); i++)
-    {
-        if (array[i].id > maxId)
-            maxId = array[i].id;
-    }
-
-
-    // Return the next highest id
-    maxId++;
-    return maxId;
-}
-
-/**
- * Get the number of elements in the array
-*/
-template<class T> int len(T array[MAX_SIZE])
+int lenStudents()
 {
     // Search for unused position in array (i.e. id which value is -1)
     for (int i = 0; i < MAX_SIZE; i++)
     {
-        if (array[i].id == -1)
+        if (Students[i].id == -1)
             return i;
     }
     // Array is fully used
@@ -636,48 +466,13 @@ template<class T> int len(T array[MAX_SIZE])
 /**
  * Find index of `targetId`. Return `-1` if not found.
 */
-template<class T> int findId(T array[MAX_SIZE], int targetId)
+int findStudent(int targetId)
 {
     // Search for index of target id
-    for (int i = 0; i < len(array); i++)
+    for (int i = 0; i < lenStudents(); i++)
     {
-        if (array[i].id == targetId)
+        if (Students[i].id == targetId)
             return i;
     }
     return -1;
-}
-
-/**
- * Find an index in the array which is empty. Return `-1` if array is full.
-*/
-template<class T> int getEmptyPosition(T array[MAX_SIZE])
-{
-    int length = len(array);
-    if (length == MAX_SIZE)
-        return -1;
-    return length;
-}
-
-/**
- * Delete an element at specified `index` and move other elements forward to fill empty space. Return `false` if an error occurred, else `true`.
-*/
-template<class T> bool deleteAtIndex(T array[MAX_SIZE], int index)
-{
-    // Invalid index
-    if (index >= MAX_SIZE || index < 0)
-    {
-        // ErrMsg = "Index at position " + numToString(index) + " is invalid.";
-        return false;
-    }
-
-    int initLen = len(array);
-    array[index] = T();
-
-    // Move other elements forward to fill empty spaces
-    for (int i = index; i < initLen - 1; i++)
-    {
-        swap(array[i], array[i+1]);
-    }
-
-    return true;
 }
