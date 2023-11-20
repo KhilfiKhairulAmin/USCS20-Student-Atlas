@@ -1,36 +1,45 @@
+/*
+                                            WELCOME TO INTEC STUDENT DATA MANAGEMENT SYSTEM!
+
+We (Irfan, Iyas & Khilfi) proudly present our project source code to you.
+
+All in all, the source code is separated into three main parts from top to bottom. The sections are listed below:
+1. Headers and Initializations
+2. Main Program
+3. Prototypes and Function Declarations
+
+Each function and global variable have been documented to provide clarification of their existence. You can view each
+function purpose on top of its function header to know its return value and meanings.
+
+Lastly, we hope this source code serve as a prime example of what a structured and readable code should be. Lastly,
+please contact khilfikhairulamin@gmail.com if you have further inquiries or bug reports on this project.
+
+Thanks ^_^
+*/
+
+
+/*============================================== SECTION 1: HEADERS AND INITIALIZATIONS ==============================================*/
+
 #include <iostream> // For user input and output
 #include <fstream> // For file operations
 #include <cmath> // For complicated mathematical operations
 #include <algorithm> // for string processing
 using namespace std;
 
-
-// DATA STRUCTURE DEFINITION
-
 // Account datatype
 struct Account
 {
-    int id;
+    int id = -1;
     string username;
     string password;
     string role;
     int refStudentId;
-
-    Account(int id_ = -1, string username_ = "", string password_ = "", string role_ = "STUDENT", int refStudentId_ = -1)
-    : id(id_), username(username_), password(password_), refStudentId(refStudentId_)
-    {
-        id = id_;
-        username = username_;
-        password = password_;
-        role = role_;
-        refStudentId = refStudentId_;
-    }
 };
 
 // Student datatype
 struct Student
 {
-    int id;
+    int id = -1;
     string firstName;
     string lastName;
     int age;
@@ -38,72 +47,60 @@ struct Student
     string programme;
     int numOfSubjects;
     double cgpa;
-
-    Student(
-        int id_ = -1, string firstName_ = "", string lastName_ = "",
-        int age_ = -1, string icNumber_ = "", string programme_ = "",
-        int numOfSubjects_ = 0, float cgpa_ = -1)
-        : id(id_), firstName(firstName_), lastName(lastName_),
-        age(age_), icNumber(icNumber_), programme(programme_),
-        numOfSubjects(numOfSubjects_), cgpa(cgpa_)
-        {
-            id = id_;
-            firstName = firstName_;
-            lastName = lastName_;
-            age = age_;
-            icNumber = icNumber_;
-            programme = programme_;
-            numOfSubjects = numOfSubjects_;
-            cgpa = cgpa_;
-        }
 };
 
-
-// GLOBAL VARIABLES DECLARATION
-
-// Constant to control the maximum number of data an array can hold
+// Maximum size of array
 const int MAX_SIZE = 200;
 
-// Global array storing all `Account` data
+// Store Accounts data
 Account Accounts[MAX_SIZE];
 
-// Global array storing all `Student` data
+// Store Students data
 Student Students[MAX_SIZE];
 
-// Global variable storing the latest Error message
+// Store error message
 string ErrMsg = "";
 
-
-// MAIN FUNCTION PROTOTYPES (USED BY main() FUNCTION)
-
+// Prototypes for main user interface
 void authUI();
-void mainUI();
-void load();
-void signUp();
-void login();
-int createAccount(string, string, string);
-int updateAccount(int, string, string);
-void printAccounts();
-int createStudent(int, string, string, int, string, string, int, float);
-int updateStudent(int, string, string, int, string, string, int, float);
-void printStudents();
-bool deleteAccountAndStudent(int);
-void save();
+void mainUI(int);
 
 
-// THIS IS WHERE THE PROGRAM STARTS EXECUTING
+/*===================================================== SECTION 2: MAIN PROGRAM =====================================================*/
+
 int main()
 {
-    load();
-    deleteAccountAndStudent(3);
+    // Authorize the user by signing up or logging in
+    authUI();
+
+    // User has logged in successfully
+    mainUI(1);
+
     return 0;
 }
 
 
-// UTILITY FUNCTION PROTOTYPES (USED BY FUNCTIONS OTHER THAN main())
+/*========================================= SECTION 3: PROTOTYPES AND FUNCTION DECLARATIONS =========================================*/
 
-string parseName(string);
-string unparseName(string);
+
+/*+++++++ SECTION 3A: PROTOTYPES +++++++*/
+
+// Prototypes for signUp and login
+void signUp(),
+     login();
+
+// Prototypes for data manipulation functions
+void load(),
+     save();
+int  createAccount(string, string, string),
+     updateAccount(int, string, string),
+     createStudent(int, string, string, int, string, string, int, float),
+     updateStudent(int, string, string, int, string, string, int, float);
+bool deleteAccountAndStudent(int);
+
+// Prototypes for utility functions
+string parseName(string),
+       unparseName(string);
 template<class T> int generateId(T [MAX_SIZE]);
 template<class T> int getEmptyPosition(T [MAX_SIZE]);
 template<class T> int findId(T [MAX_SIZE], int);
@@ -111,8 +108,9 @@ template<class T> bool deleteAtIndex(T [MAX_SIZE], int);
 template<class T> int len(T [MAX_SIZE]);
 
 
-// PROGRAM & UTILITY FUNCTIONS DEFINITION
+/*+ SECTION 3A: FUNCTION DECLARATIONS +*/
 
+// Authorization user interface
 void authUI()
 {
     int choice;
@@ -152,6 +150,7 @@ void authUI()
     return;
 }
 
+// Main program interface
 void mainUI(int x)
 {
 	int select;
@@ -192,10 +191,9 @@ void mainUI(int x)
 	}
 	
 	return;
-	
 }
 
-
+// Register new account
 void signUp()
 {
     string username, password, repeatPassword, fullname, program;
@@ -236,6 +234,9 @@ void signUp()
     // return;
 }
 
+/**
+ * Login account
+*/
 void login()
 {
     string user_test = "iyas";
@@ -292,13 +293,14 @@ void load()
     do
     {
         // Assign each data into an Account and store in the global array
-        Accounts[i++] = Account(
-            accountId,
-            username,
-            password,
-            role,
-            refStudentId
-        );
+        Account account;
+        account.id = accountId;
+        account.username = username;
+        account.password = password;
+        account.role = role;
+        account.refStudentId = refStudentId;
+
+        Accounts[i++] = account;
 
         // Read the next row
         readAccountsData >> accountId >> username >> password >> role >> refStudentId;
@@ -324,16 +326,17 @@ void load()
     do
     {
         // Assign each `Student` into the global array
-        Students[j++] = Student(
-            studentId,
-            parseName(firstName),
-            parseName(lastName),
-            age,
-            icNumber,
-            programme,
-            numOfSubjects,
-            cgpa
-        );
+        Student student;
+        student.id = studentId;
+        student.firstName = firstName;
+        student.lastName = lastName;
+        student.age = age;
+        student.icNumber = icNumber;
+        student.programme = programme;
+        student.numOfSubjects = numOfSubjects;
+        student.cgpa = cgpa;
+
+        Students[j++] = student;
 
         // Read next row
         readStudentsData >> studentId >> firstName >> lastName >> age >> icNumber
@@ -353,7 +356,11 @@ int createAccount(string username, string password, string role)
     int accountId = generateId(Accounts);
 
     // Create new account
-    Account newAccount(accountId, username, password, role);
+    Account newAccount;
+    newAccount.id = accountId;
+    newAccount.username = username;
+    newAccount.password = password;
+    newAccount.role = role;
 
     // Find the position of empty space in the array
     int empty = getEmptyPosition(Accounts);
@@ -459,16 +466,16 @@ int createStudent(
     // Get new id
     int studentId = generateId(Students);
 
-    Student newStudent(
-        studentId,
-        firstName,
-        lastName,
-        age,
-        icNumber,
-        programme,
-        numOfSubjects,
-        cgpa
-    );
+    Student newStudent;
+
+    newStudent.id = studentId;
+    newStudent.firstName = firstName;
+    newStudent.lastName = lastName;
+    newStudent.age = age;
+    newStudent.icNumber = icNumber;
+    newStudent.programme = programme;
+    newStudent.numOfSubjects = numOfSubjects;
+    newStudent.cgpa = cgpa;
 
     // Find the position of empty space in the array
     int empty = getEmptyPosition(Students);
