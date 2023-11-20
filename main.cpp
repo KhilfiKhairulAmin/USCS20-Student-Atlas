@@ -12,7 +12,7 @@ Each function and global variable have been documented to provide clarification 
 function purpose on top of its function header to know its return value and meanings.
 
 Lastly, we hope this source code serve as a prime example of what a structured and readable code should be. Lastly,
-please contact khilfikhairulamin@gmail.com if you have further inquiries or bug reports on this project.
+please contact us if you have further inquiries or bug reports on this project.
 
 Thanks ^_^
 */
@@ -49,7 +49,7 @@ Student Students[MAX_SIZE];
 /*===================================================== SECTION 2: MAIN PROGRAM =====================================================*/
 
 void authUI();
-void mainUI(int);
+void mainUI();
 
 int main()
 {
@@ -57,7 +57,7 @@ int main()
     authUI();
 
     // User has logged in successfully
-    mainUI(1);
+    mainUI();
 
     return 0;
 }
@@ -74,10 +74,11 @@ void signUp(),
 
 // Prototypes for data manipulation functions
 void readStudents(),
-     writeStudents();
-int  addStudent(int, string, string, int, string, string, int, float),
-     editStudent(int, string, string, int, string, string, int, float);
-bool deleteStudent(int);
+     writeStudents(),
+     viewStudents(),
+     addStudent(),
+     editStudent(),
+     deleteStudent();
 
 // Prototypes for utility functions
 int  findStudent(int),
@@ -127,46 +128,46 @@ void authUI()
 }
 
 // Main program interface
-void mainUI(int x)
+void mainUI()
 {
-	int select;
-	if(x == 1)
-	{
-		cout<< "========================="
-			<< "\n Welcome to main menu "
-			<<"\n========================="
-			<<endl
-			<<"1.Browse"
-			<<"\n2.Edit"
-			<<"\n3.Delete"
-			<<"\n4.Exit";
-			do {
-			cout<<"\nPlease make your selection: ";
-			cin>>select;
-			} while (x > 4 || x < 1);
-			
-		switch(select)
-		{
-			case 1:
-				
-				break;
-			case 2:
-				
-				break;
-			case 3:
-				
-				break;
-			case 4:
-				break;
-			
-		}
-	}
-	else
-	{
-		
-	}
-	
-	return;
+    readStudents();
+    while (true)
+    {
+        int select;
+        cout << "========================="
+                << "\n Welcome to main menu "
+                <<"\n========================="
+                <<endl
+                <<"1.Browse"
+                <<"\n2.Add"
+                <<"\n3.Edit"
+                <<"\n4.Delete"
+                <<"\n5.Exit";
+
+        do {
+        cout<<"\nPlease make your selection: ";
+        cin>>select;
+        } while (select > 5 || select < 1);
+            
+        switch(select)
+        {
+            case 1:
+                viewStudents();
+                break;
+            case 2:
+                addStudent();
+                break;
+            case 3:
+                editStudent();
+                break;
+            case 4:
+                deleteStudent();
+                break;
+            case 5:
+                cout << "Thank you for using this system ^_^ ! See you later...";
+                return;
+        }
+    }
 }
 
 // Register new account
@@ -176,7 +177,7 @@ void signUp()
     int age, nosub, studentid, year, day, month;
 
     cout << "________________________\n";
-    cout << "| STUDENT REGISTRATION |\n";
+    cout << "| ACCOUNT REGISTRATION |\n";
     cout << "------------------------\n";
 
     cout << "Username: ";
@@ -239,7 +240,7 @@ void login()
             if(usernameIn == username && passwordIn == password)
             {
                 readAccount.close();
-                cout << "\nLogin successful!";
+                cout << "\nLogin successful!\n";
                 return;
             }
             readAccount >> username >> password;
@@ -326,15 +327,53 @@ void writeStudents()
     return;
 }
 
+void viewStudents()
+{
+    cout << "\n\nINTEC STUDENTS DATA VIEW" << endl;
+    cout << "ID, First Name, Last Name, Age, IC Number, Programme, Number Of Subjects, CGPA" << endl;
+
+    for (int i = 0; i < lenStudents(); i++)
+    {
+        Student s = Students[i];
+        cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
+             << s.age << ", " << s.icNumber << ", " << s.programme << ", "
+             << s.numOfSubjects << ", " << s.cgpa << endl;
+    }
+    cout << "\n\n";
+}
+
 /**
  * Create a new `Student`. Return the `id` of student.
 */
-int addStudent(
-    int accountId, string firstName, string lastName,
-    int age, string icNumber, string programme,
-    int numOfSubjects, float cgpa
-)
+void addStudent()
 {
+    string firstName, lastName, icNumber, programme;
+    int age, numOfSubjects;
+    double cgpa;
+
+    cout << "Add new Student" << endl;
+    cout << "First Name: ";
+    cin.ignore();
+    getline(cin, firstName);
+
+    cout << "Last Name: ";
+    getline(cin, lastName);
+
+    cout << "Age: ";
+    cin >> age;
+
+    cout << "IC Number: ";
+    cin >> icNumber;
+
+    cout << "Programme: ";
+    cin >> programme;
+
+    cout << "Number of Subjects: ";
+    cin >> numOfSubjects;
+
+    cout << "CGPA: ";
+    cin >> cgpa;
+
     // Get new id
     int studentId = Students[0].id;
 
@@ -366,8 +405,7 @@ int addStudent(
     if (empty == MAX_SIZE)
     {
         cout << "Maximum size reached. Cannot add new Student.";
-        // Return invalid id to represent error occurred
-        return -1;
+        return;
     }
 
     // Assign to empty location in `Accounts` array
@@ -375,26 +413,56 @@ int addStudent(
 
     writeStudents();
 
-    return studentId;
+    return;
 }
 
 /**
  * Update `Student` with `id` to the new data. Return `pos` if the account exists, else return `-1`.
 */
-int editStudent(
-    int studentId, string firstName = "", string lastName = "",
-    int age = -1, string icNumber = "", string programme = "",
-    int numOfSubjects = -1, float cgpa = -1
-)
+void editStudent()
 {
-    // Find position of this `Student` in array
+    string firstName, lastName, icNumber, programme;
+    int studentId, age, numOfSubjects;
+    double cgpa;
+
+    cout << "Edit a Student" << endl;
+
+    cout << "Enter the student ID: ";
+    cin >> studentId;
+
+    // Find position of this student in array
     int pos = findStudent(studentId);
-    
+
     if (pos == -1)
     {
-        // ErrMsg = "Student with id of " + numToString(studentId) + " does not exist.";
-        return -1;
+        cout << "Student with id of " << studentId << " does not exist.";
+        return;
     }
+
+    cout << "Provide value for data you want to edit. Else leave blank or enter -1 for numerical value." << endl;
+
+    cout << "First Name: ";
+    cin.ignore();
+    getline(cin, firstName);
+
+    cout << "Last Name: ";
+    getline(cin, lastName);
+
+    cout << "Age: ";
+    cin >> age;
+
+    cout << "IC Number: ";
+    cin.ignore();
+    getline(cin, icNumber);
+
+    cout << "Programme: ";
+    getline(cin, programme);
+
+    cout << "Number of Subjects: ";
+    cin >> numOfSubjects;
+
+    cout << "CGPA: ";
+    cin >> cgpa;
 
     // Only update the data if provided
     if (firstName != "")
@@ -403,7 +471,7 @@ int editStudent(
         Students[pos].lastName = lastName;
     if (age != -1)
         Students[pos].age = age;
-    if (icNumber != "")
+    if (icNumber != "" || icNumber == "-1")
         Students[pos].icNumber = icNumber;
     if (programme != "")
         Students[pos].programme = programme;
@@ -413,21 +481,26 @@ int editStudent(
         Students[pos].cgpa = cgpa;
 
     writeStudents();
-
-    // Return position of this student in the array
-    return pos;
+    
+    return;
 }
 
 /**
  * Delete a Student with `studentId`
 */
-bool deleteStudent(int studentId)
+void deleteStudent()
 {
+    int studentId;
+
+    cout << "Enter the student ID: ";
+    cin >> studentId;
+
     int studentIndex = findStudent(studentId);
 
     if (studentIndex == -1)
     {
-        return false;
+        cout << "Student with id of " << studentId << " does not exist.";
+        return;
     }
 
     int initLen = lenStudents();
@@ -444,7 +517,7 @@ bool deleteStudent(int studentId)
 
     writeStudents();
 
-    return true;
+    return;
 }
 
 /**
