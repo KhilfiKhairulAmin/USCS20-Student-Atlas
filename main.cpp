@@ -95,7 +95,7 @@ void save();
 int main()
 {
     load();
-    updateAccount(1, "", "");
+    deleteAccountAndStudent(3);
     return 0;
 }
 
@@ -345,7 +345,7 @@ void printAccounts()
 /**
  * Update `Account` with `id` to the new data. Return `pos` if the account exists, else return `-1`.
 */
-int updateAccount(int accountId, string username, string newPassword)
+int updateAccount(int accountId, string username = "", string newPassword = "")
 {
     // Find position of this `Account` in array
     int pos = findId(Accounts, accountId);
@@ -389,26 +389,16 @@ bool deleteAccountAndStudent(int accountId)
         ErrMsg = "Admin account can't be deleted.";
         return false;
     }
-    
-    int studentIndex = findId(Students, account.refStudentId);
 
-    if (account.role == "STUDENT")
+    if (account.refStudentId != -1)
     {
-        if (studentIndex == -1)
-        {
-            // ErrMsg = "Student with id of " + numToString(account.refStudentId) + " does not exist.";
-            return false;
-        }
+        int studentIndex = findId(Students, account.refStudentId);
         deleteAtIndex(Students, studentIndex);
     }
-    
-    if (account.role == "ADMIN" && !deleteAtIndex(Accounts, accountIndex))
-    {
-        ErrMsg = "Something went wrong.";
-        return false;
-    }
 
-    deleteAtIndex(Accounts, 0);
+    deleteAtIndex(Accounts, accountIndex);
+
+    save();
 
     return true;
 }
@@ -477,9 +467,9 @@ void printStudents()
  * Update `Student` with `id` to the new data. Return `pos` if the account exists, else return `-1`.
 */
 int updateStudent(
-    int studentId, string firstName, string lastName,
-    int age, string icNumber, string programme,
-    int numOfSubjects, float cgpa
+    int studentId, string firstName = "", string lastName = "",
+    int age = -1, string icNumber = "", string programme = "",
+    int numOfSubjects = -1, float cgpa = -1
 )
 {
     // Find position of this `Student` in array
@@ -507,6 +497,8 @@ int updateStudent(
         Students[pos].numOfSubjects = numOfSubjects;
     if (cgpa != -1)
         Students[pos].cgpa = cgpa;
+
+    save();
 
     // Return position of this student in the array
     return pos;
@@ -627,13 +619,14 @@ template<class T> bool deleteAtIndex(T array[MAX_SIZE], int index)
         return false;
     }
 
-    // Reset element at `index`
+    int initLen = len(array);
     array[index] = T();
 
     // Move other elements forward to fill empty spaces
-    for (int i = index; i < len(array) - 1; i++)
+    for (int i = index; i < initLen - 1; i++)
     {
-        array[i] = array[i+1];
+        swap(array[i], array[i+1]);
     }
+
     return true;
 }
