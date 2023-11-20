@@ -348,12 +348,11 @@ void printAccounts()
 int updateAccount(int accountId, string username, string newPassword)
 {
     // Find position of this `Account` in array
-    // TODO Keep current data if `null` is entered.
     int pos = findId(Accounts, accountId);
 
+    // If Account is not found
     if (pos == -1)
     {
-        // Account is not found
         // ErrMsg = "Account with id of " + numToString(accountId) + " does not exist.";
         return -1;
     }
@@ -391,23 +390,23 @@ bool deleteAccountAndStudent(int accountId)
         return false;
     }
     
-    // int studentIndex = findId(Students, account.refStudentId);
+    int studentIndex = findId(Students, account.refStudentId);
 
-    // if (account.role == "STUDENT")
-    // {
-    //     if (studentIndex == -1)
-    //     {
-    //         ErrMsg = "Student with id of " + numToString(account.refStudentId) + " does not exist.";
-    //         return false;
-    //     }
-    //     deleteAtIndex(Students, studentIndex);
-    // }
+    if (account.role == "STUDENT")
+    {
+        if (studentIndex == -1)
+        {
+            // ErrMsg = "Student with id of " + numToString(account.refStudentId) + " does not exist.";
+            return false;
+        }
+        deleteAtIndex(Students, studentIndex);
+    }
     
-    // if (account.role == "ADMIN" && !deleteAtIndex(Accounts, accountIndex))
-    // {
-    //     ErrMsg = "Something went wrong.";
-    //     return false;
-    // }
+    if (account.role == "ADMIN" && !deleteAtIndex(Accounts, accountIndex))
+    {
+        ErrMsg = "Something went wrong.";
+        return false;
+    }
 
     deleteAtIndex(Accounts, 0);
 
@@ -493,17 +492,21 @@ int updateStudent(
         return -1;
     }
 
-    // Overwrite old student data
-    Students[pos] = Student(
-        studentId,
-        firstName,
-        lastName,
-        age,
-        icNumber,
-        programme,
-        numOfSubjects,
-        cgpa
-    );
+    // Only update the data if provided
+    if (firstName != "")
+        Students[pos].firstName = firstName;
+    if (lastName != "")
+        Students[pos].lastName = lastName;
+    if (age != -1)
+        Students[pos].age = age;
+    if (icNumber != "")
+        Students[pos].icNumber = icNumber;
+    if (programme != "")
+        Students[pos].programme = programme;
+    if (numOfSubjects != -1)
+        Students[pos].numOfSubjects = numOfSubjects;
+    if (cgpa != -1)
+        Students[pos].cgpa = cgpa;
 
     // Return position of this student in the array
     return pos;
