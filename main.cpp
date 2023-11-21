@@ -22,7 +22,6 @@ Thanks ^_^
 
 #include <iostream> // For user input and output
 #include <fstream> // For file operations
-#include <cmath> // For complicated mathematical operations
 #include <algorithm> // for string processing
 using namespace std;
 
