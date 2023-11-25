@@ -83,7 +83,7 @@ void readStudents(),
      addStudent(),
      editStudent(),
      deleteStudent(),
-     searchStudentByName();
+     searchStudents();
 
 // Prototypes for utility functions
 int  findStudent(int),
@@ -162,7 +162,7 @@ void mainUI()
                 deleteStudent();
                 break;
             case 5:
-                searchStudentByName();
+                searchStudents();
                 break;
             case 6:
                 cout << "Thank you for using this system ^_^ ! See you later...";
@@ -482,39 +482,111 @@ void editStudent()
 }
 
 /**
- * Search student with name. If found, display the student data.
+ * Search student based on an attribute. Display the student data if found.
 */
-void searchStudentByName()
+void searchStudents()
 {
-    string nameIn;
+    int searchKey;
 
-    cout << "Name to search: ";
-    cin.ignore();
-    getline(cin, nameIn);
+    cout << "Please choose attribute to search for:\n"
+         << "1.Student ID\n"
+         << "2.Name\n"
+         << "3.Programme\n";
+    
+    cin >> searchKey;
 
-    string fullName;
-
-    for (int i = 0; i < lenStudents(); i++)
+    switch (searchKey)
     {
-        fullName = Students[i].firstName + ' ' + Students[i].lastName;
+        case 1:
+        {
+            int idIn;
+            cout << "Student ID to search for: ";
+            
+            cin >> idIn;
 
-        // Convert nameIn and fullName to lowercase for better search results
-        for (int j = 0; j < nameIn.length(); j++)
-        {
-            nameIn[j] = (char)tolower(nameIn[j]);
+            for (int i = 0; i < lenStudents(); i++)
+            {
+                if (idIn == Students[i].id)
+                {
+                    Student s = Students[i];
+                    cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
+                        << s.age << ", " << s.icNumber << ", " << s.programme << ", "
+                        << s.numOfSubjects << ", " << s.cgpa << endl;
+                    break;
+                }
+            }
+            break;
         }
-        for (int k = 0; k < fullName.length(); k++)
+        case 2:
         {
-            fullName[k] = (char)tolower(fullName[k]);
-        }
+                        string nameIn;
 
-        if (fullName.find(nameIn) != fullName.npos)
-        {
-            Student s = Students[i];
-            cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
-                 << s.age << ", " << s.icNumber << ", " << s.programme << ", "
-                 << s.numOfSubjects << ", " << s.cgpa << endl;
+            cout << "Name to search: ";
+            cin.ignore();
+            getline(cin, nameIn);
+
+            string fullName;
+
+            for (int i = 0; i < lenStudents(); i++)
+            {
+                fullName = Students[i].firstName + ' ' + Students[i].lastName;
+
+                // Convert nameIn and fullName to lowercase for better search results
+                for (int j = 0; j < nameIn.length(); j++)
+                {
+                    nameIn[j] = (char)tolower(nameIn[j]);
+                }
+                for (int k = 0; k < fullName.length(); k++)
+                {
+                    fullName[k] = (char)tolower(fullName[k]);
+                }
+
+                if (fullName.find(nameIn) != fullName.npos)
+                {
+                    Student s = Students[i];
+                    cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
+                        << s.age << ", " << s.icNumber << ", " << s.programme << ", "
+                        << s.numOfSubjects << ", " << s.cgpa << endl;
+                }
+            }
+            break;
         }
+        case 3:
+        {
+            string programmeIn;
+
+            cout << "Programme to search: ";
+            cin.ignore();
+            getline(cin, programmeIn);
+
+            string programme;
+
+            for (int i = 0; i < lenStudents(); i++)
+            {
+                programme = Students[i].programme;
+
+                // Convert programmeIn and programme to lowercase for better search results
+                for (int j = 0; j < programmeIn.length(); j++)
+                {
+                    programmeIn[j] = (char)tolower(programmeIn[j]);
+                }
+                for (int k = 0; k < programme.length(); k++)
+                {
+                    programme[k] = (char)tolower(programme[k]);
+                }
+
+                if (programmeIn.find(programme) != programmeIn.npos)
+                {
+                    Student s = Students[i];
+                    cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
+                        << s.age << ", " << s.icNumber << ", " << s.programme << ", "
+                        << s.numOfSubjects << ", " << s.cgpa << endl;
+                }
+            }
+            break;
+        }
+        default:
+            cout << "Invalid option. Search operation aborted.\n";
     }
 }
 
