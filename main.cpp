@@ -72,20 +72,22 @@ int main()
 
 /*++++++++++++ SECTION 3A: PROTOTYPES ++++++++++++*/
 
-// Prototypes for signUp and login interface
+// Prototypes for sign up and login functionality
 void signUp(),
      login();
 
-// Prototypes for data manipulation functions
-void readStudents(),
-     writeStudents(),
-     viewStudents(),
+// Prototypes for student data management functionality
+void viewStudents(),
      addStudent(),
      editStudent(),
      deleteStudent(),
      searchStudents();
 
-// Prototypes for utility functions
+// Prototypes for file operation functionality
+void readStudents(),
+     writeStudents();
+
+// Prototypes for utility functionality
 int findStudent(int),
     lenStudents();
 
@@ -99,7 +101,7 @@ void authUI()
 {
     char choice;
 
-    cout << "Do you have an existing account? [Y/n] \n";
+    cout << "Do you have an existing account? [Y/n]: ";
     
     do
     {
@@ -127,7 +129,9 @@ void authUI()
     return;
 }
 
-// Main program interface
+/**
+ * Main program interface
+*/
 void mainUI()
 {
     readStudents();
@@ -234,7 +238,7 @@ void signUp()
 
     // Write this account at the end of the text file
     ofstream writeAccount("accounts.txt", ios::app);
-    
+
     writeAccount << username << " " << password << endl;
     writeAccount.close();
 
@@ -292,16 +296,16 @@ void readStudents()
     double cgpa;
     string firstName, lastName, icNumber, programme;
 
-    // Read data on the first row
+    // Read the first line
     readStudentsData >> studentId >> firstName >> lastName >> age >> icNumber
                      >> programme >> numOfSubjects >> cgpa;
 
-    // Parse first and last name
+    // Parse the first and last name
     replace(firstName.begin(), firstName.end(), '_', ' ');
     replace(lastName.begin(), lastName.end(), '_', ' ');
 
     int j = 0;
-    // Read data row by row
+
     do
     {
         // Assign each `Student` into the global array
@@ -317,14 +321,18 @@ void readStudents()
 
         Students[j++] = student;
 
-        // Read next row
+        // Read next line
         readStudentsData >> studentId >> firstName >> lastName >> age >> icNumber
                          >> programme >> numOfSubjects >> cgpa;
+
+        // Parse the first and last name
+        replace(firstName.begin(), firstName.end(), '_', ' ');
+        replace(lastName.begin(), lastName.end(), '_', ' ');
+        
     } while (readStudentsData.good());
 
     // Close the file
     readStudentsData.close();
-
     return;
 }
 
@@ -349,11 +357,14 @@ void writeStudents()
                       << s.numOfSubjects << ' ' << s.cgpa << endl;
     }
 
+    // Close the file
     writeStudents.close();
-
     return;
 }
 
+/**
+ * Print all student data
+*/
 void viewStudents()
 {
     cout << "\n\nINTEC STUDENTS DATA VIEW" << endl;
@@ -370,7 +381,7 @@ void viewStudents()
 }
 
 /**
- * Create a new `Student`. Return the `id` of student.
+ * Create a new student
 */
 void addStudent()
 {
@@ -444,7 +455,7 @@ void addStudent()
 }
 
 /**
- * Update `Student` with `id` to the new data. Return `pos` if the account exists, else return `-1`.
+ * Update the student data to the new one if provided.
 */
 void editStudent()
 {
@@ -622,7 +633,7 @@ void searchStudents()
 }
 
 /**
- * Delete a Student with `studentId`
+ * Delete a student
 */
 void deleteStudent()
 {
