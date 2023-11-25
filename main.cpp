@@ -9,10 +9,10 @@ All in all, the source code is separated into three main parts from top to botto
 3. Prototypes and Function Declarations
 
 Each function and global variable have been documented to provide clarification of their existence. You can view each
-function purpose on top of its function header to know its return value and meanings.
+function purpose on top of its function header to know its purpose and return value.
 
-Lastly, we hope this source code serve as a prime example of what a structured and readable code should be. Lastly,
-please contact us if you have further inquiries or bug reports on this project.
+Lastly, we hope this source code serve as a prime example of what a structured and readable code should be. Please
+contact us if you have further inquiries or bug reports on this project.
 
 Thanks ^_^
 */
@@ -86,28 +86,34 @@ void readStudents(),
      searchStudents();
 
 // Prototypes for utility functions
-int  findStudent(int),
-     lenStudents();
+int findStudent(int),
+    lenStudents();
 
 
 /*++++++ SECTION 3A: FUNCTION DECLARATIONS ++++++*/
 
-// Authorization user interface
+/**
+ * Authorization user interface
+*/
 void authUI()
 {
-    int choice;
+    char choice;
 
-    cout << "\nDo you have an existing record?\n"
-         << "1. Yes\n"
-         << "2. No\n";
+    cout << "Do you have an existing account? [Y/n] \n";
     
     do
     {
-        cout << "Option: ";
         cin >> choice;
+        choice = tolower(choice);
 
-        if(choice == 1 || choice == 2)
+        if (choice == 'y')
         {
+            login();
+            break;
+        }
+        else if (choice == 'n')
+        {
+            signUp();
             break;
         }
         
@@ -115,12 +121,7 @@ void authUI()
     }
     while(true);
 
-    if (choice == 1)
-        login();
-    else if (choice == 2)
-        signUp();
-
-    // Refresh the terminal
+    // Clear the terminal
     system("cls");
 
     return;
@@ -133,19 +134,18 @@ void mainUI()
     while (true)
     {
         int select;
-        cout << "========================="
-                << "\n Welcome to main menu "
-                <<"\n========================="
-                <<endl
-                <<"1.Browse"
-                <<"\n2.Add"
-                <<"\n3.Edit"
-                <<"\n4.Delete"
-                <<"\n5.Search by Name"
-                <<"\n6.Exit";
+        cout << "=========================\n"
+             << " Welcome to main menu  \n"
+             << "=========================\n"
+             << "1.View \n"
+             << "2.Search \n"
+             << "3.Add \n"
+             << "4.Edit \n"
+             << "5.Delete \n"
+             << "6.Exit \n";
 
-        cout<<"\nPlease make your selection: ";
-        cin>>select;
+        cout << "Please make your selection: ";
+        cin >> select;
             
         switch(select)
         {
@@ -153,20 +153,22 @@ void mainUI()
                 viewStudents();
                 break;
             case 2:
-                addStudent();
-                break;
-            case 3:
-                editStudent();
-                break;
-            case 4:
-                deleteStudent();
-                break;
-            case 5:
                 searchStudents();
                 break;
+            case 3:
+                addStudent();
+                break;
+            case 4:
+                editStudent();
+                break;
+            case 5:
+                deleteStudent();
+                break;
             case 6:
-                cout << "Thank you for using this system ^_^ ! See you later...";
+                cout << "Thank you for using this system ^_^ ! See you later... \n";
                 return;
+            default:
+                cout << "Invalid selection. \n";
         }
     }
 }
