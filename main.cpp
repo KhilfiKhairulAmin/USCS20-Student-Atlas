@@ -180,17 +180,46 @@ void signUp()
 {
     string username, password, repeatPassword, fullname, program;
     int age, nosub, studentid, year, day, month;
+    bool validUsername = false;
 
     cout << "________________________\n";
     cout << "| ACCOUNT REGISTRATION |\n";
     cout << "------------------------\n";
 
-    cout << "Username: ";
-    cin >> username;
+    // Username input and validation
+    do 
+    {
+        // Begin with assumption that username is valid
+        validUsername = true;
 
+        cout << "Username: ";
+        cin >> username;
+
+        // Read the username already registered
+        ifstream readAccount("accounts.txt");
+        string usernameRegistered;
+        
+        readAccount >> usernameRegistered;
+        while (readAccount.good())
+        {
+            // Checks if username is already taken
+            if(username == usernameRegistered)
+            {
+                // Username is not valid because it already used by other user
+                validUsername = false;
+                readAccount.close();
+                cout << "The username is already taken. Please choose other username.\n";
+                break;
+            }
+            readAccount >> usernameRegistered;
+        }
+    } while (!validUsername);
+
+    // Password input (no need validation, simple string)
     cout << "Password: ";
     cin >> password;
 
+    // Repeat password input and validation
     do
     {
         cout << "Repeat password: ";
@@ -199,14 +228,14 @@ void signUp()
         if (password == repeatPassword)
             break;
 
-        cout << "The repeated password is not correct. Please re-enter." << endl;
+        cout << "The repeated password is not correct. Please re-enter. \n" << endl;
     }
-    while (1);
+    while (true);
 
+    // Write this account at the end of the text file
     ofstream writeAccount("accounts.txt", ios::app);
-
+    
     writeAccount << username << " " << password << endl;
-
     writeAccount.close();
 
     return;
@@ -238,14 +267,14 @@ void login()
             if(usernameIn == username && passwordIn == password)
             {
                 readAccount.close();
-                cout << "\nLogin successful!\n";
+                cout << "\nLogin successful!";
                 return;
             }
             readAccount >> username >> password;
         }
         readAccount.close();
-        cout << "\nLogin failed.\n";
-        cout << "Please enter username and password again.\n\n";
+        cout << "\nLogin failed.";
+        cout << "Please enter username and password again.";
     }
     while(true);
 }
