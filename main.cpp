@@ -22,7 +22,7 @@ Thanks ^_^
 
 #include <iostream> // For user input and output
 #include <fstream> // For file operations
-#include <algorithm> // for string processing
+#include <algorithm> // For string processing
 using namespace std;
 
 // Student datatype
@@ -52,10 +52,15 @@ void mainUI();
 
 int main()
 {
+    cout << "___________________________________\n"
+         << "| WELCOME TO INTEC STUDENT RECORD |\n"
+         << "-----------------------------------\n";
+
     // Authorize the user by signing up or logging in
     authUI();
 
     // User has logged in successfully
+    // Go to the main menu
     mainUI();
 
     return 0;
@@ -77,7 +82,8 @@ void readStudents(),
      viewStudents(),
      addStudent(),
      editStudent(),
-     deleteStudent();
+     deleteStudent(),
+     searchStudentByName();
 
 // Prototypes for utility functions
 int  findStudent(int),
@@ -91,37 +97,31 @@ void authUI()
 {
     int choice;
 
-    cout << "___________________________________\n";
-    cout << "| WELCOME TO INTEC STUDENT RECORD |\n";
-    cout << "-----------------------------------\n";
-
-    cout << "\nDo you have an existing record?\n";
-    cout << "1. Yes\n";
-    cout << "2. No\n";
+    cout << "\nDo you have an existing record?\n"
+         << "1. Yes\n"
+         << "2. No\n";
     
     do
     {
-
         cout << "Option: ";
         cin >> choice;
 
-        if(choice > 2 || choice < 1)
+        if(choice == 1 || choice == 2)
         {
-            cout << "\nPlease enter option correctly.\n";
+            break;
         }
-
+        
+        cout << "\nPlease enter option correctly.\n";
     }
-    while(choice > 2 || choice < 1);
+    while(true);
 
-    switch(choice)
-    {
-        case 1:
-            login();
-            break;
-        case 2:
-            signUp();
-            break;
-    }
+    if (choice == 1)
+        login();
+    else if (choice == 2)
+        signUp();
+
+    // Refresh the terminal
+    system("cls");
 
     return;
 }
@@ -141,12 +141,11 @@ void mainUI()
                 <<"\n2.Add"
                 <<"\n3.Edit"
                 <<"\n4.Delete"
-                <<"\n5.Exit";
+                <<"\n5.Search by Name"
+                <<"\n6.Exit";
 
-        do {
         cout<<"\nPlease make your selection: ";
         cin>>select;
-        } while (select > 5 || select < 1);
             
         switch(select)
         {
@@ -163,13 +162,18 @@ void mainUI()
                 deleteStudent();
                 break;
             case 5:
+                searchStudentByName();
+                break;
+            case 6:
                 cout << "Thank you for using this system ^_^ ! See you later...";
                 return;
         }
     }
 }
 
-// Register new account
+/**
+ * Register new account
+*/
 void signUp()
 {
     string username, password, repeatPassword, fullname, program;
@@ -203,14 +207,7 @@ void signUp()
 
     writeAccount.close();
 
-    // cout << "Full Name:";
-    // getline(cin >> ws, fullname);
-    // cout << "Age: ";
-    // cin >> age;
-    // cout << "Birthdate: \n";
-    // cout << "Day(1-30): "; cin >> day; cout << "Month (1 - 12): "; cin >> month; cout << "Year (2xxx): "; cin >> year;
-
-    // return;
+    return;
 }
 
 /**
@@ -485,6 +482,43 @@ void editStudent()
 }
 
 /**
+ * Search student with name. If found, display the student data.
+*/
+void searchStudentByName()
+{
+    string nameIn;
+
+    cout << "Name to search: ";
+    cin.ignore();
+    getline(cin, nameIn);
+
+    string fullName;
+
+    for (int i = 0; i < lenStudents(); i++)
+    {
+        fullName = Students[i].firstName + ' ' + Students[i].lastName;
+
+        // Convert nameIn and fullName to lowercase for better search results
+        for (int j = 0; j < nameIn.length(); j++)
+        {
+            nameIn[j] = (char)tolower(nameIn[j]);
+        }
+        for (int k = 0; k < fullName.length(); k++)
+        {
+            fullName[k] = (char)tolower(fullName[k]);
+        }
+
+        if (fullName.find(nameIn) != fullName.npos)
+        {
+            Student s = Students[i];
+            cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
+                 << s.age << ", " << s.icNumber << ", " << s.programme << ", "
+                 << s.numOfSubjects << ", " << s.cgpa << endl;
+        }
+    }
+}
+
+/**
  * Delete a Student with `studentId`
 */
 void deleteStudent()
@@ -511,6 +545,7 @@ void deleteStudent()
     // Move other elements forward to fill empty spaces
     for (int i = studentIndex; i < initLen - 1; i++)
     {
+        // Swap the position of element in the array
         swap(Students[i], Students[i+1]);
     }
 
