@@ -451,13 +451,13 @@ void searchStudents()
                 fullName = Students[i].firstName + ' ' + Students[i].lastName;
 
                 // Convert nameIn and fullName to lowercase for better search results
-                for (int j = 0; j < nameIn.length(); j++)
-                {
-                    nameIn[j] = (char)tolower(nameIn[j]);
-                }
                 for (int k = 0; k < fullName.length(); k++)
                 {
                     fullName[k] = (char)tolower(fullName[k]);
+                }
+                for (int j = 0; j < nameIn.length(); j++)
+                {
+                    nameIn[j] = (char)tolower(nameIn[j]);
                 }
 
                 if (fullName.find(nameIn) != fullName.npos)
