@@ -155,7 +155,8 @@ void mainUI()
 
         cout << "Please make your selection: ";
         cin >> select;
-            
+        cin.ignore(); // Ignore '\n' character
+
         switch(select)
         {
             case '1':
@@ -422,6 +423,7 @@ void searchStudents()
             cout << "Student ID to search for: ";
             
             cin >> idIn;
+            cin.ignore();
 
             for (int i = 0; i < lenStudents(); i++)
             {
@@ -533,7 +535,6 @@ void addStudent()
 
     cout << "Add new Student" << endl;
     cout << "First Name: ";
-    cin.ignore();
     getline(cin, firstName);
 
     cout << "Last Name: ";
@@ -602,6 +603,7 @@ void editStudent()
 
     cout << "Enter the student ID: ";
     cin >> studentId;
+    cin.ignore();
 
     // Find position of this student in array
     int pos = findStudent(studentId);
@@ -616,7 +618,7 @@ void editStudent()
          << "Leave blank or input -1 (numerical value) to keep old data." << endl;
 
     cout << "First Name: ";
-    cin.ignore();
+    
     getline(cin, firstName);
 
     cout << "Last Name: ";
