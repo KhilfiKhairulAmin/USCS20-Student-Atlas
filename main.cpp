@@ -22,6 +22,7 @@ Thanks ^_^
 
 #include <iostream> // For user input and output
 #include <fstream> // For file operations
+#include <stdlib.h> // For text output coloring
 #include <algorithm> // For string processing
 using namespace std;
 
@@ -43,6 +44,9 @@ const int MAX_SIZE = 200;
 
 // Store Students data
 Student Students[MAX_SIZE];
+
+// Store the current user's username
+string globalUsername;
 
 
 /*===================================================== SECTION 2: MAIN PROGRAM =====================================================*/
@@ -90,6 +94,7 @@ void readStudents(),
 // Prototypes for utility functionality
 int findStudent(int),
     lenStudents();
+void pressEnterToContinue();
 
 
 /*++++++ SECTION 3A: FUNCTION DECLARATIONS ++++++*/
@@ -100,11 +105,10 @@ int findStudent(int),
 void authUI()
 {
     char choice;
-
-    cout << "Do you have an existing account? [Y/n]: ";
     
     do
     {
+        cout << "\nDo you have an existing account? [Y/n]: ";
         cin >> choice;
         choice = tolower(choice);
 
@@ -118,13 +122,10 @@ void authUI()
             signUp();
             break;
         }
-        
-        cout << "\nPlease enter option correctly.\n";
+        else
+            cout << "Hint: Please enter 'y' for yes or 'n' for no.\n";
     }
     while(true);
-
-    // Clear the terminal
-    system("cls");
 
     return;
 }
@@ -137,9 +138,12 @@ void mainUI()
     readStudents();
     while (true)
     {
-        int select;
+        // Clear the terminal on each loop
+        system("cls");
+
+        char select;
         cout << "=========================\n"
-             << " Welcome to main menu  \n"
+             << " Welcome to main menu " + globalUsername + "!\n"
              << "=========================\n"
              << "1.View \n"
              << "2.Search \n"
@@ -153,22 +157,22 @@ void mainUI()
             
         switch(select)
         {
-            case 1:
+            case '1':
                 viewStudents();
                 break;
-            case 2:
+            case '2':
                 searchStudents();
                 break;
-            case 3:
+            case '3':
                 addStudent();
                 break;
-            case 4:
+            case '4':
                 editStudent();
                 break;
-            case 5:
+            case '5':
                 deleteStudent();
                 break;
-            case 6:
+            case '6':
                 cout << "Thank you for using this system ^_^ ! See you later... \n";
                 return;
             default:
@@ -182,14 +186,17 @@ void mainUI()
 */
 void signUp()
 {
+    // Clear the terminal
+    system("cls");
+
     string username, password, repeatPassword, fullname, program;
     int age, nosub, studentid, year, day, month;
-    bool validUsername = false;
 
     cout << "________________________\n";
     cout << "| ACCOUNT REGISTRATION |\n";
     cout << "------------------------\n";
 
+    bool validUsername = false;
     // Username input and validation
     do 
     {
@@ -219,20 +226,26 @@ void signUp()
         }
     } while (!validUsername);
 
-    // Password input (no need validation, simple string)
-    cout << "Password: ";
-    cin >> password;
+    globalUsername = username;
 
-    // Repeat password input and validation
+    // Password input and validation
     do
     {
+        // Password input
+        cout << "Password: ";
+        cin >> password;
+
+        system("cls");
+
+        // Repeat the same password
         cout << "Repeat password: ";
         cin >> repeatPassword;
 
         if (password == repeatPassword)
             break;
 
-        cout << "The repeated password is not correct. Please re-enter. \n" << endl;
+        system("cls");
+        cout << "The repeated password is not correct. \n";
     }
     while (true);
 
@@ -250,6 +263,9 @@ void signUp()
 */
 void login()
 {
+    // Clear the terminal
+    system("cls");
+
     cout << "_______________\n";
     cout << "|    LOG IN   |\n";
     cout << "---------------\n";
@@ -260,7 +276,7 @@ void login()
         cout << "Please enter username: ";
         cin >> usernameIn;
 
-        cout << "\nPlease enter password: ";
+        cout << "Please enter password: ";
         cin >> passwordIn;
 
         ifstream readAccount("accounts.txt");
@@ -270,15 +286,14 @@ void login()
         {
             if(usernameIn == username && passwordIn == password)
             {
+                globalUsername = username;
                 readAccount.close();
-                cout << "\nLogin successful!";
                 return;
             }
             readAccount >> username >> password;
         }
         readAccount.close();
-        cout << "\nLogin failed.";
-        cout << "Please enter username and password again.";
+        cout << "\nFail: Username or password is incorrect.\n\n";
     }
     while(true);
 }
@@ -367,6 +382,8 @@ void writeStudents()
 */
 void viewStudents()
 {
+    system("cls");
+
     cout << "\n\nINTEC STUDENTS DATA VIEW" << endl;
     cout << "ID, First Name, Last Name, Age, IC Number, Programme, Number Of Subjects, CGPA" << endl;
 
@@ -377,7 +394,121 @@ void viewStudents()
              << s.age << ", " << s.icNumber << ", " << s.programme << ", "
              << s.numOfSubjects << ", " << s.cgpa << endl;
     }
-    cout << "\n\n";
+    
+    pressEnterToContinue();
+}
+
+/**
+ * Search student based on an attribute. Display the student data if found.
+*/
+void searchStudents()
+{
+    system("cls");
+    char searchKey;
+
+    cout << "Please choose attribute to search for:\n"
+         << "1.Student ID\n"
+         << "2.Name\n"
+         << "3.Programme\n";
+    
+    cin >> searchKey;
+
+    switch (searchKey)
+    {
+        case '1':
+        {
+            int idIn;
+            cout << "Student ID to search for: ";
+            
+            cin >> idIn;
+
+            for (int i = 0; i < lenStudents(); i++)
+            {
+                if (idIn == Students[i].id)
+                {
+                    Student s = Students[i];
+                    cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
+                        << s.age << ", " << s.icNumber << ", " << s.programme << ", "
+                        << s.numOfSubjects << ", " << s.cgpa << endl;
+                    break;
+                }
+            }
+            break;
+        }
+        case '2':
+        {
+            string nameIn;
+
+            cout << "Name to search: ";
+            cin.ignore();
+            getline(cin, nameIn);
+
+            string fullName;
+
+            for (int i = 0; i < lenStudents(); i++)
+            {
+                fullName = Students[i].firstName + ' ' + Students[i].lastName;
+
+                // Convert nameIn and fullName to lowercase for better search results
+                for (int j = 0; j < nameIn.length(); j++)
+                {
+                    nameIn[j] = (char)tolower(nameIn[j]);
+                }
+                for (int k = 0; k < fullName.length(); k++)
+                {
+                    fullName[k] = (char)tolower(fullName[k]);
+                }
+
+                if (fullName.find(nameIn) != fullName.npos)
+                {
+                    Student s = Students[i];
+                    cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
+                        << s.age << ", " << s.icNumber << ", " << s.programme << ", "
+                        << s.numOfSubjects << ", " << s.cgpa << endl;
+                }
+            }
+            break;
+        }
+        case '3':
+        {
+            string programmeIn;
+
+            cout << "Programme to search: ";
+            cin.ignore();
+            getline(cin, programmeIn);
+
+            string programme;
+
+            for (int i = 0; i < lenStudents(); i++)
+            {
+                programme = Students[i].programme;
+
+                // Convert programmeIn and programme to lowercase for better search results
+                for (int j = 0; j < programmeIn.length(); j++)
+                {
+                    programmeIn[j] = (char)tolower(programmeIn[j]);
+                }
+                for (int k = 0; k < programme.length(); k++)
+                {
+                    programme[k] = (char)tolower(programme[k]);
+                }
+
+                if (programmeIn.find(programme) != programmeIn.npos)
+                {
+                    Student s = Students[i];
+                    cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
+                         << s.age << ", " << s.icNumber << ", " << s.programme << ", "
+                         << s.numOfSubjects << ", " << s.cgpa << endl;
+                }
+            }
+            break;
+        }
+        default:
+            cout << "Invalid option. Search operation aborted.\n";
+            return;
+    }
+
+    pressEnterToContinue();
 }
 
 /**
@@ -388,6 +519,16 @@ void addStudent()
     string firstName, lastName, icNumber, programme;
     int age, numOfSubjects;
     double cgpa;
+
+    // Get the position of empty index in the array
+    int empty = lenStudents();
+
+    // Array is fully used
+    if (empty == MAX_SIZE)
+    {
+        cout << "Maximum size of " << MAX_SIZE << " students is reached.";
+        return;
+    }
 
     cout << "Add new Student" << endl;
     cout << "First Name: ";
@@ -436,20 +577,13 @@ void addStudent()
     newStudent.numOfSubjects = numOfSubjects;
     newStudent.cgpa = cgpa;
 
-    // Get the position of empty index in the array
-    int empty = lenStudents();
-
-    // Array is fully used
-    if (empty == MAX_SIZE)
-    {
-        cout << "Maximum size reached. Cannot add new Student.";
-        return;
-    }
-
     // Assign to empty location in `Accounts` array
     Students[empty] = newStudent;
 
     writeStudents();
+
+    cout << "Student is successfully added. Student ID: " << studentId << "\n";
+    pressEnterToContinue();
 
     return;
 }
@@ -477,7 +611,8 @@ void editStudent()
         return;
     }
 
-    cout << "Provide value for data you want to edit. Else leave blank or enter -1 for numerical value." << endl;
+    cout << "Provide value for data you want to edit.\n"
+         << "Leave blank or input -1 (numerical value) to keep old data." << endl;
 
     cout << "First Name: ";
     cin.ignore();
@@ -521,115 +656,6 @@ void editStudent()
     writeStudents();
     
     return;
-}
-
-/**
- * Search student based on an attribute. Display the student data if found.
-*/
-void searchStudents()
-{
-    int searchKey;
-
-    cout << "Please choose attribute to search for:\n"
-         << "1.Student ID\n"
-         << "2.Name\n"
-         << "3.Programme\n";
-    
-    cin >> searchKey;
-
-    switch (searchKey)
-    {
-        case 1:
-        {
-            int idIn;
-            cout << "Student ID to search for: ";
-            
-            cin >> idIn;
-
-            for (int i = 0; i < lenStudents(); i++)
-            {
-                if (idIn == Students[i].id)
-                {
-                    Student s = Students[i];
-                    cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
-                        << s.age << ", " << s.icNumber << ", " << s.programme << ", "
-                        << s.numOfSubjects << ", " << s.cgpa << endl;
-                    break;
-                }
-            }
-            break;
-        }
-        case 2:
-        {
-                        string nameIn;
-
-            cout << "Name to search: ";
-            cin.ignore();
-            getline(cin, nameIn);
-
-            string fullName;
-
-            for (int i = 0; i < lenStudents(); i++)
-            {
-                fullName = Students[i].firstName + ' ' + Students[i].lastName;
-
-                // Convert nameIn and fullName to lowercase for better search results
-                for (int j = 0; j < nameIn.length(); j++)
-                {
-                    nameIn[j] = (char)tolower(nameIn[j]);
-                }
-                for (int k = 0; k < fullName.length(); k++)
-                {
-                    fullName[k] = (char)tolower(fullName[k]);
-                }
-
-                if (fullName.find(nameIn) != fullName.npos)
-                {
-                    Student s = Students[i];
-                    cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
-                        << s.age << ", " << s.icNumber << ", " << s.programme << ", "
-                        << s.numOfSubjects << ", " << s.cgpa << endl;
-                }
-            }
-            break;
-        }
-        case 3:
-        {
-            string programmeIn;
-
-            cout << "Programme to search: ";
-            cin.ignore();
-            getline(cin, programmeIn);
-
-            string programme;
-
-            for (int i = 0; i < lenStudents(); i++)
-            {
-                programme = Students[i].programme;
-
-                // Convert programmeIn and programme to lowercase for better search results
-                for (int j = 0; j < programmeIn.length(); j++)
-                {
-                    programmeIn[j] = (char)tolower(programmeIn[j]);
-                }
-                for (int k = 0; k < programme.length(); k++)
-                {
-                    programme[k] = (char)tolower(programme[k]);
-                }
-
-                if (programmeIn.find(programme) != programmeIn.npos)
-                {
-                    Student s = Students[i];
-                    cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
-                        << s.age << ", " << s.icNumber << ", " << s.programme << ", "
-                        << s.numOfSubjects << ", " << s.cgpa << endl;
-                }
-            }
-            break;
-        }
-        default:
-            cout << "Invalid option. Search operation aborted.\n";
-    }
 }
 
 /**
@@ -695,4 +721,15 @@ int findStudent(int targetId)
             return i;
     }
     return -1;
+}
+
+/**
+ * Prompt the user to press Enter to continue the program
+*/
+void pressEnterToContinue()
+{
+    char _;
+    cout << "Press Enter to continue... ";
+    cin >> _;
+    return;
 }
