@@ -95,7 +95,7 @@ void viewStudents(),
 // Prototypes for utility functionality
 int findStudent(int),
     lenStudents();
-void pressEnterToContinue();
+void pressEnterToContinue(string = "Press Enter to continue... ");
 
 
 /*++++++ SECTION 3A: FUNCTION DECLARATIONS ++++++*/
@@ -414,6 +414,7 @@ void searchStudents()
          << "3.Programme\n";
     
     cin >> searchKey;
+    cin.ignore();
 
     switch (searchKey)
     {
@@ -441,9 +442,8 @@ void searchStudents()
         case '2':
         {
             string nameIn;
-
+    
             cout << "Name to search: ";
-            cin.ignore();
             getline(cin, nameIn);
 
             string fullName;
@@ -477,7 +477,6 @@ void searchStudents()
             string programmeIn;
 
             cout << "Programme to search: ";
-            cin.ignore();
             getline(cin, programmeIn);
 
             string programme;
@@ -554,6 +553,7 @@ void addStudent()
 
     cout << "CGPA: ";
     cin >> cgpa;
+    cin.ignore();
 
     // Get new id
     int studentId = 0;
@@ -585,7 +585,7 @@ void addStudent()
     writeStudents();
 
     cout << "Student is successfully added. Student ID: " << studentId << "\n";
-    pressEnterToContinue();
+    pressEnterToContinue("\n[Go to Main Menu] ");
 
     return;
 }
@@ -595,66 +595,123 @@ void addStudent()
 */
 void editStudent()
 {
+    system("cls");
+
     string firstName, lastName, icNumber, programme;
-    int studentId, age, numOfSubjects;
+    int studentId, age, numOfSubjects, pos;
     double cgpa;
 
     cout << "Edit a Student" << endl;
 
-    cout << "Enter the student ID: ";
-    cin >> studentId;
-    cin.ignore();
-
-    // Find position of this student in array
-    int pos = findStudent(studentId);
-
-    if (pos == -1)
+    do
     {
+        cout << "Enter the student ID: ";
+        cin >> studentId;
+        cin.ignore();
+
+        // Find position of this student in array
+        pos = findStudent(studentId);
+
+        if (pos != -1)
+        {
+            system("cls");
+            cout << "Student with id of " << Students[pos].id << " found.\n";
+            break;
+        }
         cout << "Student with id of " << studentId << " does not exist.";
-        return;
+
+    } while (true);
+
+    while (true)
+    {
+        char editOption;
+
+        cout << "Choose your action to edit the data\n";
+        cout << "1.First Name\n"
+             << "2.Last Name\n"
+             << "3.Age\n"
+             << "4.IC Number\n"
+             << "5.Programme\n"
+             << "6.Number of Subjects\n"
+             << "7.CGPA\n"
+             << "8.Go to Main Menu\n";
+
+        cin >> editOption;
+        cin.ignore();
+
+        switch (editOption)
+        {
+            case '1':
+            {
+                cout << "Current First Name: " << Students[pos].firstName << "\n";
+                cout << "New First Name: ";
+                getline(cin, firstName);
+                Students[pos].firstName = firstName;
+                break;
+            }
+            case '2':
+            {
+                cout << "Current Last Name: " << Students[pos].lastName << "\n" << "\n";
+                cout << "New Last Name: ";
+                getline(cin, lastName);
+                Students[pos].lastName = lastName;
+                break;
+            }
+            case '3':
+            {
+                cout << "Current Age: " << Students[pos].age << "\n"; 
+                cout << "New Age: ";
+                cin >> age;
+                cin.ignore();
+                Students[pos].age = age;
+                break;
+            }
+            case '4':
+            {
+                cout << "Current IC Number: " << Students[pos].icNumber << "\n";
+                cout << "New IC Number: ";
+                getline(cin, icNumber);
+                Students[pos].icNumber = icNumber;
+                break;
+            }
+            case '5':
+            {
+                cout << "Current Programme: " << Students[pos].programme << "\n";
+                cout << "New Programme: ";
+                getline(cin, programme);
+                Students[pos].programme = programme;
+                break;
+            }
+            case '6':
+            {
+                cout << "Current Number of Subjects: " << Students[pos].numOfSubjects << "\n";
+                cout << "New Number of Subjects: ";
+                cin >> numOfSubjects;
+                cin.ignore();
+                Students[pos].numOfSubjects = numOfSubjects;
+                break;
+            }
+            case '7':
+            {
+                cout << "Current CGPA: " << Students[pos].cgpa << "\n";
+                cout << "New CGPA: ";
+                cin >> cgpa;
+                cin.ignore();
+                Students[pos].cgpa = cgpa;
+                break;
+            }
+            case '8':
+            {
+                return;
+            }
+            default:
+                cout << "Please enter a number between 1 and 8.\n";
+                continue;
+        }
+        cout << "Data has been updated successfully.\n";
+        pressEnterToContinue();
+        system("cls");
     }
-
-    cout << "Provide value for data you want to edit.\n"
-         << "Leave blank or input -1 (numerical value) to keep old data." << endl;
-
-    cout << "First Name: ";
-    
-    getline(cin, firstName);
-
-    cout << "Last Name: ";
-    getline(cin, lastName);
-
-    cout << "Age: ";
-    cin >> age;
-
-    cout << "IC Number: ";
-    cin.ignore();
-    getline(cin, icNumber);
-
-    cout << "Programme: ";
-    getline(cin, programme);
-
-    cout << "Number of Subjects: ";
-    cin >> numOfSubjects;
-
-    cout << "CGPA: ";
-    cin >> cgpa;
-
-    // Only update the data if provided
-    if (firstName != "")
-        Students[pos].firstName = firstName;
-    if (lastName != "")
-        Students[pos].lastName = lastName;
-    if (age != -1)
-        Students[pos].age = age;
-    if (icNumber != "" || icNumber == "-1")
-        Students[pos].icNumber = icNumber;
-    if (programme != "")
-        Students[pos].programme = programme;
-    if (numOfSubjects != -1)
-        Students[pos].numOfSubjects = numOfSubjects;
-    if (cgpa != -1)
-        Students[pos].cgpa = cgpa;
 
     writeStudents();
     
@@ -729,11 +786,10 @@ int findStudent(int targetId)
 /**
  * Prompt the user to press Enter to continue the program
 */
-void pressEnterToContinue()
+void pressEnterToContinue(string message)
 {
     string _;
-    cout << "Press Enter to continue... ";
-    cin.ignore();
+    cout << message;
     getline(cin, _, '\n');
     return;
 }
