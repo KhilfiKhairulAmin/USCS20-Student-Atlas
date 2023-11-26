@@ -1,5 +1,5 @@
 /*
-                                            WELCOME TO INTEC STUDENT DATA MANAGEMENT SYSTEM!
+                                WELCOME TO INTEC STUDENT DATA MANAGEMENT SYSTEM!
 
 We (Irfan, Iyas & Khilfi) proudly present our project source code to you.
 
