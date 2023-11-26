@@ -16,9 +16,7 @@ contact us if you have further inquiries or bug reports on this project.
 
 Thanks ^_^
 */
-// TODO update interface of edit student
-// TODO update interface of delete student
-// TODO 
+
 
 /*============================================== SECTION 1: HEADERS AND INITIALIZATIONS ==============================================*/
 
