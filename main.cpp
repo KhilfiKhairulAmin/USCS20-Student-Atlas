@@ -618,7 +618,7 @@ void editStudent()
             cout << "Student with id of " << Students[pos].id << " found.\n";
             break;
         }
-        cout << "Student with id of " << studentId << " does not exist.";
+        cout << "Student with id of " << studentId << " does not exist.\n";
 
     } while (true);
 
@@ -723,18 +723,48 @@ void editStudent()
 */
 void deleteStudent()
 {
-    int studentId;
+    system("cls");
 
-    cout << "Enter the student ID: ";
-    cin >> studentId;
+    int studentId, studentIndex;
 
-    int studentIndex = findStudent(studentId);
+    cout << "Edit a Student" << endl;
 
-    if (studentIndex == -1)
+    do
     {
-        cout << "Student with id of " << studentId << " does not exist.";
-        return;
-    }
+        cout << "Enter the student ID: ";
+        cin >> studentId;
+        cin.ignore();
+
+        // Find position of this student in array
+        studentIndex = findStudent(studentId);
+
+        if (studentIndex != -1)
+        {
+            cout << "Student with id of " << Students[studentIndex].id << " found.\n";
+            break;
+        }
+        cout << "Student with id of " << studentId << " does not exist.\n";
+
+    } while (true);
+
+    char assure;
+    do
+    {
+        cout << "Are you sure you want to perform this action? It can't be reversed. [Y/n]: ";
+        cin >> assure;
+        assure = tolower(assure);
+
+        if (assure == 'y')
+        {
+            break;
+        }
+        else if (assure == 'n')
+        {
+            return;
+        }
+        else
+            cout << "Hint: Please enter 'y' for yes or 'n' for no.\n";
+    } while (true);
 
     int initLen = lenStudents();
     Student reset;
