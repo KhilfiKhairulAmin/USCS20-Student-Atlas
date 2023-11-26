@@ -16,13 +16,14 @@ contact us if you have further inquiries or bug reports on this project.
 
 Thanks ^_^
 */
-
+// TODO update interface of edit student
+// TODO update interface of delete student
+// TODO 
 
 /*============================================== SECTION 1: HEADERS AND INITIALIZATIONS ==============================================*/
 
 #include <iostream> // For user input and output
 #include <fstream> // For file operations
-#include <stdlib.h> // For text output coloring
 #include <algorithm> // For string processing
 using namespace std;
 
@@ -80,16 +81,16 @@ int main()
 void signUp(),
      login();
 
+// Prototypes for file operation functionality
+void readStudents(),
+     writeStudents();
+
 // Prototypes for student data management functionality
 void viewStudents(),
      addStudent(),
      editStudent(),
      deleteStudent(),
      searchStudents();
-
-// Prototypes for file operation functionality
-void readStudents(),
-     writeStudents();
 
 // Prototypes for utility functionality
 int findStudent(int),
@@ -142,9 +143,9 @@ void mainUI()
         system("cls");
 
         char select;
-        cout << "=========================\n"
+        cout << "================================\n"
              << " Welcome to main menu " + globalUsername + "!\n"
-             << "=========================\n"
+             << "================================\n"
              << "1.View \n"
              << "2.Search \n"
              << "3.Add \n"
@@ -311,18 +312,22 @@ void readStudents()
     double cgpa;
     string firstName, lastName, icNumber, programme;
 
-    // Read the first line
+    int j = 0;
+
+    // Read next line
     readStudentsData >> studentId >> firstName >> lastName >> age >> icNumber
                      >> programme >> numOfSubjects >> cgpa;
-
-    // Parse the first and last name
-    replace(firstName.begin(), firstName.end(), '_', ' ');
-    replace(lastName.begin(), lastName.end(), '_', ' ');
-
-    int j = 0;
+    
+    // No student exists in file
+    if (studentId <= 0)
+        return;
 
     do
     {
+        // Parse the first and last name
+        replace(firstName.begin(), firstName.end(), '_', ' ');
+        replace(lastName.begin(), lastName.end(), '_', ' ');
+
         // Assign each `Student` into the global array
         Student student;
         student.id = studentId;
@@ -339,12 +344,7 @@ void readStudents()
         // Read next line
         readStudentsData >> studentId >> firstName >> lastName >> age >> icNumber
                          >> programme >> numOfSubjects >> cgpa;
-
-        // Parse the first and last name
-        replace(firstName.begin(), firstName.end(), '_', ' ');
-        replace(lastName.begin(), lastName.end(), '_', ' ');
-        
-    } while (readStudentsData.good());
+    } while(readStudentsData.good());
 
     // Close the file
     readStudentsData.close();
@@ -384,7 +384,8 @@ void viewStudents()
 {
     system("cls");
 
-    cout << "\n\nINTEC STUDENTS DATA VIEW" << endl;
+    cout << lenStudents() << endl;
+    cout << "INTEC STUDENTS DATA VIEW" << endl;
     cout << "ID, First Name, Last Name, Age, IC Number, Programme, Number Of Subjects, CGPA" << endl;
 
     for (int i = 0; i < lenStudents(); i++)
@@ -554,7 +555,7 @@ void addStudent()
     cin >> cgpa;
 
     // Get new id
-    int studentId = Students[0].id;
+    int studentId = 0;
 
     // Search for highest id in the array
     for (int i = 0; i < lenStudents(); i++)
@@ -702,7 +703,7 @@ int lenStudents()
     // Search for unused position in array (i.e. id which value is -1)
     for (int i = 0; i < MAX_SIZE; i++)
     {
-        if (Students[i].id == -1)
+        if (Students[i].id <= 0)
             return i;
     }
     // Array is fully used
@@ -728,8 +729,9 @@ int findStudent(int targetId)
 */
 void pressEnterToContinue()
 {
-    char _;
+    string _;
     cout << "Press Enter to continue... ";
-    cin >> _;
+    cin.ignore();
+    getline(cin, _, '\n');
     return;
 }
