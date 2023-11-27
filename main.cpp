@@ -109,28 +109,13 @@ void pressEnterToContinue(string = "Press Enter to continue... "),
 void authUI()
 {
     char choice;
+    // Input choice ('y' or 'n')
+    inputChoice(choice, "\nDo you have an existing account? [Y/n]: ");
     
-    do
-    {
-        cout << "\nDo you have an existing account? [Y/n]: ";
-        cin >> choice;
-        cin.ignore();
-        choice = tolower(choice);
-
-        if (choice == 'y')
-        {
-            login();
-            break;
-        }
-        else if (choice == 'n')
-        {
-            signUp();
-            break;
-        }
-        else
-            cout << "Hint: Please enter 'y' for yes or 'n' for no.\n";
-    }
-    while(true);
+    if (choice == 'y')
+        login();
+    else if (choice == 'n')
+        signUp();
 
     return;
 }
@@ -725,24 +710,11 @@ void deleteStudent()
     } while (true);
 
     char assure;
-    do
-    {
-        cout << "Are you sure you want to perform this action? It can't be reversed. [Y/n]: ";
-        cin >> assure;
-        assure = tolower(assure);
-
-        if (assure == 'y')
-        {
-            break;
-        }
-        else if (assure == 'n')
-        {
-            return;
-        }
-        else
-            cout << "Hint: Please enter 'y' for yes or 'n' for no.\n";
-    } while (true);
-
+    inputChoice(assure, "Are you sure you want to perform this action? It can't be reversed. [Y/n]: ");
+    
+    if (assure == 'n')
+        return;
+    
     int initLen = lenStudents();
     Student reset;
 
@@ -798,6 +770,29 @@ void pressEnterToContinue(string message)
     string _;
     cout << message;
     getline(cin, _, '\n');
+    return;
+}
+
+/**
+ * Get and validate choice ('y' or 'n')
+*/
+void inputChoice(char& choiceIn, string prompt)
+{
+    do
+    {
+        cout << prompt;
+        cin >> choiceIn;
+        cin.ignore();
+        choiceIn = tolower(choiceIn);
+
+        if (choiceIn != 'x' || choiceIn != 'y')
+        {
+            cout << "Hint: Please enter 'y' for yes or 'n' for no.\n";
+            continue;
+        }
+        break;
+    }
+    while(true);
     return;
 }
 
@@ -859,7 +854,6 @@ void inputStringData(string& stringIn, string prompt, int mode)
             break;
         }
     }
-
     return;
 }
 
@@ -883,7 +877,6 @@ void inputIntData(int& numIn, string prompt)
         break;
 
     } while (true);
-    
     return;
 }
 
@@ -956,7 +949,6 @@ void inputProgramme(string& programmeIn, string prompt)
         }
         break;
     } while (true);
-    
     return;
 }
 
@@ -979,6 +971,5 @@ void inputCgpa(double& cgpaIn, string prompt)
         break;
 
     } while (true);
-    
     return;
 }
