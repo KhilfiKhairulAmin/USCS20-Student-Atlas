@@ -522,6 +522,7 @@ void searchStudents()
 */
 void addStudent()
 {
+    system("cls");
     string firstName, lastName, icNumber, programme;
     int age, numOfSubjects;
     double cgpa;
@@ -547,7 +548,7 @@ void addStudent()
     // Input IC number
     inputStringData(icNumber, "IC Number: ", 1);
     // Input programme
-    inputProgramme(programme, "Programme: ");
+    inputProgramme(programme, "Choose Programme: ");
     // Input number of subjects
     inputIntData(numOfSubjects, "Number of Subjects: ");
     // Input CGPA
@@ -891,7 +892,7 @@ void inputIntData(int& numIn, string prompt)
 */
 void inputProgramme(string& programmeIn, string prompt)
 {
-    cout << "\nProgramme:\n"
+    cout << "\nProgramme List\n"
          << "1.ACCA\n"
          << "2.ADTP\n"
          << "3.ALG\n"
@@ -909,43 +910,44 @@ void inputProgramme(string& programmeIn, string prompt)
         char choose;
         cout << prompt;
         cin >> choose;
+        cin.ignore();
 
         switch(choose)
         {
-            case 1:
+            case '1':
                 programmeIn = "ACCA";
                 break;
-            case 2:
+            case '2':
                 programmeIn = "ADTP";
                 break;
-            case 3:
+            case '3':
                 programmeIn = "ALG";
                 break;
-            case 4:
+            case '4':
                 programmeIn = "ALUK";
                 break;
-            case 5:
+            case '5':
                 programmeIn = "CFAB";
                 break;
-            case 6:
+            case '6':
                 programmeIn = "DIPLOMA";
                 break;
-            case 7:
+            case '7':
                 programmeIn = "FIA";
                 break;
-            case 8:
+            case '8':
                 programmeIn = "FRANCE";
                 break;
-            case 9:
+            case '9':
                 programmeIn = "ICAEW";
                 break;
-            case 10:
+            case '10':
                 programmeIn = "KTJ";
                 break;
-            case 11:
+            case '11':
                 programmeIn = "KOREA";
                 break;
-            case 12:
+            case '12':
                 programmeIn = "SACE";
                 break;
             default:
