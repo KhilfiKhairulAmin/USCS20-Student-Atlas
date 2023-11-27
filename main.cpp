@@ -907,47 +907,47 @@ void inputProgramme(string& programmeIn, string prompt)
          << "12.SACE\n";
     do
     {
-        char choose;
+        int choose;
         cout << prompt;
         cin >> choose;
         cin.ignore();
 
         switch(choose)
         {
-            case '1':
+            case 1:
                 programmeIn = "ACCA";
                 break;
-            case '2':
+            case 2:
                 programmeIn = "ADTP";
                 break;
-            case '3':
+            case 3:
                 programmeIn = "ALG";
                 break;
-            case '4':
+            case 4:
                 programmeIn = "ALUK";
                 break;
-            case '5':
+            case 5:
                 programmeIn = "CFAB";
                 break;
-            case '6':
+            case 6:
                 programmeIn = "DIPLOMA";
                 break;
-            case '7':
+            case 7:
                 programmeIn = "FIA";
                 break;
-            case '8':
+            case 8:
                 programmeIn = "FRANCE";
                 break;
-            case '9':
+            case 9:
                 programmeIn = "ICAEW";
                 break;
-            case '10':
+            case 10:
                 programmeIn = "KTJ";
                 break;
-            case '11':
+            case 11:
                 programmeIn = "KOREA";
                 break;
-            case '12':
+            case 12:
                 programmeIn = "SACE";
                 break;
             default:
@@ -976,7 +976,6 @@ void inputCgpa(double& cgpaIn, string prompt)
             cout << "Please provide CGPA value between 0.00 - 4.00.\n";
             continue;
         }
-
         break;
 
     } while (true);
