@@ -94,7 +94,7 @@ void viewStudents(),
 int findStudent(int),
     lenStudents();
 void pressEnterToContinue(string = "Press Enter to continue... "),
-     inputStringData(string&, string, int),
+     inputStringData(string&, string, int, int = 1, int = 100),
      // For data validation purpose
      inputChoice(char&, string),
      inputIntData(int&, string),
@@ -227,7 +227,7 @@ void signUp()
     do
     {
         // Password input
-        inputStringData(password, "Password: ", 1);
+        inputStringData(password, "Password: ", 1, 8);
 
         system("cls");
 
@@ -272,7 +272,7 @@ void login()
         inputStringData(usernameIn, "Please enter username: ", 1);
 
         // Input password
-        inputStringData(passwordIn, "Please enter password: ", 1);
+        inputStringData(passwordIn, "Please enter password: ", 1, 8);
 
         ifstream readAccount("accounts.txt");
 
@@ -532,7 +532,7 @@ void addStudent()
     // Input age
     inputIntData(age, "Age: ");
     // Input IC number
-    inputStringData(icNumber, "IC Number: ", 1);
+    inputStringData(icNumber, "IC Number: ", 1, 12, 12);
     // Input programme
     inputProgramme(programme, "Choose Programme: ");
     // Input number of subjects
@@ -639,7 +639,7 @@ void editStudent()
             case '4':
             {
                 cout << "Current IC Number: " << Students[pos].icNumber << "\n";
-                inputStringData(icNumber, "New IC Number: ", 1);
+                inputStringData(icNumber, "New IC Number: ", 1, 12, 12);
                 Students[pos].icNumber = icNumber;
                 break;
             }
@@ -798,9 +798,9 @@ void inputChoice(char& choiceIn, string prompt)
 }
 
 /**
- * Get and validate string input by the user. If mode = 1, use cin (get only first word). If mode = 2, use getline (get whole input).
+ * Get and validate string input by the user. If mode = 1, get only first word. If mode = 2, get whole input.
 */
-void inputStringData(string& stringIn, string prompt, int mode)
+void inputStringData(string& stringIn, string prompt, int mode, int minSize, int maxSize)
 {
     // Reset to default if invalid mode is provided
     if (mode < 1 || mode > 2)
@@ -808,53 +808,36 @@ void inputStringData(string& stringIn, string prompt, int mode)
         mode = 2;
     }
 
-    switch (mode)
+    do
     {
-        // Case 1: Single word input only
-        case 1:
+        // Mode 1: Singular word input
+        // Mode 2: Multiple word Input
+        cout << prompt;
+        getline(cin, stringIn, '\n');
+
+        // Validate empty
+        if (stringIn == "")
         {
-            do
-            {
-                cout << prompt;
-                getline(cin, stringIn, '\n');
-
-                // Validate single word input
-                if (stringIn == "")
-                {
-                    cout << "Data can't be empty.\n";
-                    continue;
-                }
-                else if (stringIn.find(" ") != stringIn.npos)
-                {
-                    cout << "Data can't contain spaces.\n";
-                    continue;
-                }
-
-                break;
-            } while(true);
-            break;
+            cout << "Data can't be empty.\n";
+            continue;
         }
-        // Case 2: Multiple words input
-        case 2:
+        else if (stringIn.length() > maxSize || stringIn.length() < minSize)
         {
-            do
-            {
-                cout << prompt;
-                getline(cin, stringIn);
-                
-                // Validate multiword input
-                if (stringIn == "")
-                {
-                    cout << "Data can't be empty.\n";
-                    continue;
-                }
-
-                break;
-
-            } while(true);
-            break;
+            cout << "Please enter data between " << minSize << " and " << maxSize << " characters.\n";
+            continue;
         }
-    }
+
+        if (mode == 1)
+        {
+            if (stringIn.find(" ") != stringIn.npos)
+            {
+                cout << "Data can't contain spaces.\n";
+                continue;
+            }
+        }
+
+        break;
+    } while (true);
     return;
 }
 
