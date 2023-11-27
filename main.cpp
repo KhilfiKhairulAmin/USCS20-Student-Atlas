@@ -481,7 +481,7 @@ void searchStudents()
         {
             string programmeIn;
 
-            inputStringData(programmeIn, "Programme to search: ", 1);
+            inputProgramme(programmeIn, "Programme to search: ");
 
             string programme;
 
@@ -547,7 +547,7 @@ void addStudent()
     // Input IC number
     inputStringData(icNumber, "IC Number: ", 1);
     // Input programme
-    inputStringData(programme, "Programme: ", 1);
+    inputProgramme(programme, "Programme: ");
     // Input number of subjects
     inputIntData(numOfSubjects, "Number of Subjects: ");
     // Input CGPA
@@ -659,7 +659,7 @@ void editStudent()
             case '5':
             {
                 cout << "Current Programme: " << Students[pos].programme << "\n";
-                inputStringData(programme, "New Programme: ", 1);
+                inputProgramme(programme, "New Programme: ");
                 Students[pos].programme = programme;
                 break;
             }
