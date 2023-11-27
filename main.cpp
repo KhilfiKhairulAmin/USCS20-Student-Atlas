@@ -802,12 +802,6 @@ void inputChoice(char& choiceIn, string prompt)
 */
 void inputStringData(string& stringIn, string prompt, int mode, int minSize, int maxSize)
 {
-    // Reset to default if invalid mode is provided
-    if (mode < 1 || mode > 2)
-    {
-        mode = 2;
-    }
-
     do
     {
         // Mode 1: Singular word input
@@ -869,7 +863,7 @@ void inputIntData(int& numIn, string prompt)
 */
 void inputProgramme(string& programmeIn, string prompt)
 {
-    cout << "\nProgramme List\n"
+    cout << "Programme List\n"
          << "1.ACCA\n"
          << "2.ADTP\n"
          << "3.ALG\n"
