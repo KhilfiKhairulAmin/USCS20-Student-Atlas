@@ -96,6 +96,7 @@ int findStudent(int),
 void pressEnterToContinue(string = "Press Enter to continue... "),
      inputStringData(string&, string, int),
      // For data validation purpose
+     inputChoice(char&, string),
      inputIntData(int&, string),
      inputProgramme(string&, string),
      inputCgpa(double&, string);
