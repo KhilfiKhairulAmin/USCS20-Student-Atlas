@@ -428,10 +428,9 @@ void searchStudents()
         case '1':
         {
             int idIn;
-            cout << "Student ID to search for: ";
             
-            cin >> idIn;
-            cin.ignore();
+            // Input ID to be searched
+            inputIntData(idIn, "Student ID to search for: ");
 
             for (int i = 0; i < lenStudents(); i++)
             {
@@ -537,40 +536,27 @@ void addStudent()
         return;
     }
 
-    cout << "Add new Student" << endl;
+    cout << "Add new Student\n";
+
+    // Input first name
     inputStringData(firstName, "First Name: ", 2);
-
+    // Input last name
     inputStringData(lastName, "Last Name: ", 2);
-
-    cout << "Age: ";
-    cin >> age;
-
+    // Input age
+    inputIntData(age, "Age: ");
+    // Input IC number
     inputStringData(icNumber, "IC Number: ", 1);
-
+    // Input programme
     inputStringData(programme, "Programme: ", 1);
+    // Input number of subjects
+    inputIntData(numOfSubjects, "Number of Subjects: ");
+    // Input CGPA
+    inputCgpa(cgpa, "CGPA: ");
 
-    cout << "Number of Subjects: ";
-    cin >> numOfSubjects;
-
-    cout << "CGPA: ";
-    cin >> cgpa;
-    cin.ignore();
-
-    // Get new id
-    int studentId = 0;
-
-    // Search for highest id in the array
-    for (int i = 0; i < lenStudents(); i++)
-    {
-        if (Students[i].id > studentId)
-            studentId = Students[i].id;
-    }
-
-    // Get the next id
-    studentId++;
+    // Generate a new Student ID based on highest Student ID + 1
+    int studentId = Students[lenStudents() - 1].id + 1;
 
     Student newStudent;
-
     newStudent.id = studentId;
     newStudent.firstName = firstName;
     newStudent.lastName = lastName;
@@ -585,7 +571,7 @@ void addStudent()
 
     writeStudents();
 
-    cout << "Student is successfully added. Student ID: " << studentId << "\n";
+    cout << "Student is successfully added. Student ID assigned: " << studentId << "\n";
     pressEnterToContinue("\n[Go to Main Menu] ");
 
     return;
@@ -606,20 +592,20 @@ void editStudent()
 
     do
     {
-        cout << "Enter the student ID: ";
-        cin >> studentId;
-        cin.ignore();
+        // Input student id
+        inputIntData(studentId, "Enter the student ID: ");
 
         // Find position of this student in array
         pos = findStudent(studentId);
 
-        if (pos != -1)
+        if (pos == -1)
         {
-            system("cls");
-            cout << "Student with id of " << Students[pos].id << " found.\n";
-            break;
+            cout << "Student with id of " << studentId << " does not exist.\n";
+            continue;
         }
-        cout << "Student with id of " << studentId << " does not exist.\n";
+        system("cls");
+        cout << "Student with id of " << Students[pos].id << " found.\n";
+        break;
 
     } while (true);
 
@@ -659,9 +645,7 @@ void editStudent()
             case '3':
             {
                 cout << "Current Age: " << Students[pos].age << "\n"; 
-                cout << "New Age: ";
-                cin >> age;
-                cin.ignore();
+                inputIntData(age, "New Age: ");
                 Students[pos].age = age;
                 break;
             }
@@ -682,18 +666,14 @@ void editStudent()
             case '6':
             {
                 cout << "Current Number of Subjects: " << Students[pos].numOfSubjects << "\n";
-                cout << "New Number of Subjects: ";
-                cin >> numOfSubjects;
-                cin.ignore();
+                inputIntData(numOfSubjects, "New Number of Subjects: ");
                 Students[pos].numOfSubjects = numOfSubjects;
                 break;
             }
             case '7':
             {
                 cout << "Current CGPA: " << Students[pos].cgpa << "\n";
-                cout << "New CGPA: ";
-                cin >> cgpa;
-                cin.ignore();
+                inputCgpa(cgpa, "New CGPA: ");
                 Students[pos].cgpa = cgpa;
                 break;
             }
@@ -728,9 +708,8 @@ void deleteStudent()
 
     do
     {
-        cout << "Enter the student ID: ";
-        cin >> studentId;
-        cin.ignore();
+        // Input student Id
+        inputIntData(studentId, "Enter the student ID: ");
 
         // Find position of this student in array
         studentIndex = findStudent(studentId);
