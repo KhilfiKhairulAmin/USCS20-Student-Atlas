@@ -94,7 +94,11 @@ void viewStudents(),
 int findStudent(int),
     lenStudents();
 void pressEnterToContinue(string = "Press Enter to continue... "),
-     stringInput(string&, string, int = 2);
+     inputStringData(string&, string, int),
+     // For data validation purpose
+     inputIntData(int&, string),
+     inputProgramme(string&, string),
+     inputCgpa(double&, string);
 
 
 /*++++++ SECTION 3A: FUNCTION DECLARATIONS ++++++*/
@@ -175,7 +179,8 @@ void mainUI()
                 deleteStudent();
                 break;
             case '6':
-                cout << "Thank you for using this system ^_^ ! See you later... \n";
+                system("cls");
+                cout << "Logging out " << globalUsername << "...\n\nBYE ^_^ !\n";
                 return;
             default:
                 cout << "Invalid selection. \n";
@@ -194,6 +199,7 @@ void signUp()
     string username, password, repeatPassword, fullname, program;
     int age, nosub, studentid, year, day, month;
 
+    // Header display
     cout << "________________________\n";
     cout << "| ACCOUNT REGISTRATION |\n";
     cout << "------------------------\n";
@@ -205,12 +211,14 @@ void signUp()
         // Begin with assumption that username is valid
         validUsername = true;
 
-        stringInput(username, "Username: ", 1);
+        // Input username
+        inputStringData(username, "Username: ", 1);
 
         // Read the username already registered
         ifstream readAccount("accounts.txt");
         string usernameRegistered;
         
+        // Validate whether the username has been taken or not
         readAccount >> usernameRegistered;
         while (readAccount.good())
         {
@@ -233,12 +241,12 @@ void signUp()
     do
     {
         // Password input
-        stringInput(password, "Password: ", 1);
+        inputStringData(password, "Password: ", 1);
 
         system("cls");
 
         // Repeat the same password
-        stringInput(repeatPassword, "Repeat password: ", 1);
+        inputStringData(repeatPassword, "Repeat password: ", 1);
 
         if (password == repeatPassword)
             break;
@@ -265,6 +273,7 @@ void login()
     // Clear the terminal
     system("cls");
 
+    // Header display
     cout << "_______________\n";
     cout << "|    LOG IN   |\n";
     cout << "---------------\n";
@@ -272,9 +281,12 @@ void login()
     do
     {
         string usernameIn, passwordIn, username, password;
-        stringInput(usernameIn, "Please enter username: ", 1);
 
-        stringInput(passwordIn, "Please enter password: ", 1);
+        // Input username
+        inputStringData(usernameIn, "Please enter username: ", 1);
+
+        // Input password
+        inputStringData(passwordIn, "Please enter password: ", 1);
 
         ifstream readAccount("accounts.txt");
 
@@ -438,7 +450,7 @@ void searchStudents()
         {
             string nameIn;
     
-            stringInput(nameIn, "Name to search: ", 2);
+            inputStringData(nameIn, "Name to search: ", 2);
 
             string fullName;
 
@@ -470,7 +482,7 @@ void searchStudents()
         {
             string programmeIn;
 
-            stringInput(programmeIn, "Programme to search: ", 1);
+            inputStringData(programmeIn, "Programme to search: ", 1);
 
             string programme;
 
@@ -526,16 +538,16 @@ void addStudent()
     }
 
     cout << "Add new Student" << endl;
-    stringInput(firstName, "First Name: ", 2);
+    inputStringData(firstName, "First Name: ", 2);
 
-    stringInput(lastName, "Last Name: ", 2);
+    inputStringData(lastName, "Last Name: ", 2);
 
     cout << "Age: ";
     cin >> age;
 
-    stringInput(icNumber, "IC Number: ", 1);
+    inputStringData(icNumber, "IC Number: ", 1);
 
-    stringInput(programme, "Programme: ", 1);
+    inputStringData(programme, "Programme: ", 1);
 
     cout << "Number of Subjects: ";
     cin >> numOfSubjects;
@@ -633,14 +645,14 @@ void editStudent()
             case '1':
             {
                 cout << "Current First Name: " << Students[pos].firstName << "\n";
-                stringInput(firstName, "New First Name: ", 2);
+                inputStringData(firstName, "New First Name: ", 2);
                 Students[pos].firstName = firstName;
                 break;
             }
             case '2':
             {
                 cout << "Current Last Name: " << Students[pos].lastName << "\n" << "\n";
-                stringInput(lastName, "New Last Name: ", 2);
+                inputStringData(lastName, "New Last Name: ", 2);
                 Students[pos].lastName = lastName;
                 break;
             }
@@ -656,14 +668,14 @@ void editStudent()
             case '4':
             {
                 cout << "Current IC Number: " << Students[pos].icNumber << "\n";
-                stringInput(icNumber, "New IC Number: ", 1);
+                inputStringData(icNumber, "New IC Number: ", 1);
                 Students[pos].icNumber = icNumber;
                 break;
             }
             case '5':
             {
                 cout << "Current Programme: " << Students[pos].programme << "\n";
-                stringInput(programme, "New Programme: ", 1);
+                inputStringData(programme, "New Programme: ", 1);
                 Students[pos].programme = programme;
                 break;
             }
@@ -812,7 +824,7 @@ void pressEnterToContinue(string message)
 /**
  * Get and validate string input by the user. If mode = 1, use cin (get only first word). If mode = 2, use getline (get whole input).
 */
-void stringInput(string& store, string prompt, int mode)
+void inputStringData(string& stringIn, string prompt, int mode)
 {
     // Reset to default if invalid mode is provided
     if (mode < 1 || mode > 2)
@@ -822,20 +834,21 @@ void stringInput(string& store, string prompt, int mode)
 
     switch (mode)
     {
+        // Case 1: Single word input only
         case 1:
         {
             do
             {
                 cout << prompt;
-                getline(cin, store, '\n');
+                getline(cin, stringIn, '\n');
 
                 // Validate single word input
-                if (store == "")
+                if (stringIn == "")
                 {
                     cout << "Data can't be empty.\n";
                     continue;
                 }
-                else if (store.find(" ") != store.npos)
+                else if (stringIn.find(" ") != stringIn.npos)
                 {
                     cout << "Data can't contain spaces.\n";
                     continue;
@@ -845,15 +858,16 @@ void stringInput(string& store, string prompt, int mode)
             } while(true);
             break;
         }
+        // Case 2: Multiple words input
         case 2:
         {
-            // Validate multiword input
             do
             {
                 cout << prompt;
-                getline(cin, store);
-
-                if (store == "")
+                getline(cin, stringIn);
+                
+                // Validate multiword input
+                if (stringIn == "")
                 {
                     cout << "Data can't be empty.\n";
                     continue;
@@ -867,4 +881,28 @@ void stringInput(string& store, string prompt, int mode)
     }
 
     return;
+}
+
+/**
+ * Get and validate integer data
+*/
+void inputIntData(int& numIn, string prompt)
+{
+
+}
+
+/**
+ * Get and validate Programme data
+*/
+void inputProgramme(string& programmeIn, string prompt)
+{
+
+}
+
+/**
+ * Get and validate CGPA data
+*/
+void inputCgpa(double& cgpaIn, string prompt)
+{
+
 }
