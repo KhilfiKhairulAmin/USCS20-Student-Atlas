@@ -783,10 +783,10 @@ void inputChoice(char& choiceIn, string prompt)
     {
         cout << prompt;
         cin >> choiceIn;
-        cin.ignore();
         choiceIn = tolower(choiceIn);
+        cin.ignore();
 
-        if (choiceIn != 'x' || choiceIn != 'y')
+        if (choiceIn != 'n' && choiceIn != 'y')
         {
             cout << "Hint: Please enter 'y' for yes or 'n' for no.\n";
             continue;
