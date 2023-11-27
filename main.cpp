@@ -93,7 +93,8 @@ void viewStudents(),
 // Prototypes for utility functionality
 int findStudent(int),
     lenStudents();
-void pressEnterToContinue(string = "Press Enter to continue... ");
+void pressEnterToContinue(string = "Press Enter to continue... "),
+     stringInput(string&, string, int = 2);
 
 
 /*++++++ SECTION 3A: FUNCTION DECLARATIONS ++++++*/
@@ -109,6 +110,7 @@ void authUI()
     {
         cout << "\nDo you have an existing account? [Y/n]: ";
         cin >> choice;
+        cin.ignore();
         choice = tolower(choice);
 
         if (choice == 'y')
@@ -203,8 +205,7 @@ void signUp()
         // Begin with assumption that username is valid
         validUsername = true;
 
-        cout << "Username: ";
-        cin >> username;
+        stringInput(username, "Username: ", 1);
 
         // Read the username already registered
         ifstream readAccount("accounts.txt");
@@ -232,14 +233,12 @@ void signUp()
     do
     {
         // Password input
-        cout << "Password: ";
-        cin >> password;
+        stringInput(password, "Password: ", 1);
 
         system("cls");
 
         // Repeat the same password
-        cout << "Repeat password: ";
-        cin >> repeatPassword;
+        stringInput(repeatPassword, "Repeat password: ", 1);
 
         if (password == repeatPassword)
             break;
@@ -273,11 +272,9 @@ void login()
     do
     {
         string usernameIn, passwordIn, username, password;
-        cout << "Please enter username: ";
-        cin >> usernameIn;
+        stringInput(usernameIn, "Please enter username: ", 1);
 
-        cout << "Please enter password: ";
-        cin >> passwordIn;
+        stringInput(passwordIn, "Please enter password: ", 1);
 
         ifstream readAccount("accounts.txt");
 
@@ -441,8 +438,7 @@ void searchStudents()
         {
             string nameIn;
     
-            cout << "Name to search: ";
-            getline(cin, nameIn);
+            stringInput(nameIn, "Name to search: ", 2);
 
             string fullName;
 
@@ -474,8 +470,7 @@ void searchStudents()
         {
             string programmeIn;
 
-            cout << "Programme to search: ";
-            getline(cin, programmeIn);
+            stringInput(programmeIn, "Programme to search: ", 1);
 
             string programme;
 
@@ -531,20 +526,16 @@ void addStudent()
     }
 
     cout << "Add new Student" << endl;
-    cout << "First Name: ";
-    getline(cin, firstName);
+    stringInput(firstName, "First Name: ", 2);
 
-    cout << "Last Name: ";
-    getline(cin, lastName);
+    stringInput(lastName, "Last Name: ", 2);
 
     cout << "Age: ";
     cin >> age;
 
-    cout << "IC Number: ";
-    cin >> icNumber;
+    stringInput(icNumber, "IC Number: ", 1);
 
-    cout << "Programme: ";
-    cin >> programme;
+    stringInput(programme, "Programme: ", 1);
 
     cout << "Number of Subjects: ";
     cin >> numOfSubjects;
@@ -642,16 +633,14 @@ void editStudent()
             case '1':
             {
                 cout << "Current First Name: " << Students[pos].firstName << "\n";
-                cout << "New First Name: ";
-                getline(cin, firstName);
+                stringInput(firstName, "New First Name: ", 2);
                 Students[pos].firstName = firstName;
                 break;
             }
             case '2':
             {
                 cout << "Current Last Name: " << Students[pos].lastName << "\n" << "\n";
-                cout << "New Last Name: ";
-                getline(cin, lastName);
+                stringInput(lastName, "New Last Name: ", 2);
                 Students[pos].lastName = lastName;
                 break;
             }
@@ -667,16 +656,14 @@ void editStudent()
             case '4':
             {
                 cout << "Current IC Number: " << Students[pos].icNumber << "\n";
-                cout << "New IC Number: ";
-                getline(cin, icNumber);
+                stringInput(icNumber, "New IC Number: ", 1);
                 Students[pos].icNumber = icNumber;
                 break;
             }
             case '5':
             {
                 cout << "Current Programme: " << Students[pos].programme << "\n";
-                cout << "New Programme: ";
-                getline(cin, programme);
+                stringInput(programme, "New Programme: ", 1);
                 Students[pos].programme = programme;
                 break;
             }
@@ -819,5 +806,65 @@ void pressEnterToContinue(string message)
     string _;
     cout << message;
     getline(cin, _, '\n');
+    return;
+}
+
+/**
+ * Get and validate string input by the user. If mode = 1, use cin (get only first word). If mode = 2, use getline (get whole input).
+*/
+void stringInput(string& store, string prompt, int mode)
+{
+    // Reset to default if invalid mode is provided
+    if (mode < 1 || mode > 2)
+    {
+        mode = 2;
+    }
+
+    switch (mode)
+    {
+        case 1:
+        {
+            do
+            {
+                cout << prompt;
+                getline(cin, store, '\n');
+
+                // Validate single word input
+                if (store == "")
+                {
+                    cout << "Data can't be empty.\n";
+                    continue;
+                }
+                else if (store.find(" ") != store.npos)
+                {
+                    cout << "Data can't contain spaces.\n";
+                    continue;
+                }
+
+                break;
+            } while(true);
+            break;
+        }
+        case 2:
+        {
+            // Validate multiword input
+            do
+            {
+                cout << prompt;
+                getline(cin, store);
+
+                if (store == "")
+                {
+                    cout << "Data can't be empty.\n";
+                    continue;
+                }
+
+                break;
+
+            } while(true);
+            break;
+        }
+    }
+
     return;
 }
