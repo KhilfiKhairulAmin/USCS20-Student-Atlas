@@ -23,6 +23,7 @@ Thanks ^_^
 #include <iostream> // For user input and output
 #include <fstream> // For file operations
 #include <algorithm> // For string processing
+#include <iomanip> // For data manipulation
 using namespace std;
 
 // Student datatype
@@ -55,9 +56,10 @@ void mainUI();
 
 int main()
 {
-    cout << "___________________________________\n"
-         << "| WELCOME TO INTEC STUDENT RECORD |\n"
-         << "-----------------------------------\n";
+    system("Color 70");
+    cout << "+======================================================================================================================+\n"
+         << "+                                     WELCOME TO INTEC STUDENT DATA ATLAS!                                             +\n"
+         << "+======================================================================================================================+\n";
 
     // Authorize the user by signing up or logging in
     authUI();
@@ -93,9 +95,11 @@ void viewStudents(),
 // Prototypes for utility functionality
 int findStudent(int),
     lenStudents();
-void pressEnterToContinue(string = "Press Enter to continue... "),
-     inputStringData(string&, string, int, int = 1, int = 100),
+void printStudent(Student),
+     printStudentTable(Student[MAX_SIZE]),
+     pressEnterToContinue(string = "Press Enter to continue... "),
      // For data validation purpose
+     inputStringData(string&, string, int, int = 1, int = 100),
      inputChoice(char&, string),
      inputIntData(int&, string),
      inputProgramme(string&, string),
@@ -133,9 +137,11 @@ void mainUI()
         system("cls");
 
         char select;
-        cout << "================================\n"
-             << " Welcome to main menu " + globalUsername + "!\n"
-             << "================================\n"
+        cout << "+======================================================================================================================+\n"
+             << "+                                                    MAIN MENU                                                         +\n"
+             << "+======================================================================================================================+\n"
+             << "Welcome " << globalUsername << "!\n\n"
+             << "What action do you want to perform?\n"
              << "1.View \n"
              << "2.Search \n"
              << "3.Add \n"
@@ -143,7 +149,7 @@ void mainUI()
              << "5.Delete \n"
              << "6.Exit \n";
 
-        cout << "Please make your selection: ";
+        cout << "\nPlease make your selection [1-6]: ";
         cin >> select;
         cin.ignore(); // Ignore '\n' character
 
@@ -165,11 +171,14 @@ void mainUI()
                 deleteStudent();
                 break;
             case '6':
-                system("cls");
-                cout << "Logging out " << globalUsername << "...\n\nBYE ^_^ !\n";
+                cout << "+======================================================================================================================+\n"
+                     << "+                                               HAVE A GREAT DAY!                                                      +\n"
+                     << "+======================================================================================================================+\n";
+                cout << "\nLogging out " << globalUsername << "...\n"
+                     << "\nKACHING~DONE!";
                 return;
             default:
-                cout << "Invalid selection. \n";
+                cout << "Invalid selection.\n";
         }
     }
 }
@@ -185,10 +194,9 @@ void signUp()
     string username, password, repeatPassword, fullname, program;
     int age, nosub, studentid, year, day, month;
 
-    // Header display
-    cout << "________________________\n";
-    cout << "| ACCOUNT REGISTRATION |\n";
-    cout << "------------------------\n";
+    cout << "+======================================================================================================================+\n";
+    cout << "+                                             ACCOUNT REGISTRATION                                                     +\n";
+    cout << "+======================================================================================================================+\n";
 
     bool validUsername = false;
     // Username input and validation
@@ -258,11 +266,9 @@ void login()
 {
     // Clear the terminal
     system("cls");
-
-    // Header display
-    cout << "_______________\n";
-    cout << "|    LOG IN   |\n";
-    cout << "---------------\n";
+    cout << "+======================================================================================================================+\n";
+    cout << "+                                                    ACCOUNT LOG IN                                                    +\n";
+    cout << "+======================================================================================================================+\n";
 
     do
     {
@@ -272,7 +278,7 @@ void login()
         inputStringData(usernameIn, "Please enter username: ", 1);
 
         // Input password
-        inputStringData(passwordIn, "Please enter password: ", 1, 8);
+        inputStringData(passwordIn, "Please enter password: ", 1);
 
         ifstream readAccount("accounts.txt");
 
@@ -377,20 +383,12 @@ void writeStudents()
 void viewStudents()
 {
     system("cls");
-
-    cout << lenStudents() << endl;
-    cout << "INTEC STUDENTS DATA VIEW" << endl;
-    cout << "ID, First Name, Last Name, Age, IC Number, Programme, Number Of Subjects, CGPA" << endl;
-
-    for (int i = 0; i < lenStudents(); i++)
-    {
-        Student s = Students[i];
-        cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
-             << s.age << ", " << s.icNumber << ", " << s.programme << ", "
-             << s.numOfSubjects << ", " << s.cgpa << endl;
-    }
-    
-    pressEnterToContinue();
+    cout << "+======================================================================================================================+\n"
+         << "+                                             INTEC STUDENT DATA ATLAS                                                 +\n"
+         << "+======================================================================================================================+\n"
+         << "\nNumber of Student Records: " << lenStudents() << "/" << MAX_SIZE << "\n\n";
+    printStudentTable(Students);
+    pressEnterToContinue("\n[Back to Main Menu]");
 }
 
 /**
@@ -400,14 +398,22 @@ void searchStudents()
 {
     system("cls");
     char searchKey;
+    Student found[MAX_SIZE];
+    int count = 0;
+
+    cout << "+======================================================================================================================+\n"
+         << "+                                                    SEARCH STUDENT DATA                                               +\n"
+         << "+======================================================================================================================+\n";
 
     cout << "Please choose attribute to search for:\n"
          << "1.Student ID\n"
          << "2.Name\n"
-         << "3.Programme\n";
+         << "3.Programme\n"
+		 << "\nEnter your choice [1-3]: ";
     
     cin >> searchKey;
     cin.ignore();
+    cout << endl;
 
     switch (searchKey)
     {
@@ -422,10 +428,7 @@ void searchStudents()
             {
                 if (idIn == Students[i].id)
                 {
-                    Student s = Students[i];
-                    cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
-                        << s.age << ", " << s.icNumber << ", " << s.programme << ", "
-                        << s.numOfSubjects << ", " << s.cgpa << endl;
+                    found[count++] = Students[i];
                     break;
                 }
             }
@@ -455,10 +458,7 @@ void searchStudents()
 
                 if (fullName.find(nameIn) != fullName.npos)
                 {
-                    Student s = Students[i];
-                    cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
-                        << s.age << ", " << s.icNumber << ", " << s.programme << ", "
-                        << s.numOfSubjects << ", " << s.cgpa << endl;
+                    found[count++] = Students[i];
                 }
             }
             break;
@@ -467,7 +467,7 @@ void searchStudents()
         {
             string programmeIn;
 
-            inputProgramme(programmeIn, "Programme to search: ");
+            inputProgramme(programmeIn, "Programme to search [1-12]: ");
 
             string programme;
 
@@ -487,20 +487,27 @@ void searchStudents()
 
                 if (programmeIn.find(programme) != programmeIn.npos)
                 {
-                    Student s = Students[i];
-                    cout << s.id << ", " << s.firstName << ", " << s.lastName << ", "
-                         << s.age << ", " << s.icNumber << ", " << s.programme << ", "
-                         << s.numOfSubjects << ", " << s.cgpa << endl;
+                    found[count++] = Students[i];
                 }
             }
             break;
         }
         default:
-            cout << "Invalid option. Search operation aborted.\n";
+            cout << "Invalid option. Search operation cancelled.\n";
+            pressEnterToContinue("\n[Exit]");
             return;
     }
 
-    pressEnterToContinue();
+    if (count == 0)
+    {
+        cout << "\nNo student found.\n";
+    }
+    else
+    {
+        cout << "\nFound: " << count << " record(s)\n";
+        printStudentTable(found);
+    }
+    pressEnterToContinue("\n[Back to Main Menu]");
 }
 
 /**
@@ -519,11 +526,13 @@ void addStudent()
     // Array is fully used
     if (empty == MAX_SIZE)
     {
-        cout << "Maximum size of " << MAX_SIZE << " students is reached.";
+        cout << "Can't add Student. Maximum size of " << MAX_SIZE << " students reached.\n";
         return;
     }
 
-    cout << "Add new Student\n";
+        cout << "+======================================================================================================================+\n"
+             << "+                                                    ADD NEW STUDENT                                                   +\n"
+             << "+======================================================================================================================+\n";
 
     // Input first name
     inputStringData(firstName, "First Name: ", 2);
@@ -534,7 +543,7 @@ void addStudent()
     // Input IC number
     inputStringData(icNumber, "IC Number: ", 1, 12, 12);
     // Input programme
-    inputProgramme(programme, "Choose Programme: ");
+    inputProgramme(programme, "Choose Programme [1-12]: ");
     // Input number of subjects
     inputIntData(numOfSubjects, "Number of Subjects: ");
     // Input CGPA
@@ -558,10 +567,12 @@ void addStudent()
 
     writeStudents();
 
-    cout << "Student is successfully added. Student ID assigned: " << studentId << "\n";
-    pressEnterToContinue("\n[Go to Main Menu] ");
+    cout << "\n+======================================================================================================================+\n";
+    printStudent(Students[empty]);
+    cout << "\n+======================================================================================================================+\n";
 
-    return;
+    cout << "\n\nStudent is successfully added.\n";
+    pressEnterToContinue("\n[OK]");
 }
 
 /**
@@ -575,12 +586,14 @@ void editStudent()
     int studentId, age, numOfSubjects, pos;
     double cgpa;
 
-    cout << "Edit a Student" << endl;
+    cout << "+======================================================================================================================+\n"
+         << "+                                                EDIT STUDENT DATA                                                     +\n"
+         << "+======================================================================================================================+\n";
 
     do
     {
         // Input student id
-        inputIntData(studentId, "Enter the student ID: ");
+        inputIntData(studentId, "\nEnter the student ID: ");
 
         // Find position of this student in array
         pos = findStudent(studentId);
@@ -591,7 +604,6 @@ void editStudent()
             continue;
         }
         system("cls");
-        cout << "Student with id of " << Students[pos].id << " found.\n";
         break;
 
     } while (true);
@@ -600,7 +612,12 @@ void editStudent()
     {
         char editOption;
 
-        cout << "Choose your action to edit the data\n";
+        cout << "+======================================================================================================================+\n"
+             << "+                                                EDIT STUDENT DATA                                                     +\n"
+             << "+======================================================================================================================+\n\n";
+
+        printStudent(Students[pos]);
+        cout << "\n\nChoose your action to edit the Student data:\n";
         cout << "1.First Name\n"
              << "2.Last Name\n"
              << "3.Age\n"
@@ -608,10 +625,12 @@ void editStudent()
              << "5.Programme\n"
              << "6.Number of Subjects\n"
              << "7.CGPA\n"
-             << "8.Go to Main Menu\n";
+             << "8.[Exit]\n"
+			 << "\nEnter your choice [1-8]: ";
 
         cin >> editOption;
         cin.ignore();
+        cout << "\n";
 
         switch (editOption)
         {
@@ -646,7 +665,7 @@ void editStudent()
             case '5':
             {
                 cout << "Current Programme: " << Students[pos].programme << "\n";
-                inputProgramme(programme, "New Programme: ");
+                inputProgramme(programme, "New Programme [1-12]: ");
                 Students[pos].programme = programme;
                 break;
             }
@@ -672,14 +691,11 @@ void editStudent()
                 cout << "Please enter a number between 1 and 8.\n";
                 continue;
         }
-        cout << "Data has been updated successfully.\n";
-        pressEnterToContinue();
+        writeStudents();
+        cout << "\nStudent data updated successfully.\n";
+        pressEnterToContinue("\n[OK]");
         system("cls");
     }
-
-    writeStudents();
-    
-    return;
 }
 
 /**
@@ -691,27 +707,32 @@ void deleteStudent()
 
     int studentId, studentIndex;
 
-    cout << "Edit a Student" << endl;
+    cout << "+======================================================================================================================+\n"
+         << "+                                              DELETE STUDENT DATA                                                     +\n"
+         << "+======================================================================================================================+\n";
 
     do
     {
         // Input student Id
-        inputIntData(studentId, "Enter the student ID: ");
+        inputIntData(studentId, "\nEnter the student ID: ");
 
         // Find position of this student in array
         studentIndex = findStudent(studentId);
 
         if (studentIndex != -1)
         {
-            cout << "Student with id of " << Students[studentIndex].id << " found.\n";
+            cout << "\nStudent with id of " << Students[studentIndex].id << " found.\n";
             break;
         }
-        cout << "Student with id of " << studentId << " does not exist.\n";
+        cout << "\nStudent with id of " << studentId << " does not exist.\n";
 
     } while (true);
 
+    cout << endl;
+    printStudent(Students[studentIndex]);
+
     char assure;
-    inputChoice(assure, "Are you sure you want to perform this action? It can't be reversed. [Y/n]: ");
+    inputChoice(assure, "\nAre you sure? [Y/n]: ");
     
     if (assure == 'n')
         return;
@@ -731,7 +752,57 @@ void deleteStudent()
 
     writeStudents();
 
-    return;
+    cout << "\nStudent has been deleted successfully.\n";
+    pressEnterToContinue("\n[OK]");
+}
+
+/**
+ * Display information of a Student
+*/
+void printStudent(Student s)
+{
+    cout << "Student Information"
+         << "\n|- Student ID: " << s.id
+         << "\n|- First Name: " << s.firstName
+         << "\n|-  Last Name: " << s.lastName 
+         << "\n|-        Age: " << s.age 
+         << "\n|-  IC Number: " << s.icNumber
+         << "\n|-  Programme: " << s.programme 
+         << "\n|-   Subjects: " << s.numOfSubjects 
+         << "\n|-       CGPA: " << s.cgpa
+         << "\n";
+}
+
+/**
+ * Display Student data in table
+*/
+void printStudentTable(Student students[MAX_SIZE])
+{
+    cout <<"+======================================================================================================================+\n";
+    cout <<setw(10)<<setiosflags(ios::left)<<"|ID"<<"|"
+		 <<setw(23)<<setiosflags(ios::left) <<"       First Name"<<"|"
+		 <<setw(22)<<setiosflags(ios::left)<<"       Last Name"<<"|"
+		 <<setw(10)<<setiosflags(ios::left)<<"   Age"<<"|"
+		 <<setw(14)<<setiosflags(ios::left)<<"  IC Number"<<"|"
+		 <<setw(8)<<setiosflags(ios::left)<<"Programme"<<"|"
+		 <<setw(19)<<setiosflags(ios::left)<<"Number Of Subjects"<<"|"
+		 <<setw(5)<<setiosflags(ios::left)<<"CGPA"<<"|" << endl;
+
+    int i = 0;
+    while (students[i].id > 0)
+    {
+        Student s = students[i++];
+    	cout <<"+======================================================================================================================+\n|";
+        cout <<setw(9)<<setiosflags(ios::left)<< s.id << "|" 
+			 <<setw(23)<<setiosflags(ios::left)<< s.firstName << "|" 
+			 <<setw(22)<<setiosflags(ios::left)<< s.lastName << "|"
+             <<setw(10)<<setiosflags(ios::left)<<s.age << "|" 
+			 <<setw(14)<<setiosflags(ios::left)<< s.icNumber << "|" 
+			 <<setw(9)<<setiosflags(ios::left)<< s.programme << "|"
+             <<setw(19)<<setiosflags(ios::left)<< s.numOfSubjects << "|" 
+			 <<setw(5)<<setiosflags(ios::left)<<fixed<<setprecision(2)<< s.cgpa <<"|"<< endl;
+    }
+    cout << "+======================================================================================================================+\n";
 }
 
 /**
@@ -771,7 +842,6 @@ void pressEnterToContinue(string message)
     string _;
     cout << message;
     getline(cin, _, '\n');
-    return;
 }
 
 /**
@@ -794,7 +864,6 @@ void inputChoice(char& choiceIn, string prompt)
         break;
     }
     while(true);
-    return;
 }
 
 /**
@@ -832,7 +901,6 @@ void inputStringData(string& stringIn, string prompt, int mode, int minSize, int
 
         break;
     } while (true);
-    return;
 }
 
 /**
@@ -853,9 +921,7 @@ void inputIntData(int& numIn, string prompt)
         }
 
         break;
-
     } while (true);
-    return;
 }
 
 /**
@@ -863,19 +929,20 @@ void inputIntData(int& numIn, string prompt)
 */
 void inputProgramme(string& programmeIn, string prompt)
 {
-    cout << "Programme List\n"
-         << "1.ACCA\n"
-         << "2.ADTP\n"
-         << "3.ALG\n"
-         << "4.ALUK\n"
-         << "5.CFAB\n"
-         << "6.DIPLOMA\n"
-         << "7.FIA\n"
-         << "8.FRANCE\n"
-         << "9.ICAEW\n"
-         << "10.KTJ\n"
-         << "11.KOREA\n"
-         << "12.SACE\n";
+    cout << "Programme Number\n"
+         << " 1. ACCA\n"
+         << " 2. ADTP\n"
+         << " 3. ALG\n"
+         << " 4. ALUK\n"
+         << " 5. CFAB\n"
+         << " 6. DIPLOMA\n"
+         << " 7. FIA\n"
+         << " 8. FRANCE\n"
+         << " 9. ICAEW\n"
+         << "10. KTJ\n"
+         << "11. KOREA\n"
+         << "12. SACE\n";
+
     do
     {
         int choose;
@@ -927,7 +994,6 @@ void inputProgramme(string& programmeIn, string prompt)
         }
         break;
     } while (true);
-    return;
 }
 
 /**
@@ -947,7 +1013,5 @@ void inputCgpa(double& cgpaIn, string prompt)
             continue;
         }
         break;
-
     } while (true);
-    return;
 }
