@@ -888,7 +888,23 @@ void inputStringData(string& stringIn, string prompt, int mode)
 */
 void inputIntData(int& numIn, string prompt)
 {
+    do
+    {
+        cout << prompt;
+        cin >> numIn;
+        cin.ignore();
 
+        if (numIn <= 0)
+        {
+            cout << "Number must be more than 0.\n";
+            continue;
+        }
+
+        break;
+
+    } while (true);
+    
+    return;
 }
 
 /**
@@ -896,7 +912,71 @@ void inputIntData(int& numIn, string prompt)
 */
 void inputProgramme(string& programmeIn, string prompt)
 {
+    cout << "\nProgramme:\n"
+         << "1.ACCA\n"
+         << "2.ADTP\n"
+         << "3.ALG\n"
+         << "4.ALUK\n"
+         << "5.CFAB\n"
+         << "6.DIPLOMA\n"
+         << "7.FIA\n"
+         << "8.FRANCE\n"
+         << "9.ICAEW\n"
+         << "10.KTJ\n"
+         << "11.KOREA\n"
+         << "12.SACE\n";
+    do
+    {
+        char choose;
+        cout << prompt;
+        cin >> choose;
 
+        switch(choose)
+        {
+            case 1:
+                programmeIn = "ACCA";
+                break;
+            case 2:
+                programmeIn = "ADTP";
+                break;
+            case 3:
+                programmeIn = "ALG";
+                break;
+            case 4:
+                programmeIn = "ALUK";
+                break;
+            case 5:
+                programmeIn = "CFAB";
+                break;
+            case 6:
+                programmeIn = "DIPLOMA";
+                break;
+            case 7:
+                programmeIn = "FIA";
+                break;
+            case 8:
+                programmeIn = "FRANCE";
+                break;
+            case 9:
+                programmeIn = "ICAEW";
+                break;
+            case 10:
+                programmeIn = "KTJ";
+                break;
+            case 11:
+                programmeIn = "KOREA";
+                break;
+            case 12:
+                programmeIn = "SACE";
+                break;
+            default:
+                cout << "Hint: Please enter number between 1 - 12.\n";
+                continue;
+        }
+        break;
+    } while (true);
+    
+    return;
 }
 
 /**
@@ -904,5 +984,21 @@ void inputProgramme(string& programmeIn, string prompt)
 */
 void inputCgpa(double& cgpaIn, string prompt)
 {
+    do
+    {
+        cout << prompt;
+        cin >> cgpaIn;
+        cin.ignore();
 
+        if (cgpaIn < 0 || cgpaIn > 4)
+        {
+            cout << "Please provide CGPA value between 0.00 - 4.00.\n";
+            continue;
+        }
+
+        break;
+
+    } while (true);
+    
+    return;
 }
