@@ -7,9 +7,9 @@ It can do operations on data: (1) browse, (2) search, (3) add, (4) edit, and (5)
 
 #### Feel free to run our project at our [repl.it](https://replit.com/@iNFiENiTEWorld/INTEC-Student-Data-Management-System?v=1) or download the source code and run on your machine!
 ## Our Group
-#### Irfan (Frontend Developer, Product Pitch)
-#### Iyas (Secretary, Frontend Developer)
-#### Khilfi (Lead Developer, Backend Developer)
+- **Irfan** (Frontend Developer, Product Pitch)
+- **Iyas** (Secretary, Frontend Developer)
+- **Khilfi** (Lead Developer, Backend Developer)
 
 ## System Features
 #### Account
