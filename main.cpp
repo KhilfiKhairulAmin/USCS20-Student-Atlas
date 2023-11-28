@@ -331,7 +331,7 @@ void readStudents()
     if (studentId <= 0)
         return;
 
-    do
+    while (readStudentsData.good())
     {
         // Parse the first and last name
         replace(firstName.begin(), firstName.end(), '_', ' ');
@@ -353,7 +353,7 @@ void readStudents()
         // Read next line
         readStudentsData >> studentId >> firstName >> lastName >> age >> icNumber
                          >> programme >> numOfSubjects >> cgpa;
-    } while(readStudentsData.good());
+    }
 
     // Close the file
     readStudentsData.close();
