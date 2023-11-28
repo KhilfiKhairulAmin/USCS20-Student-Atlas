@@ -1,14 +1,15 @@
 # INTEC Student Data Management System
-### Our Group
-Backend Developer: Khilfi
-Frontend Developer: Irfan & Iyas
-Secretary: Iyas
+## Our Group
+#### Irfan (Frontend Developer, Product Pitch)
+#### Iyas (Secretary, Frontend Developer)
+#### Khilfi (Lead Developer, Backend Developer)
 
-### System Features
-Account
+## System Features
+#### Account
 1. Register Account
 2. Login Account
-Student
+
+#### Student
 1. View Students
 2. Search Students
 3. Add a Student
