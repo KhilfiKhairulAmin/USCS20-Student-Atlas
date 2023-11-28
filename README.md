@@ -1,4 +1,5 @@
 # INTEC Student Data Management System
+![System Screenshot](https://github.com/KhilfiKhairulAmin/uscs20-project/blob/main/System%20Screenshot.png?raw=true)
 ## Our Group
 #### Irfan (Frontend Developer, Product Pitch)
 #### Iyas (Secretary, Frontend Developer)
