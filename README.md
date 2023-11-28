@@ -23,4 +23,4 @@ It can do operations on data: (1) browse, (2) search, (3) add, (4) edit, and (5)
 4. Edit a Student
 5. Delete a Student
 
-### Run the project at [repl.it](https://replit.com/@iNFiENiTEWorld/INTEC-Student-Data-Management-System?v=1)
+### Run the project at our [repl.it](https://replit.com/@iNFiENiTEWorld/INTEC-Student-Data-Management-System?v=1).
