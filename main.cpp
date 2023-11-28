@@ -99,7 +99,7 @@ void printStudent(Student),
      printStudentTable(Student[MAX_SIZE]),
      pressEnterToContinue(string = "Press Enter to continue... "),
      // For data validation purpose
-     inputStringData(string&, string, int, int = 1, int = 100),
+     inputStringData(string&, string, int, int = 1, int = 22),
      inputChoice(char&, string),
      inputIntData(int&, string),
      inputProgramme(string&, string),
@@ -171,6 +171,7 @@ void mainUI()
                 deleteStudent();
                 break;
             case '6':
+            system("cls");
                 cout << "+======================================================================================================================+\n"
                      << "+                                               HAVE A GREAT DAY!                                                      +\n"
                      << "+======================================================================================================================+\n";
@@ -210,10 +211,10 @@ void signUp()
 
         // Read the username already registered
         ifstream readAccount("accounts.txt");
-        string usernameRegistered;
+        string usernameRegistered, _;
         
         // Validate whether the username has been taken or not
-        readAccount >> usernameRegistered;
+        readAccount >> usernameRegistered >> _;
         while (readAccount.good())
         {
             // Checks if username is already taken
@@ -238,6 +239,9 @@ void signUp()
         inputStringData(password, "Password: ", 1, 8);
 
         system("cls");
+        cout << "+======================================================================================================================+\n";
+        cout << "+                                             ACCOUNT REGISTRATION                                                     +\n";
+        cout << "+======================================================================================================================+\n";
 
         // Repeat the same password
         inputStringData(repeatPassword, "Repeat password: ", 1);
@@ -246,7 +250,12 @@ void signUp()
             break;
 
         system("cls");
-        cout << "The repeated password is not correct. \n";
+        cout << "+======================================================================================================================+\n";
+        cout << "+                                             ACCOUNT REGISTRATION                                                     +\n";
+        cout << "+======================================================================================================================+\n";
+
+        cout << "The repeat password was not correct. Please re-enter password. \n\n";
+
     }
     while (true);
 
@@ -569,7 +578,7 @@ void addStudent()
 
     cout << "\n+======================================================================================================================+\n";
     printStudent(Students[empty]);
-    cout << "\n+======================================================================================================================+\n";
+    cout << "+======================================================================================================================+";
 
     cout << "\n\nStudent is successfully added.\n";
     pressEnterToContinue("\n[OK]");
@@ -721,10 +730,10 @@ void deleteStudent()
 
         if (studentIndex != -1)
         {
-            cout << "\nStudent with id of " << Students[studentIndex].id << " found.\n";
+            cout << "Student with id of " << Students[studentIndex].id << " found.\n";
             break;
         }
-        cout << "\nStudent with id of " << studentId << " does not exist.\n";
+        cout << "Student with id of " << studentId << " does not exist.\n";
 
     } while (true);
 
@@ -945,52 +954,37 @@ void inputProgramme(string& programmeIn, string prompt)
 
     do
     {
-        int choose;
-        cout << prompt;
-        cin >> choose;
-        cin.ignore();
+        string choose;
+        inputStringData(choose, prompt, 1, 1, 2);
 
-        switch(choose)
+        if (choose == "1")
+            programmeIn = "ACCA";
+        else if (choose == "2")
+            programmeIn = "ADTP";
+        else if (choose == "3")
+            programmeIn = "ALG";
+        else if (choose == "4")
+            programmeIn = "ALUK";
+        else if (choose == "5")
+            programmeIn = "CFAB";
+        else if (choose == "6")
+            programmeIn = "DIPLOMA";
+        else if (choose == "7")
+            programmeIn = "FIA";
+        else if (choose == "8")
+            programmeIn = "FRANCE";
+        else if (choose == "9")
+            programmeIn = "ICAEW";
+        else if (choose == "10")
+            programmeIn = "KTJ";
+        else if (choose == "11")
+            programmeIn = "KOREA";
+        else if (choose == "12")
+            programmeIn = "SACE";
+        else
         {
-            case 1:
-                programmeIn = "ACCA";
-                break;
-            case 2:
-                programmeIn = "ADTP";
-                break;
-            case 3:
-                programmeIn = "ALG";
-                break;
-            case 4:
-                programmeIn = "ALUK";
-                break;
-            case 5:
-                programmeIn = "CFAB";
-                break;
-            case 6:
-                programmeIn = "DIPLOMA";
-                break;
-            case 7:
-                programmeIn = "FIA";
-                break;
-            case 8:
-                programmeIn = "FRANCE";
-                break;
-            case 9:
-                programmeIn = "ICAEW";
-                break;
-            case 10:
-                programmeIn = "KTJ";
-                break;
-            case 11:
-                programmeIn = "KOREA";
-                break;
-            case 12:
-                programmeIn = "SACE";
-                break;
-            default:
-                cout << "Hint: Please enter number between 1 - 12.\n";
-                continue;
+            cout << "Hint: Please enter number between 1 - 12.\n";
+            continue;
         }
         break;
     } while (true);
