@@ -15,6 +15,8 @@ Lastly, we hope this source code serve as a prime example of what a structured a
 contact us if you have further inquiries or bug reports on this project.
 
 Thanks ^_^
+
+Github: https://github.com/KhilfiKhairulAmin/uscs20-project
 */
 
 
@@ -176,7 +178,8 @@ void mainUI()
                      << "+                                               HAVE A GREAT DAY!                                                      +\n"
                      << "+======================================================================================================================+\n";
                 cout << "\nLogging out " << globalUsername << "...\n"
-                     << "\nKACHING~DONE!";
+                     << "\nKACHING~DONE!\n"
+                     << "\nCheck out our project on GitHub: https://github.com/KhilfiKhairulAmin/uscs20-project\n";
                 return;
             default:
                 cout << "Invalid selection.\n";
